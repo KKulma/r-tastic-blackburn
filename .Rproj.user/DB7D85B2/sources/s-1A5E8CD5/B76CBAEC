@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1535316959895.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B76CBAEC",
+    "lastKnownWriteTime" : 1535317318,
+    "last_content_update" : 1535317318360,
+    "path" : "~/MEGA/projects/r-tastic-blackburn/config.toml",
+    "project_path" : "config.toml",
+    "properties" : {
+        "cursorPosition" : "20,6",
+        "scrollLine" : "11"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "toml"
+}
