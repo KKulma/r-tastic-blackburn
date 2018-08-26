@@ -5,13 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2410220654",
+    "hash" : "1967871980",
     "id" : "AE5084EF",
-    "lastKnownWriteTime" : 1535318820,
-    "last_content_update" : 1535318820,
+    "lastKnownWriteTime" : 1535319350,
+    "last_content_update" : 1535319350517,
     "path" : "~/MEGA/projects/r-tastic-blackburn/content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd",
     "project_path" : "content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd",
     "properties" : {
+        "cursorPosition" : "47,31",
+        "scrollLine" : "46"
     },
     "relative_order" : 3,
     "source_on_save" : false,

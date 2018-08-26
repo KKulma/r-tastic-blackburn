@@ -18,7 +18,7 @@
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
-      <description></description>
+      <description>Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being data.police.uk API. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and I explored it using heat maps in the past. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information.</description>
     </item>
     
     <item>

@@ -1,0 +1,8 @@
+"0","final_df <- final_df %>% "
+"0","  left_join(wiki_sample, by = c(""location"" = ""name"")) #%>% "
+"0","   rename(#date = month,"
+"0","          search_lat = lat,"
+"0","          search_long = long)"
+"2","Error in rename(search_lat = lat, search_long = long) : 
+  object 'lat' not found
+"

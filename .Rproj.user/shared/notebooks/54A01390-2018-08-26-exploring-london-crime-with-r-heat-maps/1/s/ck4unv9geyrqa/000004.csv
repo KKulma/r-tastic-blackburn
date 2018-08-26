@@ -1,0 +1,83 @@
+"0","### scraping with rvest() ####"
+"0","# Wikipedia linke"
+"0","wiki_link <- ""https://wiki.openstreetmap.org/wiki/List_of_London_Underground_stations"""
+"0","# scraping information from the table in the above URL "
+"0","wiki_tbl <- wiki_link %>%"
+"0","  read_html() %>%"
+"0","  html_nodes(xpath='//*[@id=""mw-content-text""]/div/table[1]') %>% "
+"0","  html_table(fill = TRUE) %>% "
+"0","  as.data.frame()"
+"2","Rendering content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd
+"
+"2","Loading required package: xml2
+"
+"2","
+Attaching package: 'purrr'
+
+"
+"2","The following object is masked from 'package:rvest':
+
+    pluck
+
+"
+"2","
+Attaching package: 'dplyr'
+
+"
+"2","The following objects are masked from 'package:stats':
+
+    filter, lag
+
+"
+"2","The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+"
+"2","
+Attaching package: 'jsonlite'
+
+"
+"2","The following object is masked from 'package:purrr':
+
+    flatten
+
+"
+"2","
+Attaching package: 'lubridate'
+
+"
+"2","The following object is masked from 'package:base':
+
+    date
+
+"
+"2","Loading required package: viridisLite
+"
+"2","Quitting from lines 146-151 (2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd) 
+"
+"2","Error in rename_(.data, .dots = compat_as_lazy_dots(...)) : 
+  argument "".data"" is missing, with no default
+Calls: local ... eval -> eval -> rename -> rename.default -> rename_
+In addition: Warning messages:
+1: package 'stringr' was built under R version 3.4.3 
+2: package 'viridis' was built under R version 3.4.4 
+3: package 'viridisLite' was built under R version 3.4.3 
+4: package 'leaflet' was built under R version 3.4.4 
+5: package 'leaflet.extras' was built under R version 3.4.4 
+"
+"2","Execution halted
+"
+"1","<"
+"1","simpleError"
+"1"," in "
+"1","render_page(f)"
+"1",": "
+"1","Failed to render 'content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd'"
+"1",">
+"
+"2","
+* Retrying in 16 seconds...
+
+"
+"0","head(wiki_tbl)"
