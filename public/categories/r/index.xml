@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Sat, 25 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Aug 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Exploring London Crime with R heat maps</title>
+      <link>/post/exploring-london-crime-with-r-heat-maps/</link>
+      <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>First post in new r-tastic</title>

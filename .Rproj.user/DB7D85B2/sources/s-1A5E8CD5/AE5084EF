@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1535318823047.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2410220654",
+    "id" : "AE5084EF",
+    "lastKnownWriteTime" : 1535318820,
+    "last_content_update" : 1535318820,
+    "path" : "~/MEGA/projects/r-tastic-blackburn/content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd",
+    "project_path" : "content/post/2018-08-26-exploring-london-crime-with-r-heat-maps.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
