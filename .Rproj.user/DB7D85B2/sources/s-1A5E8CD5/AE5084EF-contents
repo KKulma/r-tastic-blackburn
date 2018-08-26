@@ -154,7 +154,7 @@ Finally, for some heat maps, all time data will be too much to handle. In those 
 ```{r july-data}
 july_data <- final_df %>%
   filter(date == "2017-07") %>% 
-  sample_frac(.2)
+  sample_frac(.1)
 ```
 
 
