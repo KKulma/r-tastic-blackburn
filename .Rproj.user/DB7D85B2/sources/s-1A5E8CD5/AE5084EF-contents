@@ -17,11 +17,11 @@ topics: []
 Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being [data.police.uk API](https://data.police.uk/). Oh, those hours of pure intellectual exploration it's given me! I have a soft spot for crime data and [I explored it using heat maps in the past](https://kkulma.github.io/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis/).
 Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information. I'm dedicating this post to my favourite heat maps, so expect some lovely colours (side by side with insightful findings on London crime)! 
 
-## **PROJECT DESCRIPTION**
+## **Project description**
 
 I'm going to scrape Wikipedia to get coordinates of all Tube Stations in London. Then I'll pick a random sample of 20 of them and use their latitude and longitude to pull all crime information for those locations between Jan 2016 and June 2018. Then, I'll explore crime frequency and crime type per location over time using faceted heatmaps. Finally, I play a bit with `leaflet` package to explore best way of visualising this data on geographical heat maps.
 
-## **PACKAGES**
+## **Packages**
 
 Here's a sweet collection of packages required to run this analysis:
 
@@ -41,7 +41,7 @@ library(htmltools)
 ```
 
 
-## **SCRAPING WIKI**
+## **Scraping Wiki**
 
 Let's first start with scraping a table from Wikipedia website that holds coordinates for all London Tube stations. I used Google Selector tool for it, you can learn more about it [here](https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/):
 
@@ -79,7 +79,7 @@ wiki_sample <- wiki_selected[k, ]
 wiki_sample
 ```
 
-## **PULLING DATA FROM __DATA.POLICE.UK__ API**
+## **Pulling data from __data.police.uk__ API**
 
 Now that we have coordinates, we can feed them into the UK Police API that requires the following parameters: latitude, longitude and year-month which we want to pull crime data for. To make everyone's life easier, I define a function `get_crime()` which will require all three parameters but also a name of the station that coordinates correspond to:
 
@@ -150,7 +150,7 @@ final_df <- final_df %>%
           search_long = long)
 ```
 
-Finally, for some heat maps, all time data will be too much to handle. In those cases I'll focus on one month only, July 2017:
+Finally, for some heat maps, all time data will be too much to handle. In those cases I'll focus on one month only, July 2017, and I pick only random 10% of it, to make interactive maps more responsive:
 ```{r july-data}
 july_data <- final_df %>%
   filter(date == "2017-07") %>% 
@@ -158,7 +158,7 @@ july_data <- final_df %>%
 ```
 
 
-## **HEAT MAPP-ING**
+## **Heat-mapping**
 
 **FACETED HEAT MAPS**
 
@@ -268,20 +268,7 @@ july_data %>%
              radius = 8)
 ```
 
-That makes comparison a bit more solid and quantifiable. Great! But still we don't know But which area on the map corresponds to which tube station. We can fix it by adding markers to the centre of each area:
-
-```{r basic-geo-labels}
-
-july_data %>% 
-  leaflet() %>%
-  addProviderTiles(providers$CartoDB.Positron) %>%
-  addMarkers(lng = ~as.numeric(search_long),
-             lat = ~as.numeric(search_lat),
-             label = ~location) %>% 
-  addHeatmap(lng=~as.numeric(location.longitude), lat=~as.numeric(location.latitude), radius = 8)
-```
-
-Much better! Now we at least now what we look at. But still, it's difficult to understand, for example, how areas with the highest crime rate relate to each other. There's a solution for it! First, let's pick 3 areas with the most crimes: 
+That makes comparison a bit more solid and quantifiable. Great! But still, it's difficult to understand, for example, how areas with the highest crime rate relate to each other. There's a solution for it! First, let's pick 3 areas with the most crimes: 
 
 ```{r top_3, warning=FALSE, message=FALSE}
 # pick top 3 most 'criminal' areas
