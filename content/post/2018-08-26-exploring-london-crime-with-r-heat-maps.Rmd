@@ -144,10 +144,10 @@ Let's finish off with some minor data cleaning: API returns coordinates for crim
 
 ```{r add-names}
 final_df <- final_df %>% 
-  left_join(wiki_sample, by = c("location" = "name")) #%>% 
-   rename(date = month,
-          search_lat = lat,
-          search_long = long)
+    left_join(wiki_sample, by = c("location" = "name")) %>%
+    rename(date = month,
+         search_lat = lat,
+         search_long = long)
 ```
 
 Finally, for some heat maps, all time data will be too much to handle. In those cases I'll focus on one month only, July 2017, and I pick only random 10% of it, to make interactive maps more responsive:
