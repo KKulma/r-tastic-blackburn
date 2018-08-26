@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://rtastic-blackburn.netlify.com/"
 languageCode = "en-us"
 title = "r-tastic"
 theme = "blackburn"

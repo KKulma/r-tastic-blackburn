@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "3285283803",
     "id" : "B76CBAEC",
-    "lastKnownWriteTime" : 1535317318,
-    "last_content_update" : 1535317318360,
+    "lastKnownWriteTime" : 1535318465,
+    "last_content_update" : 1535318465275,
     "path" : "~/MEGA/projects/r-tastic-blackburn/config.toml",
     "project_path" : "config.toml",
     "properties" : {
-        "cursorPosition" : "20,6",
-        "scrollLine" : "11"
+        "cursorPosition" : "0,48",
+        "scrollLine" : "0"
     },
     "relative_order" : 1,
     "source_on_save" : false,
