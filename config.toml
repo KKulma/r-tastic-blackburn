@@ -12,8 +12,8 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
   # Shown in the home page
   subtitle = "Weird and wonderful exploration of data using R"
   brand = "Kasia Kulma"
-  #googleAnalytics = "Your Google Analytics tracking ID"
-  #disqus = "Your Disqus shortname"
+  googleAnalytics = "UA-92539076-2"
+  disqus = "r-tastic-co-uk"
   # CSS name for highlight.js
   highlightjs = "androidstudio"
   dateFormat = "02 Jan 2006, 15:04"
