@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.47.1" />
+
+  <title>Did Disney Princesses distort girl names in USA? &middot; r-tastic</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2018. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Did Disney Princesses distort girl names in USA?</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>28 Feb 2017, 00:00</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/babynames">babynames</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/ggplot2">ggplot2</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  <p>My goal is to analyse how frequency of names found among Disney female characters changed over time in the US. Specifically, I want to see if the movie release had any impact on their popularity. For this purpose, I will use <code>babynames</code> dataset that is available on CRAN.</p>
+<p>The idea for the exercise was inspired by <a href="http://seankross.com/notes/disney/">Sean Kross’ blog post</a></p>
+<div id="short-description-of-the-dataset" class="section level2">
+<h2>Short description of the dataset</h2>
+<p><em>from CRAN <a href="%22https://cran.r-project.org/web/packages/babynames/index.html%22">package description</a></em></p>
+<p><em>The SSA baby names data comes from social security number (SSN) applications. SSA cards were first issued in 1936, but were only needed for people with an income. In 1986, the law changed effectively requiring all children to get an SSN at birth.</em></p>
+<p>The dataset is quite simple, covering US baby name records from late 1800’s until 2014. It specifies whether a name is male or female, number of respective names in a given year and what proportion they constituted.</p>
+<pre class="r"><code>library(babynames)
+baby &lt;- babynames
+baby$sex=as.factor(baby$sex)
+summary(baby)</code></pre>
+<pre><code>##       year      sex             name                 n          
+##  Min.   :1880   F:1100858   Length:1858689     Min.   :    5.0  
+##  1st Qu.:1950   M: 757831   Class :character   1st Qu.:    7.0  
+##  Median :1983               Mode  :character   Median :   12.0  
+##  Mean   :1973                                  Mean   :  183.4  
+##  3rd Qu.:2002                                  3rd Qu.:   32.0  
+##  Max.   :2015                                  Max.   :99680.0  
+##       prop          
+##  Min.   :2.260e-06  
+##  1st Qu.:3.900e-06  
+##  Median :7.350e-06  
+##  Mean   :1.391e-04  
+##  3rd Qu.:2.324e-05  
+##  Max.   :8.155e-02</code></pre>
+</div>
+<div id="installing-packages" class="section level2">
+<h2>Installing packages</h2>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+</div>
+<div id="quick-data-pre-prep" class="section level2">
+<h2>Quick data pre-prep</h2>
+<p>I assign each name to a separate dataframe.</p>
+<pre class="r"><code>ariel &lt;- baby %&gt;%
+  filter(name == &quot;Ariel&quot;, sex == &quot;F&quot;)
+
+belle &lt;- baby %&gt;%
+  filter(name == &quot;Belle&quot;, sex == &quot;F&quot;)
+
+jasmine &lt;- baby %&gt;%
+  filter(name == &quot;Jasmine&quot;, sex == &quot;F&quot;)
+
+tiana &lt;- baby %&gt;%
+  filter(name == &quot;Tiana&quot;, sex == &quot;F&quot;)
+
+merida &lt;- baby %&gt;%
+  filter(name == &quot;Merida&quot;, sex == &quot;F&quot;)
+
+elsa &lt;- baby %&gt;%
+  filter(name == &quot;Elsa&quot;, sex == &quot;F&quot;)</code></pre>
+<p>Next, I create variables specifying the release date of a movie with character’s name.</p>
+<pre class="r"><code># The Little Mermaid
+ariel_release = 1989
+
+# Beauty and the Beast
+belle_release = 1991
+
+# Alladin
+jasmine_release = 1992
+
+# The Princess and the Frog
+tiana_release = 2009
+
+# Brave
+merida_release = 2012
+
+# Frozen
+elsa_release = 2013</code></pre>
+</div>
+<div id="plots" class="section level2">
+<h2>Plots</h2>
+<p>Finally, I plot the number of names for a given year. The arrows indicate when the movie was released, so that it’s easier to compare <em>before</em> and <em>after</em> trend. Additionally, I show the number of names and their proportion for a year proceeding and following the movie release. The numbers (and graphs!) say it all :-)</p>
+</div>
+<div id="trends" class="section level2">
+<h2>Trends</h2>
+<p>Namely, the movie release indeed seems to have a positive impact on name popularity, at least short- , but often long-term. For example, Ariel, Belle showed much higher popularity that in pre-release days even a decade after the movie has been published.</p>
+<div id="ariel" class="section level3">
+<h3>Ariel</h3>
+<pre class="r"><code>  ggplot(ariel, aes(x=year, y=n)) +
+  geom_line(col=&quot;red&quot;) +
+  xlab(&quot;&quot;) +
+  ylab(&quot;&quot;) +
+  ggtitle(&quot;Ariel&quot;) +
+  geom_segment(aes(x = ariel_release, y = 0, xend = ariel_release, yend = 500), arrow = arrow(length = unit(0.1, &quot;cm&quot;))) +
+  theme_minimal()</code></pre>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/ariel_plot-1.png" width="672" /></p>
+<pre class="r"><code>ariel %&gt;%
+  filter(year %in% c(ariel_release - 1,  ariel_release + 1))  %&gt;%
+  mutate(when = ifelse(year == ariel_release - 1, &quot;1 yr before&quot;,
+                      &quot;1 yr after&quot;))</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##    year sex   name      n     prop when       
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;      
+## 1 1988. F     Ariel   910 0.000473 1 yr before
+## 2 1990. F     Ariel  3605 0.00176  1 yr after</code></pre>
+</div>
+<div id="belle" class="section level3">
+<h3>Belle</h3>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/belle_plot-1.png" width="672" /></p>
+<pre><code>## # A tibble: 2 x 6
+##    year sex   name      n       prop when       
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;      
+## 1 1990. F     Belle    13 0.00000633 1 yr before
+## 2 1992. F     Belle    19 0.00000948 1 yr after</code></pre>
+</div>
+<div id="jasmine" class="section level3">
+<h3>Jasmine</h3>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/jasmine_plot-1.png" width="672" /></p>
+<pre><code>## # A tibble: 2 x 6
+##    year sex   name        n    prop when       
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;   &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;      
+## 1 1991. F     Jasmine 11522 0.00567 1 yr before
+## 2 1993. F     Jasmine 12059 0.00612 1 yr after</code></pre>
+<p>On the other hand, in case of Jasmine and Tiana, the positive effect of the Disney movie release on name’s popularity was rather short-term, although strong.</p>
+</div>
+<div id="tiana" class="section level3">
+<h3>Tiana</h3>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/tiana_plot-1.png" width="672" /></p>
+<pre><code>## # A tibble: 2 x 6
+##    year sex   name      n     prop when       
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;      
+## 1 2008. F     Tiana   481 0.000231 1 yr before
+## 2 2010. F     Tiana   962 0.000492 1 yr after</code></pre>
+</div>
+<div id="merida" class="section level3">
+<h3>Merida</h3>
+<p>Finally, it’s difficult to judge the long-term effect for names Merida and Elsa, as both movies have been released very recently, but at least a year following the release showed a remarkable jump in names’ popularity.</p>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/merida_plot-1.png" width="672" /></p>
+<p>Here, the <em>1 year before and after</em> comparison is not possible, as the movie was released in 2012 and no baby was called Merida in the US between 2002 and 2012. This still proves how powerful Disney movies can be!</p>
+<pre class="r"><code>tail(merida)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##    year sex   name       n       prop
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;  &lt;int&gt;      &lt;dbl&gt;
+## 1 2001. F     Merida     5 0.00000253
+## 2 2002. F     Merida     5 0.00000253
+## 3 2012. F     Merida    19 0.00000982
+## 4 2013. F     Merida   109 0.0000567 
+## 5 2014. F     Merida   103 0.0000529 
+## 6 2015. F     Merida    99 0.0000512</code></pre>
+</div>
+<div id="elsa" class="section level3">
+<h3>Elsa</h3>
+<p><img src="/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/elsa_plot-1.png" width="672" /></p>
+<pre><code>## # A tibble: 2 x 6
+##    year sex   name      n     prop when       
+##   &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;      
+## 1 2012. F     Elsa    540 0.000279 1 yr before
+## 2 2014. F     Elsa   1138 0.000584 1 yr after</code></pre>
+<p>All in all, it goes to show that Disney movies are an important part of our culture that has the power to influence our lives in surprising ways :)</p>
+</div>
+</div>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="next">
+      <a href="/post/first-post-in-new-r-tastic/">First post in new r-tastic</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="/post/first-post-in-new-r-tastic/"><i class="fa fa-chevron-right"></i></a>
+    
+  </div>
+</div>
+
+
+
+  
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'https-r-tastic-co-uk';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-92539076-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+
+
+</body>
+</html>
+
