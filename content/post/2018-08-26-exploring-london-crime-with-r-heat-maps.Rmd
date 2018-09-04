@@ -181,7 +181,7 @@ ggplot(police_grid,aes(x=date,y=location, fill=n_crimes))+
   #define new breaks on x-axis
   scale_x_discrete(expand=c(0,0), 
                    breaks=c("2016-01","2017-01","2018-01"))+
-  scale_fill_viridis(option = "B") +
+  scale_fill_viridis(option = "B", name = "Number of crimes") +
   ggtitle("Number of crimes at London Tube stations") +
   coord_fixed()+
   #set a base size for all fonts
@@ -198,8 +198,7 @@ ggplot(police_grid,aes(x=date,y=location, fill=n_crimes))+
     plot.background=element_blank(),
     #remove plot border
     panel.border=element_blank()
-  ) +
-  guides(fill=guide_legend(title="Number of crimes"))
+  ) 
 ```
 
 So pretty! I'm a big-big fan of `viridis` colour pallette and I must say you see it at its best in heat maps. And how informative this heat map is! From the first glimpse you can see straight away which areas tend to have more crime (e.g. Bethnal Green, Bayswater) and when (summer months). We know what and when, what about the type of crime they experiene most? This can be sorted with another faceted heatmap:
@@ -215,7 +214,7 @@ ggplot(crime_grid,aes(x=category,y=location, fill=n_crimes))+
   geom_tile(colour="white",size=0.25)+
   labs(x="",y="")+
   scale_y_discrete(expand=c(0,0))+
-  scale_fill_viridis(option = "B") +
+  scale_fill_viridis(option = "B", name = "Number of crimes") +
   coord_fixed()+
   theme_grey(base_size=8)+
   theme(
@@ -224,8 +223,10 @@ ggplot(crime_grid,aes(x=category,y=location, fill=n_crimes))+
     axis.ticks=element_line(size=0.4),
     plot.background=element_blank(),
     panel.border=element_blank()
-  ) +
-  guides(fill=guide_legend(title="Number of crimes"))
+  ) #+
+  #guides(fill=guide_legend(title="Number of crimes"),
+  #       colour = guide_legend(reverse=T))
+
 ```
 
 Another informative beauty! You can see that 3 types of crime dominate: anit-social behaviour, violent crime and vehicle theft. Again, avoid Bethnal Green if you can and make sure you hang out in Epping, instead! 

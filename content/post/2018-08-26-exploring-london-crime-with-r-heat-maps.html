@@ -318,7 +318,7 @@ ggplot(police_grid,aes(x=date,y=location, fill=n_crimes))+
   #define new breaks on x-axis
   scale_x_discrete(expand=c(0,0), 
                    breaks=c(&quot;2016-01&quot;,&quot;2017-01&quot;,&quot;2018-01&quot;))+
-  scale_fill_viridis(option = &quot;B&quot;) +
+  scale_fill_viridis(option = &quot;B&quot;, name = &quot;Number of crimes&quot;) +
   ggtitle(&quot;Number of crimes at London Tube stations&quot;) +
   coord_fixed()+
   #set a base size for all fonts
@@ -335,8 +335,7 @@ ggplot(police_grid,aes(x=date,y=location, fill=n_crimes))+
     plot.background=element_blank(),
     #remove plot border
     panel.border=element_blank()
-  ) +
-  guides(fill=guide_legend(title=&quot;Number of crimes&quot;))</code></pre>
+  ) </code></pre>
 <p><img src="/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap1-1.png" width="672" /></p>
 <p>So pretty! I’m a big-big fan of <code>viridis</code> colour pallette and I must say you see it at its best in heat maps. And how informative this heat map is! From the first glimpse you can see straight away which areas tend to have more crime (e.g. Bethnal Green, Bayswater) and when (summer months). We know what and when, what about the type of crime they experiene most? This can be sorted with another faceted heatmap:</p>
 <pre class="r"><code># summarise data by location and crime type
@@ -349,7 +348,7 @@ ggplot(crime_grid,aes(x=category,y=location, fill=n_crimes))+
   geom_tile(colour=&quot;white&quot;,size=0.25)+
   labs(x=&quot;&quot;,y=&quot;&quot;)+
   scale_y_discrete(expand=c(0,0))+
-  scale_fill_viridis(option = &quot;B&quot;) +
+  scale_fill_viridis(option = &quot;B&quot;, name = &quot;Number of crimes&quot;) +
   coord_fixed()+
   theme_grey(base_size=8)+
   theme(
@@ -358,9 +357,10 @@ ggplot(crime_grid,aes(x=category,y=location, fill=n_crimes))+
     axis.ticks=element_line(size=0.4),
     plot.background=element_blank(),
     panel.border=element_blank()
-  ) +
-  guides(fill=guide_legend(title=&quot;Number of crimes&quot;))</code></pre>
+  ) #+</code></pre>
 <p><img src="/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap2-1.png" width="672" /></p>
+<pre class="r"><code>  #guides(fill=guide_legend(title=&quot;Number of crimes&quot;),
+  #       colour = guide_legend(reverse=T))</code></pre>
 <p>Another informative beauty! You can see that 3 types of crime dominate: anit-social behaviour, violent crime and vehicle theft. Again, avoid Bethnal Green if you can and make sure you hang out in Epping, instead!</p>
 <p><em>GEOGRAPHIC HEAT MAPS</em></p>
 <p>Facets are brilliant when it comes to quantitative comparison, but where are these areas? are they close/far away from each other? These questions can be only answered by geo heat maps. Lets plot a very basic one using <code>leaflet</code> package:</p>
