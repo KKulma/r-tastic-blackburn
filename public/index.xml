@@ -24,7 +24,7 @@
 
 &lt;p&gt;Data without insights are just meaningless series of numbers or characters. I love diving deep into new datasets, discovering new patterns and exceptions. Getting familiar with data and saying “I know something about you now”, at the end. And that’s exactly what I’m going to do here.&lt;/p&gt;
 
-&lt;p&gt;This blog is essentially for me to showcase - and remind myself - what data / methods I’ve been playing with and what I’ve learned in the process.&lt;/p&gt;
+&lt;p&gt;This blog is essentially for me to showcase - and remind myself - what data / methods I’ve been playing with and what I’ve learned in the process. I built it using &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; &amp;rsquo;s theme &lt;a href=&#34;https://github.com/yoshiharuyamashita/blackburn&#34;&gt;blackburn&lt;/a&gt; and deployed it using &lt;a href=&#34;https://app.netlify.com/&#34;&gt;Netlify&lt;/a&gt;. Also, I can now say, I contribute it to &lt;a href=&#34;https://www.r-bloggers.com.&#34;&gt;r-bloggers&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;This is a second version of my R blog, the original &lt;em&gt;r-tastic&lt;/em&gt; blog can be found &lt;a href=&#34;https://kkulma.github.io/&#34;&gt;here&lt;/a&gt;, but with time I&amp;rsquo;ll be migrating its content here.&lt;/p&gt;
 

@@ -11,7 +11,7 @@ About r-tastic
 
 Data without insights are just meaningless series of numbers or characters. I love diving deep into new datasets, discovering new patterns and exceptions. Getting familiar with data and saying “I know something about you now”, at the end. And that’s exactly what I’m going to do here.
 
-This blog is essentially for me to showcase - and remind myself - what data / methods I’ve been playing with and what I’ve learned in the process.
+This blog is essentially for me to showcase - and remind myself - what data / methods I’ve been playing with and what I’ve learned in the process. I built it using [Hugo](https://gohugo.io/) 's theme [blackburn](https://github.com/yoshiharuyamashita/blackburn) and deployed it using [Netlify](https://app.netlify.com/). Also, I can now say, I contribute it to [r-bloggers](https://www.r-bloggers.com.).
 
 This is a second version of my R blog, the original _r-tastic_ blog can be found [here](https://kkulma.github.io/), but with time I'll be migrating its content here.
 
