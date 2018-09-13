@@ -499,6 +499,206 @@ july_data %&amp;gt;%
     </item>
     
     <item>
+      <title>Prime hints for running a data project in R</title>
+      <link>/post/prime-hints-forrrunning-a-data-project-in-r/</link>
+      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/prime-hints-forrrunning-a-data-project-in-r/</guid>
+      <description>&lt;p&gt;I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.&lt;/p&gt;
+&lt;div id=&#34;use-r-projects.-always.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;01. Use R projects. Always.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Human Civilization was built on conventions. R scripts have them, too. For example&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Any resident R script is written assuming that it will be run from a fresh R process with working directory set to the project directory. It creates everything it needs, in its own workspace or folder, and it touches nothing it did not create.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You want your project to work. Not only now, but also in 5 years, even if folder and file paths have changed. Also, you want it to work when your collaborator runs it from their computer. Projects create convention that make it possible.&lt;/p&gt;
+&lt;p&gt;Basically, they create the environment where&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;all code and outputs are stored in one set location (no more &lt;code&gt;setwd()&lt;/code&gt;!)&lt;/li&gt;
+&lt;li&gt;relative file paths are created - this guarantees better reproducibility&lt;/li&gt;
+&lt;li&gt;clean R environment is created every time you open it (no more &lt;code&gt;rm(list = ls())&lt;/code&gt;!)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you’re not convinced, read &lt;a href=&#34;https://www.tidyverse.org/articles/2017/12/workflow-vs-script/&#34;&gt;a more thorough explanation given by Jenny Bryan&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;So, go on and start a New Project today! Otherwise, your computer may be at risk of being set on fire…&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jb_tweet.png&#34; alt=&#34;jb_tweet&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;jb_tweet&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;describe-the-purpose-of-your-code-project.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;02. Describe the purpose of your code / project.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Before you even load the packages or import the data, state the purpose and content of your script in hashed code.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;### Data import and cleaning from sources A, B and C. 
+### This script is part of Segmentation project. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Naturally, you can update it along the way, but having such description in place from day one will guarantee that whoever has access to your script will instantly know what he/she is looking at. Also, if you leave it for later, the chances are that you’ll forget to do it altogether and believe me, in X months time when you go back to your code it won’t be that clear what were you trying to do here.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;load-all-necessary-packages-in-the-beginning-of-your-script-consider-calling-functions-in-a-package-via-.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;03. Load all necessary packages in the beginning of your script &amp;amp; consider calling functions in a package via &lt;code&gt;::&lt;/code&gt;.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Ok, I know how it is: you load some basic packages to start with, but then the analysis takes to wondrous and wonderful places that require more specialized libraries. So you install and load them along the way… WRONG! Whenever you have to load a new package, go back to the beginning of your script and load them there. This way whenever you (or someone else) have to run the script again, they will have ALL necessary libraries to run it and won’t get stuck somewhere in the middle of the execution because the function they called is not recognized. It’s coding. Small things matter.&lt;/p&gt;
+&lt;p&gt;Also, if you don’t want to load the whole package just for the sake of using a single function, consider specifying package directly via &lt;code&gt;::&lt;/code&gt;. Use this text cleaning exercise as an example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(readr)
+library(dplyr)
+
+tweets &amp;lt;- read_csv(&amp;quot;tweets.csv&amp;quot;)
+
+all_tweets &amp;lt;- tweets %&amp;gt;% 
+  rename(author = handle) %&amp;gt;% 
+  select(author, text) %&amp;gt;% 
+  mutate(text = qdapRegex::rm_url(text)) %&amp;gt;% #removes URLs from text
+  na.omit()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here, I’m expecting to use &lt;code&gt;readr&lt;/code&gt; and &lt;code&gt;dplyr&lt;/code&gt; packages regularly and I’m using &lt;code&gt;qdapRegex&lt;/code&gt; library only once - to remove URL’s from my tweet data. In this case I call &lt;code&gt;rm_url()&lt;/code&gt; once and I specify the package that it comes from. More about in &lt;a href=&#34;https://stackoverflow.com/a/23232888&#34;&gt;here&lt;/a&gt;. Easy peasy.&lt;/p&gt;
+&lt;div id=&#34;update&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;!!! UPDATE !!!&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;As &lt;a href=&#34;https://twitter.com/brentauble/status/975667201595277313&#34;&gt;Brent Auble&lt;/a&gt; correctly pointed out, if you decide to use &lt;code&gt;::&lt;/code&gt; way of calling the package, make sure to put the comment clarifying that you’re going to use this package - preferrably in the load section of the script - so that the user installs the package before running the script.&lt;/p&gt;
+&lt;p&gt;Also, &lt;a href=&#34;https://twitter.com/ma_salmon&#34;&gt;Maëlle Salmon&lt;/a&gt; made me realise that there’s already an excellent package &lt;a href=&#34;https://github.com/MilesMcBain/packup&#34;&gt;packup&lt;/a&gt; that organises your code so that any mentioned libraries anywhere in the script automatically end up in the beginning of your code. Genius!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;name-your-code-sections-and-use-them-for-quick-navigation.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;04. Name your code sections and use them for quick navigation.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Your code will grow. Sometimes it will turn into an R script equivalent of the Bible, at least in terms of volume. To keep it organized, keep your code nice and tidy by assigning relevant code chunks to different sections that can be later folded/unfolded; you can also easily navigate yourself through chunks by using ‘drop-up’ menu at the bottom of the script screen.&lt;/p&gt;
+&lt;p&gt;You create a new code section by writing &lt;code&gt;####&lt;/code&gt; or &lt;code&gt;----&lt;/code&gt; at the end of any comment that is to become a new code section.&lt;/p&gt;
+&lt;p&gt;See the image below for a simplified example:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/code_sections.png&#34; width=&#34;550px&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;update-1&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;!!! UPDATE !!!&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;There’s even a &lt;a href=&#34;https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts&#34;&gt;keyboard shortcut&lt;/a&gt; in RStudio for inserting code sections: &lt;code&gt;Ctrl+Shift+R&lt;/code&gt; for Windows users and &lt;code&gt;Command+Shift+R&lt;/code&gt; for Mac users. Even &lt;a href=&#34;https://twitter.com/hadleywickham/status/975711350130327552&#34;&gt;Hadley Wickham can tell you that!&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;make-your-life-easier-and-mark-your-code-when-you-need-to.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;05. Make your life easier and mark your code when you need to.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Did you know that if you click anywhere left from line numbers in RStudio, it will create a red mark? I think this is one of the most underused features in RStudio, and a very useful one, too! Imagine having to define a function using another part of a very long R script? Instead of finding a relevant part of the script and then spending seconds or minutes on finding the function that you were about to define, you first mark that function, go to the relevant bit of code and then have no problems finding the function to be defined again, as the red mark will tell you where to look. BTW, it works only in already saved R scripts and it doesn’t work in RMarkdown files.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/red_dot.png&#34; width=&#34;550px&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;update-2&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;!!! UPDATE !!!&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;I didn’t know at the time of writing, but as &lt;a href=&#34;https://twitter.com/carroll_jono/status/975498243944587264&#34;&gt;Jonathan Carroll&lt;/a&gt; and many after him pointed out: the red dot actually indicates a debug point. If you leave it in the script while running the code, it will start a debugging process and therefore stop executing your code. Therefore &lt;strong&gt;always remember to remove the red dot when you run/source your code!!&lt;/strong&gt;. Still, I find it pretty useful for temporary marking purposes ;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;write-your-code-as-if-someone-was-going-to-use-it-without-communicating-with-you.-from.-day.-one.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;06. Write your code as if someone was going to use it without communicating with you. From. Day. One.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;I know, I know. We all mean to do it, but we rarely do. I always promise myself that I’ll be thoroughly commenting my code from the very beginning of the project but even these days I find it difficult to do it consistently. Why? Because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;analysis itself is more important (I’m telling myself).&lt;/li&gt;
+&lt;li&gt;I know what I’m doing.&lt;/li&gt;
+&lt;li&gt;I (usually) have no direct collaborators that are using the code.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;But how short-sighted those arguments are! The reality is that&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;even most precious and relevant piece of analysis is useless if you or others don’t understand it (more about it below)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;you know what you’re doing at the moment, but it won’t feel the same way in a month or two when you have moved on to another project but someone asked you an innocent question about how you defined that key variable… Our memory is fallible. Make sure you don’t have to rely on it with every single piece of code you produce&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;even you don’t have active collaborators at the time of doing analysis, someone will have to use your code sooner or later. You’re not going to be in the same position for the rest of your life. You’re creating legacy that ONE DAY someone will use, no matter how far away it seems right now.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What makes good, reproducible code?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;generous and clear comments&lt;/li&gt;
+&lt;li&gt;logical and efficient code&lt;/li&gt;
+&lt;li&gt;code that is ideally timed and tested&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;update-3&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;!!! UPDATE !!!&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;I had discussions online and offline whether your code alone can be used as sufficient documentation. The argument is that clean and clear code should stand for itself, no comments are necessary. There was a time when I thought that, too, but as &lt;a href=&#34;https://twitter.com/sellorm/status/975845659420119041&#34;&gt;Mark Sellors&lt;/a&gt; pointed out: any code will explain what you did, but it will rarely say WHY you did it. So comment your code generously, please!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;name-your-files-like-a-pro.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;07. Name your files like a Pro.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Jenny Bryan is probably the first very high profile R-user I know who’s been actively highlighting the importance of things that not many people talk about: file naming is one of them. I’m not going to reinvent the excellent wheel that she has already invented, so I’m only going to summarize her advice here. But for more detail, please, please, have a look at &lt;a href=&#34;https://t.co/99waX8liuQ&#34;&gt;Jenny’s slides&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;So, what do all good file names have in common? They are:&lt;/p&gt;
+&lt;div id=&#34;machine-readable&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;MACHINE READABLE &lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;This means that file names are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;regular expression and globbing friendly. Meaning? You can search them using key words (with &lt;code&gt;regex&lt;/code&gt; and/or &lt;code&gt;stringr&lt;/code&gt; package). In order to make that easier/possible, remember to avoid spaces, punctuation, accented characters, case sensitivity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This way it will be easy to search for files later and/or narrow file lists based on names.&lt;/p&gt;
+&lt;p&gt;Jenny’s example:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/jenny1.png&#34; width=&#34;600px&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;easy to compute on using delimiters: this means that the file names should have a consistent name structure, where each section of the name has its role and is separated from other name sections with delimiters. This way it will be easy to extract information from file names, e.g. by splitting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;See Jenny’s example below for clarification:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/jenny2.png&#34; width=&#34;600px&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;human-readable&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;HUMAN READABLE&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Human readable means exactly what is says on the tin:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Easy to figure out what the heck something is, based on its name, as simple as that :)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I should add, it’s easy to figure it out also for someone who doesn’t know your work very well (this is a clear reminder of the previous point). I love the example below:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/jenny3.png&#34; width=&#34;600px&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;they-play-well-with-default-ordering&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;THEY PLAY WELL WITH DEFAULT ORDERING&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;The reality is that your computer will sort your files for you, no matter whether you like/need it or not. Therefore:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;put something numeric in your file name first - if the order of sourcing files doesn’t matter, stating when the file was created is always useful. Otherwise, you can indicate the logical order of the files (I’ll come back to that in point 9).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;use the &lt;code&gt;YYYY-MM-DD&lt;/code&gt; format for dates (it’s ISO 8601 standard!) EVEN when you’re American :)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;left pad other numbers with zeroes - otherwise you’ll end up with &lt;code&gt;10&lt;/code&gt; before &lt;code&gt;1&lt;/code&gt; and so on.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Again, one of Jenny’s examples:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R_files/figure-markdown_github/jenny4.png&#34; width=&#34;550px&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I couldn’t believe how much these little hacks improved the flow of my work. Paying attention to file names was also appreciated by my coworkers, I’m sure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;if-you-have-to-copypaste-excerpt-of-code-3-or-more-times-write-a-function-for-it.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;08. If you have to copy/paste excerpt of code 3 or more times, write a function for it.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;.. as Hadley Wickham said many many times in his and Charlotte’s &lt;a href=&#34;https://www.datacamp.com/courses/writing-functions-in-r/&#34;&gt;course on DataCamp&lt;/a&gt;. It doesn’t only teach you to write more elegant and efficient code, but also it makes it more readable for yourself and others.&lt;/p&gt;
+&lt;p&gt;To learn how to write good functions, you can have a sneak peak into the first chapter of the DataCamp course for free (the rest is available under paid subscription) or read this &lt;a href=&#34;https://www.datacamp.com/community/tutorials/functions-in-r-a-tutorial&#34;&gt;DataCamp tutorial&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;with-big-complex-data-projects-use-project-pipeline.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;09. With big, complex data projects use project pipeline.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;I’m not sure if &lt;code&gt;project pipeline&lt;/code&gt; is an official name for what I want to talk about, but for a sake of the argument, let’s call it a &lt;code&gt;project pipeline&lt;/code&gt; ;) Namely, sometimes running a full project from one script - with even clearest and informatively named code sections - is simply difficult, if not unfeasible. Particularly when big(ish) data is involved: imagine trying to run a hefty model on data that requires importing and cleaning, where import into R alone takes about an hour (real life scenario!). You wouldn’t possibly want to do it every time you open the project, right?&lt;/p&gt;
+&lt;p&gt;So what you do instead is write one script for data import and save the data.frame with useful data as an .RData file (using, e.g. &lt;code&gt;save(data1, file = &amp;quot;data.RData&amp;quot;)&lt;/code&gt;. Then start a new script for, let’s say, data cleaning where you load previously imported data.frame from the .RData file (using &lt;code&gt;load(&amp;quot;data.RData&amp;quot;)&lt;/code&gt;). Then you clean the data and save it as yet another .RData file. Then you write the third script where you load the clean data.frame from the second .RData file and you use it to run your model. Jenny Bryan’s advice on file naming comes in handy here, as you want to name and order your scripts or their outputs logically to avoid surprises in the future.&lt;/p&gt;
+&lt;p&gt;This way you create a clear structure of building blocks, as well inputs and outputs. Additionally, once the data has been imported and cleaned, you can jump straight away into next steps of analysis/modelling without wasting any time on the first two steps.&lt;/p&gt;
+&lt;p&gt;I started using this approach in big and complex projects after reading &lt;a href=&#34;https://stackoverflow.com/a/1434424&#34;&gt;this SO answer&lt;/a&gt; and I never looked back.&lt;/p&gt;
+&lt;div id=&#34;update-4&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;!!! UPDATE !!!&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Lots of comments regarding this one.&lt;/p&gt;
+&lt;p&gt;First, I didn’t mention it explicitly, but it mentioned in the Stack Overflow reply I refer to: if you define a number of functions, it’s a good practice to define them in a separate script that you can later source. &lt;a href=&#34;http://disq.us/p/1r2d3ga&#34;&gt;Blazko&lt;/a&gt; is clearly a fan of this solution :)&lt;/p&gt;
+&lt;p&gt;Secondly, saving your data objects as &lt;code&gt;.rds&lt;/code&gt; file is probably a better solution than using &lt;code&gt;.RData&lt;/code&gt;, as you can directly assing it to another object in a new session (right, &lt;a href=&#34;https://twitter.com/keestimmulder/status/975854141401595904&#34;&gt;Kees Mulder&lt;/a&gt; ?) or assign a bunch of similar object into a list (wink wink, &lt;a href=&#34;https://twitter.com/mrtnj/status/975856756927750145&#34;&gt;Martin Johnsson&lt;/a&gt; ). It’s also an official recommendation of &lt;a href=&#34;https://twitter.com/JennyBryan/status/975856014019903489&#34;&gt;Jenny Bryan&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, if you need a reproducible way of running a number of connected script and/or visualising how they are connected, search no more: &lt;a href=&#34;https://github.com/ropensci/drake&#34;&gt;drake package&lt;/a&gt; is here to help! Really impressive tool, had no idea it existed at the time of writing this post, so thanks &lt;a href=&#34;https://twitter.com/ibddoctor/status/975731013266673665&#34;&gt;Peter Higgins&lt;/a&gt; for telling me about it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;never-save-your-workspace.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;10. Never save your workspace.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Again, there were others that already said it before me and said it much better than I would have. So there you go:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Loading a saved workspace turns your R script from a program, where everything happens logically according to the plan that is the code, to something akin to a cardboard box taken down from the attic, full of assorted pages and notebooks that may or may not be what they seem to be. You end up having to put an inordinate trust in your old self. I don’t know about your old selves, dear reader, but if they are anything like mine, don’t save your workspace.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For details, see &lt;a href=&#34;https://twitter.com/mrtnj&#34;&gt;Martin Johnsson&lt;/a&gt;’s excellent &lt;a href=&#34;https://martinsbioblogg.wordpress.com/2017/04/02/using-r-dont-save-your-workspace/&#34;&gt;blog post&lt;/a&gt; that I quoted above.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;before-publishingsharing-your-code-run-it-in-the-fresh-workspace.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;11. Before publishing/sharing your code, run it in the fresh workspace.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;This almost goes without saying, but if I got a £ for every time I forgot to do it… Basically, stuff happens when you write your code: you work with multiple files, maybe you loaded a package in one of them but forgot to do it in the rest of them? If that’s the case, you’ll be able to run all scripts in this particular session but if you send someone the code without the imported function… they will fail to run it. The same will happen if you try to run the script on its own, on your own machine.&lt;/p&gt;
+&lt;p&gt;Anyway, this doesn’t need much explaining. Simply make sure that you re-run your code in a fresh session before you take it further. Amen.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;thats-it-for-now.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;strong&gt;That’s it for now.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;So.. these are my ‘prime hints’ - if someone had told me about them 2 years ago, my &lt;code&gt;#rstats&lt;/code&gt; life would have been much much easier. By no means is this list complete or exhaustive, but my intention was to highlight the points that I personally found most useful in my daily fun with R. Hope it will help someone!&lt;/p&gt;
+&lt;div id=&#34;quick-reference&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;QUICK REFERENCE&lt;/strong&gt;&lt;/h4&gt;
+&lt;/div&gt;
+&lt;div id=&#34;general-good-practice&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;General good practice&lt;/strong&gt;&lt;/h4&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.datacamp.com/community/tutorials/five-tips-r-code-improve&#34;&gt;Five Tips to Improve Your R Code (DataCamp)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/questions/1429907/workflow-for-statistical-analysis-and-report-writing/1434424#1434424&#34;&gt;Workflow for statistical analysis and report writing (SO)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.quantinsti.com/blog/r-best-practices-r-you-writing-the-r-way/&#34;&gt;R Best Practices: R you writing the R way! (By Milind Paradkar)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://kb.iu.edu/d/aaxp&#34;&gt;Good practices in R programming (Indiana University)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;good-practice-for-package-building&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;strong&gt;Good practice for package building&lt;/strong&gt;&lt;/h4&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://romantsegelskyi.github.io/blog/2015/11/16/good-practices-r-package/&#34;&gt;Good Practices for Writing R Packages (by Roman Tsegelskyi)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://gist.github.com/stevenpollack/141b14437c6c4b071fff&#34;&gt;R package development “best practices” (by stevenpollack)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/MangoTheCat/goodpractice&#34;&gt;goodpractice - Advice on R Package Building (by MangoTheCat)&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>End of Year thoughts</title>
       <link>/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>

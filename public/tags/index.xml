@@ -31,6 +31,15 @@
     </item>
     
     <item>
+      <title>Best Practice</title>
+      <link>/tags/best-practice/</link>
+      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/best-practice/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Blogdown</title>
       <link>/tags/blogdown/</link>
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
@@ -69,7 +78,7 @@
     <item>
       <title>Opinion</title>
       <link>/tags/opinion/</link>
-      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/opinion/</guid>
       <description></description>
@@ -90,15 +99,6 @@
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/text-analysis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Web Scraping</title>
-      <link>/tags/web-scraping/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/web-scraping/</guid>
       <description></description>
     </item>
     
