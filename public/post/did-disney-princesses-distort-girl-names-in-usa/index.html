@@ -262,6 +262,7 @@ summary(baby)</code></pre>
 <div id="installing-packages" class="section level2">
 <h2>Installing packages</h2>
 <pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.4</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -271,14 +272,15 @@ summary(baby)</code></pre>
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 3.4.4</code></pre>
 </div>
 <div id="quick-data-pre-prep" class="section level2">
 <h2>Quick data pre-prep</h2>
 <p>I assign each name to a separate dataframe.</p>
 <pre class="r"><code>ariel &lt;- baby %&gt;%
-  filter(name == &quot;Ariel&quot;, sex == &quot;F&quot;)
-
-belle &lt;- baby %&gt;%
+  filter(name == &quot;Ariel&quot;, sex == &quot;F&quot;)</code></pre>
+<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.4</code></pre>
+<pre class="r"><code>belle &lt;- baby %&gt;%
   filter(name == &quot;Belle&quot;, sex == &quot;F&quot;)
 
 jasmine &lt;- baby %&gt;%

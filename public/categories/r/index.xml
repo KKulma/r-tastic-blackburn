@@ -34,6 +34,15 @@
     </item>
     
     <item>
+      <title>Scraping online table with info on R datasets</title>
+      <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
+      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
+      <description>It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from here using rvest and xml2 packages:</description>
+    </item>
+    
+    <item>
       <title>Amazon reviews wordcloud</title>
       <link>/post/amazon-reviews-word-cloud/</link>
       <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>

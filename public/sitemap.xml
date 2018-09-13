@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/post/scraping-online-table-with-info-on-r-datasets/</loc>
+    <lastmod>2017-03-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/amazon-reviews-word-cloud/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
   </url>
@@ -94,6 +99,12 @@
   <url>
     <loc>/tags/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/web-scraping/</loc>
+    <lastmod>2017-03-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

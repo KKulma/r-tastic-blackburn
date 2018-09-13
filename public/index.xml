@@ -329,6 +329,7 @@ for(i in 1:length(iter_months)){
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;july_data &amp;lt;- final_df %&amp;gt;%
   filter(date == &amp;quot;2017-07&amp;quot;) %&amp;gt;% 
   sample_frac(.1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;bindrcpp&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;heat-mapping&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;strong&gt;Heat-mapping&lt;/strong&gt;&lt;/h2&gt;
@@ -494,6 +495,247 @@ july_data %&amp;gt;%
 &lt;p&gt;Hope this helps!&lt;/p&gt;
 &lt;p&gt;To finish off: &lt;a href=&#34;https://kkulma.github.io/&#34;&gt;old r-tastic blog&lt;/a&gt; is still available at its old address, but with time I’ll try to migrate as many posts from there to here.&lt;/p&gt;
 &lt;p&gt;New &lt;code&gt;blogdown&lt;/code&gt; site, new beginning! hope to see you here more often!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scraping online table with info on R datasets</title>
+      <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
+      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
+      <description>&lt;p&gt;It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from &lt;a href=&#34;https://vincentarelbundock.github.io/Rdatasets/datasets.html&#34;&gt;here&lt;/a&gt; using &lt;code&gt;rvest&lt;/code&gt; and &lt;code&gt;xml2&lt;/code&gt; packages:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# loading packages
+library(rvest)
+library(xml2)
+library(dplyr)
+library(knitr)
+
+# URL to scrape
+url &amp;lt;- &amp;quot;https://vincentarelbundock.github.io/Rdatasets/datasets.html&amp;quot;
+
+# scrape the table with relevant info
+r_datasets &amp;lt;- read_html(url) %&amp;gt;% # read url
+    html_nodes(&amp;quot;table&amp;quot;) %&amp;gt;% # extract all the tables
+   .[[2]] %&amp;gt;% # it&amp;#39;s the second table we want
+    html_table() # convert it to a usable format (data.frame)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As a result, we get a tidy data frame…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;str(r_datasets)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;#39;data.frame&amp;#39;:    1162 obs. of  11 variables:
+##  $ Package      : chr  &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; ...
+##  $ Item         : chr  &amp;quot;acme&amp;quot; &amp;quot;aids&amp;quot; &amp;quot;aircondit&amp;quot; &amp;quot;aircondit7&amp;quot; ...
+##  $ Title        : chr  &amp;quot;Monthly Excess Returns&amp;quot; &amp;quot;Delay in AIDS Reporting in England and Wales&amp;quot; &amp;quot;Failures of Air-conditioning Equipment&amp;quot; &amp;quot;Failures of Air-conditioning Equipment&amp;quot; ...
+##  $ Rows         : int  60 570 12 24 8437 23 100 49 823 10 ...
+##  $ Cols         : int  3 6 1 1 4 3 4 2 3 5 ...
+##  $ has_logical  : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ has_binary   : logi  FALSE TRUE FALSE FALSE TRUE TRUE ...
+##  $ has_numeric  : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+##  $ has_character: logi  TRUE FALSE FALSE FALSE FALSE FALSE ...
+##  $ CSV          : chr  &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; ...
+##  $ Doc          : chr  &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; ...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% 
+  select(-c(CSV, Doc)) %&amp;gt;% 
+  head() &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   Package       Item                                           Title Rows
+## 1    boot       acme                          Monthly Excess Returns   60
+## 2    boot       aids    Delay in AIDS Reporting in England and Wales  570
+## 3    boot  aircondit          Failures of Air-conditioning Equipment   12
+## 4    boot aircondit7          Failures of Air-conditioning Equipment   24
+## 5    boot       amis                  Car Speeding and Warning Signs 8437
+## 6    boot        aml Remission Times for Acute Myelogenous Leukaemia   23
+##   Cols has_logical has_binary has_numeric has_character
+## 1    3       FALSE      FALSE        TRUE          TRUE
+## 2    6       FALSE       TRUE        TRUE         FALSE
+## 3    1       FALSE      FALSE        TRUE         FALSE
+## 4    1       FALSE      FALSE        TRUE         FALSE
+## 5    4       FALSE       TRUE        TRUE         FALSE
+## 6    3       FALSE       TRUE        TRUE         FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;.. that we can filter freely, according to our needs:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% filter(Rows &amp;gt;= 1000 &amp;amp; Cols &amp;gt;= 50) %&amp;gt;% 
+  kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Item&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Title&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Rows&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Cols&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_logical&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_binary&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_numeric&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_character&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;CSV&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Doc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Ecdat&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Car&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Stated Preferences for Car Choice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4654&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;70&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;ISLR&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Caravan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;The Insurance Company (TIC) Benchmark&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5822&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;86&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mosaicData&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;HELPfull&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Health Evaluation and Linkage to Primary Care&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1472&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;788&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;epi&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Eysenck Personality Inventory (EPI) data for 3570 participants&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3570&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;57&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;msq&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;75 mood items from the Motivational State Questionnaire for 3896 participants&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3896&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;92&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;msqR&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;75 mood items from the Motivational State Questionnaire for 3032 unique participants&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6411&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;79&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;spi&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;A sample from the SAPA Personality Inventory including an item dictionary and scoring keys.&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4000&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;145&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% filter(grepl(&amp;quot;cat&amp;quot;, Item)) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Item&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Title&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Rows&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Cols&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_logical&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_binary&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_numeric&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;has_character&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;CSV&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Doc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;boot&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;catsM&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Weight Data for Domestic Cats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;97&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;MASS&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;cats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Anatomical Data from Domestic Cats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;144&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;cattell&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;12 cognitive variables from Cattell (1963)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;robustbase&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;education&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Education Expenditure Data&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;This totally maked my life easier, so hope it will help you, too!&lt;/p&gt;
 </description>
     </item>
     
@@ -691,6 +933,7 @@ summary(baby)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;installing-packages&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Installing packages&lt;/h2&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## 
 ## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
@@ -700,14 +943,15 @@ summary(baby)&lt;/code&gt;&lt;/pre&gt;
 ## 
 ##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;ggplot2&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;quick-data-pre-prep&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Quick data pre-prep&lt;/h2&gt;
 &lt;p&gt;I assign each name to a separate dataframe.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ariel &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Ariel&amp;quot;, sex == &amp;quot;F&amp;quot;)
-
-belle &amp;lt;- baby %&amp;gt;%
+  filter(name == &amp;quot;Ariel&amp;quot;, sex == &amp;quot;F&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;bindrcpp&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;belle &amp;lt;- baby %&amp;gt;%
   filter(name == &amp;quot;Belle&amp;quot;, sex == &amp;quot;F&amp;quot;)
 
 jasmine &amp;lt;- baby %&amp;gt;%

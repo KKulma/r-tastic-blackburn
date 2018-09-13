@@ -1,0 +1,57 @@
+---
+title: Scraping online table with info on R datasets
+author: Kasia Kulma
+date: '2017-03-30'
+slug: scraping-online-table-with-info-on-r-datasets
+categories:
+  - r
+tags:
+  - web scraping
+description: ''
+topics: []
+---
+
+It's a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I'm working with, so this was really to make my life easier. So! I'm going to scrape the table with a list of R datasets from [here](https://vincentarelbundock.github.io/Rdatasets/datasets.html) using `rvest` and `xml2` packages:
+
+```{r, warning=FALSE, message=FALSE}
+# loading packages
+library(rvest)
+library(xml2)
+library(dplyr)
+library(knitr)
+
+# URL to scrape
+url <- "https://vincentarelbundock.github.io/Rdatasets/datasets.html"
+
+# scrape the table with relevant info
+r_datasets <- read_html(url) %>% # read url
+    html_nodes("table") %>% # extract all the tables
+   .[[2]] %>% # it's the second table we want
+    html_table() # convert it to a usable format (data.frame)
+```
+
+As a result, we get a tidy data frame...
+
+```{r}
+str(r_datasets)
+```
+
+
+```{r}
+r_datasets %>% 
+  select(-c(CSV, Doc)) %>% 
+  head() 
+```
+
+.. that we can filter freely, according to our needs:
+
+```{r, warning=FALSE, message=FALSE}
+r_datasets %>% filter(Rows >= 1000 & Cols >= 50) %>% 
+  kable()
+```
+
+```{r}
+r_datasets %>% filter(grepl("cat", Item)) %>% kable()
+```
+
+This totally maked my life easier, so hope it will help you, too!
