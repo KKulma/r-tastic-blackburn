@@ -561,6 +561,185 @@ july_data %&amp;gt;%
     </item>
     
     <item>
+      <title>Star Wars Vs Star Trek Word Battle</title>
+      <link>/post/star-wars-vs-star-trek-word-battle/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
+      <description>&lt;p&gt;It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with &lt;a href=&#34;https://twitter.com/pmigdal&#34;&gt;Piotr Migdal’s&lt;/a&gt; challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979). I chose these two because of 1) the obvious “competition” going on between the two camps and 2) similar time they were first broadcast. Let’s get cracking!&lt;/p&gt;
+&lt;p&gt;Let’s load necessary packages:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(dplyr)
+library(tm)
+library(tidytext)
+library(ggthemes)
+library(ggplot2)
+library(DT)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first one, &lt;code&gt;rvest&lt;/code&gt;, comes in handy in web-scraping text from the movie scripts (it’s amazing what you can get online for free these days):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# SW and StarTrek URLs
+swIV_url &amp;lt;-&amp;quot;http://www.imsdb.com/scripts/Star-Wars-A-New-Hope.html&amp;quot;
+startrek_url &amp;lt;- &amp;quot;http://www.dailyscript.com/scripts/startrek01.html&amp;quot;
+
+## scrape movie scripts
+# StarWars
+star_wars &amp;lt;- read_html(swIV_url) %&amp;gt;%
+  html_nodes(&amp;quot;td&amp;quot;) %&amp;gt;% 
+  html_text() %&amp;gt;% 
+  .[[88]]
+
+#StarTrek
+star_trek &amp;lt;- read_html(startrek_url) %&amp;gt;%
+  html_nodes(&amp;quot;pre&amp;quot;) %&amp;gt;%
+  html_text() 
+
+# here&amp;#39;s what we&amp;#39;ve got
+str(star_wars)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  chr &amp;quot;\r\n\r\n\n\n\n                                        STAR WARS\n\n                                        Epis&amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As you can see, the script texts are very messy, so I write a customised function to clean them up a bit:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# remove messy bits ;)
+clean_text &amp;lt;- function(x) {
+  x &amp;lt;- gsub(&amp;quot;\\\n&amp;quot;, &amp;quot; &amp;quot;, x)
+  x &amp;lt;- gsub(&amp;quot;\\\r&amp;quot;, &amp;quot; &amp;quot;, x)
+  x &amp;lt;- gsub(&amp;quot;\\\t&amp;quot;, &amp;quot; &amp;quot;, x)
+  x &amp;lt;- gsub(&amp;quot;[[:punct:]]&amp;quot;, &amp;quot; &amp;quot;, x)
+  x &amp;lt;- x %&amp;gt;% 
+    tolower() %&amp;gt;% 
+    removeNumbers() %&amp;gt;% 
+    stripWhitespace()
+  x}
+    
+# apply the customised function to both datasets
+clean_star_trek &amp;lt;- clean_text(star_trek)
+clean_star_wars &amp;lt;- clean_text(star_wars)
+
+# result
+str(clean_star_wars)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  chr &amp;quot; star wars episode iv a new hope from the journal of the whills by george lucas revised fourth draft january lu&amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s MUCH better! From here, we are only a few steps away from getting the desired word frequency tables:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(&amp;quot;stop_words&amp;quot;)
+
+
+sw_tokens &amp;lt;- clean_star_wars %&amp;gt;%
+  as_tibble() %&amp;gt;% # trasforming vector to tibble
+  rename_(sw_text = names(.)[1]) %&amp;gt;% # assign a column name
+  mutate_if(is.factor, as.character) %&amp;gt;% # convert it from factor to character
+  mutate(swt=unlist(sw_text)) %&amp;gt;% 
+  unique() %&amp;gt;% 
+  unnest_tokens(&amp;quot;word&amp;quot;, sw_text) %&amp;gt;% # break text down into single words
+  anti_join(stop_words) %&amp;gt;% # remove stop words
+  count(word, sort = TRUE) %&amp;gt;% # count word frequency and sort it in decreasing order
+  rename(sw_n = n)
+
+
+st_tokens &amp;lt;- clean_star_trek %&amp;gt;%
+  as_tibble() %&amp;gt;% 
+  rename_(st_text = names(.)[1]) %&amp;gt;%
+  mutate_if(is.factor, as.character) %&amp;gt;% 
+  mutate(stt=unlist(st_text)) %&amp;gt;% 
+  unique() %&amp;gt;% 
+  unnest_tokens(&amp;quot;word&amp;quot;, st_text) %&amp;gt;% 
+  anti_join(stop_words) %&amp;gt;% 
+  count(word, sort = TRUE) %&amp;gt;% 
+  rename(st_n = n)
+
+sw_tokens&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3,385 x 2
+##    word      sw_n
+##    &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
+##  1 luke       726
+##  2 int        314
+##  3 han        269
+##  4 star       235
+##  5 death      229
+##  6 threepio   217
+##  7 cockpit    196
+##  8 ben        176
+##  9 ext        167
+## 10 vader      162
+## # ... with 3,375 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;TA-DA! Our tables are ready and squeky clean :) Now, I’ll use &lt;code&gt;inner_join()&lt;/code&gt; to narrow down the data to only those words that the two scripts have in common. To compare the frequencies I’ll use a variable called &lt;code&gt;log_word_prop&lt;/code&gt;: logarithm of the proportion between Star Wars and Star Trek word frequency. This means that the more positive the value, the more drastic the difference in frequency it is in favour of Star Wars. On the other hand, the more negative the value, the more commonly it was used in Star Trek (in comparison to Star Wars).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens = sw_tokens %&amp;gt;% 
+  inner_join(st_tokens) %&amp;gt;% 
+  mutate(log_word_prop =  round(log(sw_n / st_n),3),
+         dominates_in = as.factor(ifelse(log_word_prop &amp;gt; 0, &amp;quot;star_wars&amp;quot;, &amp;quot;star_trek&amp;quot;))) 
+
+final_tokens&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,293 x 5
+##    word     sw_n  st_n log_word_prop dominates_in
+##    &amp;lt;chr&amp;gt;   &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;       
+##  1 int       314   110         1.05  star_wars   
+##  2 star      235     9         3.26  star_wars   
+##  3 death     229     1         5.43  star_wars   
+##  4 ext       167    49         1.23  star_wars   
+##  5 red       152     7         3.08  star_wars   
+##  6 fighter   121     1         4.80  star_wars   
+##  7 wing      112     1         4.72  star_wars   
+##  8 ship      109    48         0.820 star_wars   
+##  9 space      90    45         0.693 star_wars   
+## 10 surface    87     5         2.86  star_wars   
+## # ... with 1,283 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we can finally visualise our findings: first, let’s have a quick glipse on what words occured in pretty much the same frequency in both movies:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
+
+final_tokens %&amp;gt;% 
+  filter(abs(log_word_prop) == 0) %&amp;gt;% 
+  arrange(desc(sw_n)) %&amp;gt;% 
+  sample_n(30) %&amp;gt;% 
+  ggplot(aes(x = reorder(word, log_word_prop),  y = log_word_prop, fill = dominates_in)) +
+  geom_bar(stat  = &amp;quot;identity&amp;quot;, show.legend = FALSE) +
+  theme_minimal() +
+  coord_flip() +
+  xlab(&amp;quot;&amp;quot;) +
+  ylab(&amp;quot;log(word_prop)&amp;quot;) +
+  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
+  ggtitle(&amp;quot;Sample of words that occur with the same frequency in SW and ST&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I must say, I expected this most similar vocabulary to be much more technical. At the same time, this time according to expectations, those words reflect action and drama in both movies: things &lt;code&gt;cease&lt;/code&gt;, &lt;code&gt;emanate&lt;/code&gt; and &lt;code&gt;shove&lt;/code&gt;, people &lt;code&gt;shock&lt;/code&gt;, experience &lt;code&gt;agony&lt;/code&gt; and are &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What about most polarizing words? I chose to show the words that were at least 12 times (log_word_prop &amp;gt; 2.4) more common in one movie than the other. What are they?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
+  filter(abs(log_word_prop) &amp;gt; 2.4) %&amp;gt;% 
+  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
+  ggplot(aes(x = reorder(word, log_word_prop),  y = log_word_prop, fill = dominates_in)) +
+  geom_bar(stat  = &amp;quot;identity&amp;quot;) +
+  theme_minimal() +
+  coord_flip() +
+  xlab(&amp;quot;&amp;quot;) +
+  ylab(&amp;quot;log(word_prop)&amp;quot;) +
+  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
+  ggtitle(&amp;quot;Words that show strikingly different frequencies in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Haha! You may not be surprised that the most &lt;em&gt;Star Wars-y&lt;/em&gt; vocabulary is full of words like &lt;code&gt;death&lt;/code&gt;, &lt;code&gt;star&lt;/code&gt;, &lt;code&gt;imperial&lt;/code&gt; or even &lt;code&gt;father&lt;/code&gt;, but I didn’t expect &lt;code&gt;female&lt;/code&gt; or &lt;code&gt;cloud&lt;/code&gt; to be THAT much more present in Star Trek! Some things never &lt;code&gt;cease&lt;/code&gt; to surprise even most &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt; people, even if they have assistance of &lt;code&gt;imperial technician&lt;/code&gt; ;-)&lt;/p&gt;
+&lt;div id=&#34;update&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;UPDATE!!&lt;/h3&gt;
+&lt;p&gt;After Piotr’s suggestion, I decided to play a bit with &lt;code&gt;ggplot&lt;/code&gt;’s excellent &lt;code&gt;geom_text()&lt;/code&gt;. This little tweak can give you surprising inisghts into the Word Battle matter! Below I plotted the more dominant frequency of a given word againts a relative difference in word proportion:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
+  mutate(dominant_freq = as.numeric(ifelse(sw_n &amp;gt; st_n, sw_n, st_n))) %&amp;gt;% 
+  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
+  ggplot(aes(log_word_prop, dominant_freq, label = word)) +
+  geom_text(check_overlap = TRUE) +
+  theme_minimal() +
+  ylab(&amp;quot;Word frequency in a dominating movie&amp;quot;) +
+  xlab(&amp;quot;log(word_prop)&amp;quot;) +
+  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
+  ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Not a bad start! A much more appealing - although a bit less readable - look can be achieved with &lt;code&gt;geom_label()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
+  mutate(dominant_freq = as.numeric(ifelse(sw_n &amp;gt; st_n, sw_n, st_n))) %&amp;gt;% 
+  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
+  ggplot(aes(log_word_prop, dominant_freq, label = word)) +
+  geom_label(aes(fill = dominates_in), colour = &amp;quot;white&amp;quot;, fontface = &amp;quot;bold&amp;quot;) +
+  theme_minimal() +
+  ylab(&amp;quot;Word frequency in a dominating movie&amp;quot;) +
+  xlab(&amp;quot;log(word_prop)&amp;quot;) +
+  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
+  ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Scraping online table with info on R datasets</title>
       <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>

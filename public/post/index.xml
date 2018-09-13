@@ -43,6 +43,15 @@
     </item>
     
     <item>
+      <title>Star Wars Vs Star Trek Word Battle</title>
+      <link>/post/star-wars-vs-star-trek-word-battle/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
+      <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
+    </item>
+    
+    <item>
       <title>Scraping online table with info on R datasets</title>
       <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
