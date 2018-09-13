@@ -498,6 +498,165 @@ july_data %&amp;gt;%
     </item>
     
     <item>
+      <title>Amazon reviews wordcloud</title>
+      <link>/post/amazon-reviews-word-cloud/</link>
+      <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/amazon-reviews-word-cloud/</guid>
+      <description>
+
+&lt;p&gt;In the last month I discovered two things that changed my life: audiobooks and &lt;a href=&#34;https://en.wikipedia.org/wiki/Yuval_Noah_Harari&#34;&gt;Yuval Harari&lt;/a&gt;. The former completely transformed my daily commute, the latter changed the way I think about the surrounding world (with more appreciation for history and politics, to say the least). The cocktail of the two made my brain cells sing.&lt;/p&gt;
+
+&lt;p&gt;Harari published two books in the last three years: &lt;a href=&#34;https://www.amazon.co.uk/Sapiens-Humankind-Yuval-Noah-Harari/dp/1846558239&#34;&gt;Sapiens: A Brief History of Humankind&lt;/a&gt; and more recently: &lt;a href=&#34;https://www.amazon.co.uk/Homo-Deus-Brief-History-Tomorrow/dp/1910701874/&#34;&gt;Homo Deus: A Brief History of Tomorrow&lt;/a&gt;. Both perspective - changing, right?&lt;/p&gt;
+
+&lt;p&gt;My opinions aside, what do other readers think about his books? Let&amp;rsquo;s dig into it by scraping Amazon reviews of &amp;ldquo;Sapiens&amp;rdquo; and then visualising their most common words in a wordcloud.&lt;/p&gt;
+
+&lt;h3 id=&#34;loading-packages&#34;&gt;loading packages&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;install.packages(&amp;quot;pacman&amp;quot;, repos = &amp;quot;http://cran.us.r-project.org&amp;quot;)
+pacman::p_load(XML, dplyr, stringr, rvest, xml2) # web-scraping
+pacman::p_load(tm, rvest, SnowballC, wordcloud) # wordcloud-building
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;importing-amazon-reviews-for-yuval-harari-s-sapiens&#34;&gt;importing Amazon reviews for Yuval Harari&amp;rsquo;s &amp;ldquo;Sapiens&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;The web-scraping procedures that follow were shamelessly &amp;ldquo;borrowed&amp;rdquo; from &lt;a href=&#34;https://justrthings.wordpress.com/2016/08/17/web-scraping-and-sentiment-analysis-of-amazon-reviews/&#34;&gt;Riki Saito&amp;rsquo;s blog&lt;/a&gt;. Thanks, mate!&lt;/p&gt;
+
+&lt;p&gt;The following code requires &lt;em&gt;Amazon&amp;rsquo;s product code&lt;/em&gt;, which can be found in the product&amp;rsquo;s URL. Next, it scrapes the product&amp;rsquo;s name, just to confirm we got everything right!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# define a function removing all white space
+trim &amp;lt;- function (x) gsub(&amp;quot;^\\s+|\\s+$&amp;quot;, &amp;quot;&amp;quot;, x)
+
+# define product code and the url
+prod_code = &amp;quot;1846558239&amp;quot;
+url &amp;lt;- paste0(&amp;quot;https://www.amazon.co.uk/dp/&amp;quot;, prod_code)
+doc &amp;lt;- xml2::read_html(url)
+
+#obtain the text in the node, remove &amp;quot;\n&amp;quot; from the text, and remove white space
+prod &amp;lt;- html_nodes(doc, &amp;quot;#productTitle&amp;quot;) %&amp;gt;% html_text() %&amp;gt;% gsub(&amp;quot;\n&amp;quot;, &amp;quot;&amp;quot;, .) %&amp;gt;% trim()
+prod
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;Sapiens: A Brief History of Humankind&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So far, so good. Now, after sourcing &lt;code&gt;amazon_scraper&lt;/code&gt; function from Riki&amp;rsquo;s Github page, I import first 50 pages of reviews of &lt;em&gt;Sapiens&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# THE KEY: Source function to parse Amazon html pages for data
+source(&amp;quot;https://raw.githubusercontent.com/rjsaito/Just-R-Things/master/Text%20Mining/amazonscraper.R&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;pages &amp;lt;- 50
+
+reviews_all &amp;lt;- NULL
+
+for(page_num in 1:pages){
+  url2 &amp;lt;- paste0(&amp;quot;http://www.amazon.co.uk/product-reviews/&amp;quot;,prod_code,&amp;quot;/?pageNumber=&amp;quot;, page_num)
+  doc2 &amp;lt;- read_html(url2)
+
+  reviews &amp;lt;- amazon_scraper(doc2, reviewer = F, delay = 2)
+  reviews_all &amp;lt;- rbind(reviews_all, reviews)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It looks like everything worked! The returned data frame contains not only date, title, author and content of every review, but also number of stars given, format of the book that the review is for and even the number of people that thought this particular review was helpful, priceless!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;str(reviews_all)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    500 obs. of  8 variables:
+##  $ title       : chr  &amp;quot;A subjective history of Humankind&amp;quot; &amp;quot;Insights on every page&amp;quot; &amp;quot;Thrilling iconoclastic book of human history&amp;quot; &amp;quot;Good view of the past, questionnable view of the future&amp;quot; ...
+##  $ author      : chr  &amp;quot;Strv 74&amp;quot; &amp;quot;M. D. Holley&amp;quot; &amp;quot;Wasim Zarniwoop&amp;quot; &amp;quot;Hugo&amp;quot; ...
+##  $ date        : chr  &amp;quot;17 November 2014&amp;quot; &amp;quot;27 September 2014&amp;quot; &amp;quot;10 September 2014&amp;quot; &amp;quot;19 January 2015&amp;quot; ...
+##  $ ver.purchase: num  1 0 1 1 0 1 0 1 1 0 ...
+##  $ format      : chr  &amp;quot;Format: Hardcover&amp;quot; &amp;quot;Format: Hardcover&amp;quot; &amp;quot;Format: Kindle Edition&amp;quot; &amp;quot;Format: Paperback&amp;quot; ...
+##  $ stars       : num  4 5 5 3 5 4 5 5 2 1 ...
+##  $ comments    : chr  &amp;quot;This book looked interesting and I bought it without having read up on everything about it. I thought is was about how we came &amp;quot;| __truncated__ &amp;quot;Beautifully written, this book contains one incredible idea: that the success of homo sapiens derives from our inclination to b&amp;quot;| __truncated__ &amp;quot;The problem with human prehistory is the lack of evidence and information. What we have is little and many books use this littl&amp;quot;| __truncated__ &amp;quot;I had given this book five stars in my original review. Then, I down-rated it to 4 stars. As I read more about the subjects in &amp;quot;| __truncated__ ...
+##  $ helpful     : num  109 174 89 120 54 39 67 2 26 73 ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this post I&amp;rsquo;ll focus on the review content only. Here&amp;rsquo;s what the exemplary comment looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;reviews_all[1, 7]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;This book looked interesting and I bought it without having read up on everything about it. I thought is was about how we came to be the one surviving race of Humans on the planet. It was not. That was taken care of during the first 20 pages. The Rest is about how the single surviving human race developed into what we are today.But I am glad that I bought and read it because it was well worth reading. It is a tour through a number of different parts of human history that the author thinks has had a great influence on our species. It is a very easy read and the book is filled with facts that makes you stop and think before reading on. A lot of the theories that he puts forward are very interesting and at times thought provoking. Most of the times I found myself agreeing with his views or at least gave him credit for a very interesting view point.But there are also a number of points that he brings up that are not that convincing and in some cases probably wrong. Let me give you a few examples:- He states that the Middle East has never been as peaceful as today during the last 3000 years. This probably comes as a surprise to a lot of people fleeing from the ongoing wars. I am fairly certain that there were long periods of peace between wars during 1000 BC and 1 AD that had no wars at all.- He states that humans have not evolved during the last 70 000 years. If you put a 70 000 year old human up for an autopsy no one would know that he was 70 000 years old. This is a strange statement since humans mutate all the time and the rate of mutations has never been faster than during the last 500 years (see \&amp;quot;The 10 000 Year Explosion. How Civilization Accelerated Human Evolution\&amp;quot;)- He states that there is no proof that human intelligence has changed during the last 70 000 years. But only this year there has been published studies claiming that we are more intelligent than just 100 years ago. Of course we are more intelligent than thousands of years ago. That does not mean that people were not intelligent thousands of years ago as well.There are a lot of discussion on why men are still the rulers of the world and why women are now catching up. Here his views are not very convincing. His views on war has taken a sharp hit from the ongoing Russian war against Ukraine showing that even a book published in 2014  did not see that coming.His views on religion, sex and economy are far stronger and more convincing. But his logic behind proving that homosexuality is not \&amp;quot;unnatural\&amp;quot; (and of course it is not) also proves that all kinds of sexual variants are \&amp;quot;natural\&amp;quot;. Even those that are considered criminal today. Maybe a few more lines on this subject would have been helpful.Strange enough there are aspects of history that he for some reason does not discuss at all. One example is Democracy and the impact of that on the world. An other aspect is the environment.But the book is very engaging. You are all the time caught up in his argument and more often than not find yourself supporting them. A book well worth reading and discussing with your friends and colleagues.&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can tell, it&amp;rsquo;s not in the best shape for the analysis: it contains punctuation signs, numbers, lower and upper letters, etc. Let&amp;rsquo;s sort it out by doing some text pre-processing:&lt;/p&gt;
+
+&lt;h3 id=&#34;text-pre-processing&#34;&gt;text pre-processing&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;#### creating corpus
+m &amp;lt;- list(content = &amp;quot;comments&amp;quot;)
+myReader &amp;lt;- readTabular(mapping = m)
+
+final_reviews &amp;lt;- data.frame(comments = reviews_all$comments)
+ds &amp;lt;- DataframeSource(final_reviews)
+
+## create corpus with all the reviews
+sapiens_corpus &amp;lt;- VCorpus(ds)
+
+## remove punctuation
+sapiens_corpus = tm_map(sapiens_corpus, removePunctuation)
+
+## remove numbers
+sapiens_corpus = tm_map(sapiens_corpus, removeNumbers)
+
+## LowerCase
+sapiens_corpus = tm_map(sapiens_corpus, tolower)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I also removed some uninformative words, together with English stopwords, to make the results clearer:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;## remove stopwords and other words
+myWords=c(&amp;quot;format&amp;quot;, &amp;quot;paperback&amp;quot;, &amp;quot;kindle&amp;quot;, &amp;quot;edit&amp;quot;, &amp;quot;hardcov&amp;quot;, &amp;quot;book&amp;quot;, &amp;quot;read&amp;quot;, &amp;quot;will&amp;quot;, &amp;quot;just&amp;quot;, &amp;quot;can&amp;quot;, &amp;quot;much&amp;quot;)
+
+sapiens_corpus &amp;lt;- tm_map(sapiens_corpus, removeWords, c(stopwords(&amp;quot;english&amp;quot;), myWords))
+
+## treat pre-processed documents as text documents
+sapiens_corpus &amp;lt;- tm_map(sapiens_corpus, PlainTextDocument)
+
+## turn into doc matrix
+sapiens_dtm &amp;lt;- DocumentTermMatrix(sapiens_corpus)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s have a quick peek into the top 20 most frequent words:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# displaying most frequent words
+freq &amp;lt;- sort(colSums(as.matrix(sapiens_dtm)), decreasing=TRUE)   
+head(freq, 20)  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##     history       human     sapiens         one      author        well
+##         257         181         151         144         112         112
+##      harari     reading        many interesting     thought     species
+##         110         104         100          99          97          96
+##      really        homo         way       think       world      humans
+##          92          91          85          84          82          78
+##        like        time
+##          78          78
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And finally, crème de la crème, the wordcloud showing 250 most frequent words found in Amazon reviews of &lt;em&gt;Sapiens&lt;/em&gt;:&lt;/p&gt;
+
+&lt;h3 id=&#34;creating-a-wordcloud-with-the-top-250-most-frequent-words&#34;&gt;creating a wordcloud with the top 250 most frequent words&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;pal=brewer.pal(9, &amp;quot;Set1&amp;quot;)
+
+set.seed(100)
+wordcloud(words = names(freq), freq = freq, max.words=250,
+          random.order=FALSE,
+          colors=pal)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-03-07-amazon-reviews-word-cloud_files/unnamed-chunk-10-1.png&#34; alt=&#34;wordcloud&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As pretty as it looks, it&amp;rsquo;s not too informative regarding how positive / negative the reviews were. For this, in my next post I&amp;rsquo;ll run a &lt;a href=&#34;https://en.wikipedia.org/wiki/Sentiment_analysis&#34;&gt;sentiment analysis&lt;/a&gt; on reviews of both books, so watch this space!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Did Disney Princesses distort girl names in USA?</title>
       <link>/post/did-disney-princesses-distort-girl-names-in-usa/</link>
       <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
