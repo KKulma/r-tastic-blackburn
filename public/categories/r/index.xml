@@ -35,10 +35,10 @@
     
     <item>
       <title>Prime hints for running a data project in R</title>
-      <link>/post/prime-hints-forrrunning-a-data-project-in-r/</link>
+      <link>/post/prime-hints/</link>
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/prime-hints-forrrunning-a-data-project-in-r/</guid>
+      <guid>/post/prime-hints/</guid>
       <description>I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.</description>
     </item>
     

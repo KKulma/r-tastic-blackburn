@@ -52,7 +52,7 @@ Ok, I know how it is: you load some basic packages to start with, but then the a
 
 Also, if you don't want to load the whole package just for the sake of using a single function, consider specifying package directly via `::`. Use this text cleaning exercise as an example:
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 library(readr)
 library(dplyr)
 
