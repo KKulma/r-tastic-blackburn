@@ -32,7 +32,7 @@ If you're not convinced, read [a more thorough explanation given by Jenny Bryan]
 
 So, go on and start a New Project today! Otherwise, your computer may be at risk of being set on fire...
 
-![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jb_tweet.png)
+![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jb_tweet.png){width=90% height=90%}
 
 
 ### **02. Describe the purpose of your code / project.**
@@ -141,13 +141,13 @@ This way it will be easy to search for files later and/or narrow file lists base
 
 Jenny's example:
 
-![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny1.png)
+![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny1.png){width=90% height=90%}
 
 -   easy to compute on using delimiters: this means that the file names should have a consistent name structure, where each section of the name has its role and is separated from other name sections with delimiters. This way it will be easy to extract information from file names, e.g. by splitting.
 
 See Jenny's example below for clarification:
 
-![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny2.png)
+![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny2.png){width=90% height=90%}
 
 #### **HUMAN READABLE**
 
@@ -157,7 +157,7 @@ Human readable means exactly what is says on the tin:
 
 I should add, it's easy to figure it out also for someone who doesn't know your work very well (this is a clear reminder of the previous point). I love the example below:
 
-![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny3.png)
+![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny3.png){width=90% height=90%}
 
 #### **THEY PLAY WELL WITH DEFAULT ORDERING**
 
@@ -171,7 +171,7 @@ The reality is that your computer will sort your files for you, no matter whethe
 
 Again, one of Jenny's examples:
 
-![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny4.png)
+![](/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny4.png){width=90% height=90%}
 
 I couldn't believe how much these little hacks improved the flow of my work. Paying attention to file names was also appreciated by my coworkers, I'm sure.
 
