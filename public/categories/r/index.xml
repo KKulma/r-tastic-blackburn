@@ -34,6 +34,15 @@
     </item>
     
     <item>
+      <title>End of Year thoughts</title>
+      <link>/post/end-of-year-thoughts/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/end-of-year-thoughts/</guid>
+      <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
+    </item>
+    
+    <item>
       <title>Scraping online table with info on R datasets</title>
       <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>

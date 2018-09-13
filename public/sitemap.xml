@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/post/end-of-year-thoughts/</loc>
+    <lastmod>2017-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/scraping-online-table-with-info-on-r-datasets/</loc>
     <lastmod>2017-03-30T00:00:00+00:00</lastmod>
   </url>
@@ -75,6 +80,12 @@
   <url>
     <loc>/tags/leaflet/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/opinion/</loc>
+    <lastmod>2017-12-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

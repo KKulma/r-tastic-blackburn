@@ -499,6 +499,68 @@ july_data %&amp;gt;%
     </item>
     
     <item>
+      <title>End of Year thoughts</title>
+      <link>/post/end-of-year-thoughts/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/end-of-year-thoughts/</guid>
+      <description>
+
+&lt;p&gt;Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done. But I can&amp;rsquo;t write all this without mentioning a very special group of people - &lt;a href=&#34;https://twitter.com/search?q=%23rstats&amp;amp;src=typd&#34;&gt;#rstats community&lt;/a&gt;! - that is now a big part of everything that gets published here.&lt;/p&gt;
+
+&lt;h4 id=&#34;on-getting-stuff-done&#34;&gt;&lt;strong&gt;ON GETTING STUFF DONE&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;I&amp;rsquo;m a list-person. Totally. I love ticking off boxes, feeling that I&amp;rsquo;ve achieved a lot every day. At the same time, working full time in London (meaning work + non-negligible commute) while having two small children (2 and 4 years old) leaves me with very little spare time (usually in the evenings). Fortunately, my work as a data scientist and this blog give me lots of opportunities to solve problems and deliver something tangible in defined time frames. Here are some rules that I&amp;rsquo;ve learned in the last months and years that I try to apply whenever I can in my data projects:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;stay focused and clear - know what you want to achieve and by when. Be ambitious, yet realistic (lists and internal deadlines really help!).&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Learn to recognise when you&amp;rsquo;re delving into the literature that is irrelevant to the project (just because it&amp;rsquo;s interesting or may be useful in the future) and leave it for when the project is finished or when it can be directly applied to it.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If you want to explore an &lt;em&gt;&amp;ldquo;alternative solution&amp;rdquo;&lt;/em&gt; (for whatever reason: it may be more efficient, elegant, creative, etc.), give yourself a time limit by the end of which you&amp;rsquo;ll drop it and look for other alternatives (if you still aren&amp;rsquo;t any closer to achieving your goal). It&amp;rsquo;s surprising and embarrassing how many times I got stuck at something thinking it&amp;rsquo;s &amp;ldquo;the best way&amp;rdquo;, just to discover later better and quicker solutions.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If you&amp;rsquo;re trying to figure out how to do something (using trial &amp;amp; error + Stack Overflow + Google) and you&amp;rsquo;re not successful after 30 minutes, post your question on Twitter/Stack Overflow. Seriously, not only are you likely to get the correct answer within 5-30 minutes, but also you&amp;rsquo;ll learn several different ways to approach your problem. Also, you&amp;rsquo;ll save yourself a significant amount of time and frustration&amp;hellip;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I said that &lt;a href=&#34;https://kkulma.github.io/2017-08-13-friendships-among-top-r-twitterers/&#34;&gt;before&lt;/a&gt;, but&amp;hellip; don&amp;rsquo;t be a perfectionist. Your learning is never finished and there will be always something you could add or do better if you only knew about X, Y, Z at the time. So let it go and get stuff out. People&amp;rsquo;s feedback can only help and point you in the right direction once your project has been published. Also, being part of R community can guarantee you that this feedback will never be cruel or personal.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If things take longer than you&amp;rsquo;d like to, is there a way to break them up? Writing two shorter posts instead of one? Presenting a method/package rather than a finished analysis?&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The last but definitely not the least: no number of ticked-off boxes on the to-do list will ever replace relationships. Now even if I have a plan to finish a project in the evening, but my partner comes home late and we hadn&amp;rsquo;t had a chance to catch up yet, I drop the project and spend the evening chatting with him. For some people it&amp;rsquo;s a no-brainer but I had to learn that data projects cannot compromise relationships that have been and will be supporting us for life.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;r-community-is-like-no-other&#34;&gt;&lt;strong&gt;R COMMUNITY IS LIKE NO OTHER&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;That&amp;rsquo;s probably the most important lesson of 2017 - the R community is the most supportive and open community I&amp;rsquo;ve ever seen and been part of. Something absolutely critical that they made me realise is that &lt;strong&gt;the best and most popular R community members are so (not only) because they have great skills and produce great work, consistently. They are so because they spend a considerable amount of time and energy on acknowledging other people&amp;rsquo;s great work&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are some people that particularly contributed to this view this year and I want to help them here for that:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/ma_salmon&#34;&gt;Maelle&lt;/a&gt; for support, encouragement but also great efficiency and content of &lt;a href=&#34;http://www.masalmon.eu/&#34;&gt;her blog&lt;/a&gt;. Maelle always is one of the first people to comment on my blog posts and give me great advice on new methods/packages. We still haven&amp;rsquo;t met offline, but I already feel like I know her a little bit :)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/dataandme&#34;&gt;Mara&lt;/a&gt; for shamelessly promoting great work of others &lt;a href=&#34;https://ropensci.org/blog/2017/11/10/rprofile-mara-averick/&#34;&gt;while working on 135482629 projects at any given time&amp;hellip;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/ShirinGlander&#34;&gt;Shirin&lt;/a&gt; - Shirin is just this really impressive data scientist who knows so much and can convey this knowledge in any of her &lt;a href=&#34;https://shirinsplayground.netlify.com/&#34;&gt;various blog posts&lt;/a&gt;. I learn a lot from her!&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;supportive connections can sometimes lead to unexpected outcomes, e.g. &lt;a href=&#34;https://twitter.com/d4tagirl&#34;&gt;Daniela&lt;/a&gt; was always a super enthusiastic #rstats Twitterer and commented on my tweets sometimes. And clearly that was enough to convince her husband to help me solve &lt;a href=&#34;https://twitter.com/KKulma/status/899382021767737344&#34;&gt;really annoying issues with Jekyll and htmlwidgets&lt;/a&gt;. BTW, Daniela is a great &lt;a href=&#34;https://d4tagirl.com/&#34;&gt;blogger&lt;/a&gt; and a &lt;a href=&#34;https://open.nasa.gov/explore/datanauts/&#34;&gt;NASA Datanuat&lt;/a&gt;!&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;R ladies from London, particularly &lt;a href=&#34;https://twitter.com/hfcfrick&#34;&gt;Hannah Frick&lt;/a&gt;, Grace Mayer and &lt;a href=&#34;https://twitter.com/clavitolo&#34;&gt;Claudia Vitolo&lt;/a&gt; who go far beyond what&amp;rsquo;s expected from any volunteers and meetup organisers!&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;There are several female figures in R community who work at the forefront of R and Data Science and yet openly talk about &lt;em&gt;progress&lt;/em&gt; everyone makes when learning any programming language (or skill, for that matter) and that no one is born a master. I&amp;rsquo;m grateful for those messages particularly to:&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/JennyBryan&#34;&gt;Jenny Bryan&lt;/a&gt; who is a master of &lt;a href=&#34;https://ropensci.org/blog/2017/12/08/rprofile-jenny-bryan/&#34;&gt;workflow and life logistics&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/juliasilge&#34;&gt;Julia Silge&lt;/a&gt; who writes excellent &lt;a href=&#34;https://stackoverflow.blog/authors/juliasilge/&#34;&gt;blog posts on Stack Overflow data findings&lt;/a&gt; and dresses up in &lt;a href=&#34;https://www.datacamp.com/instructors/juliasilge&#34;&gt;DataCamp courses&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://twitter.com/CVWickham&#34;&gt;Charlotte Wickham&lt;/a&gt; who gave a great presentation on &lt;a href=&#34;http://cwick.co.nz/talks/collab-code-user17/#/&#34;&gt;collaborative coding&lt;/a&gt; and how EVERYONE can contribute to R community&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;what-a-year&#34;&gt;&lt;strong&gt;WHAT A YEAR&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;2017 was absolutely mind-blowing for me. I started this year not being at all confident in my coding or data science skills, I&amp;rsquo;m finishing it writing a semi-successful R blog, co-organizing R-ladies meetups in London, getting invited to give DS talks at meetups and conferences and definitely feeling that I&amp;rsquo;m part of R community. Most importantly, my learning rate has gone through the roof and it doesn&amp;rsquo;t look it will be stopping anytime soon :) Thanks everyone for this year, it wouldn&amp;rsquo;t happen without you!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Scraping online table with info on R datasets</title>
       <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
