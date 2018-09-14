@@ -49,6 +49,15 @@
     </item>
     
     <item>
+      <title>Clustering</title>
+      <link>/tags/clustering/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/clustering/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Ggplot2</title>
       <link>/tags/ggplot2/</link>
       <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
@@ -90,15 +99,6 @@
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/public-api/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Text Analysis</title>
-      <link>/tags/text-analysis/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/text-analysis/</guid>
       <description></description>
     </item>
     

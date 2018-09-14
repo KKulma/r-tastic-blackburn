@@ -958,6 +958,907 @@ final_tokens %&amp;gt;%
     </item>
     
     <item>
+      <title>Determining the optimal number of clusters in your dataset</title>
+      <link>/post/optimal-number-of-clusters/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/optimal-number-of-clusters/</guid>
+      <description>&lt;p&gt;Recently, I worked a bit with &lt;strong&gt;cluster analysis&lt;/strong&gt;: the common method in &lt;a href=&#34;https://en.wikipedia.org/wiki/Unsupervised_learning&#34;&gt;unsupervised learning&lt;/a&gt; that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.&lt;/p&gt;
+&lt;div id=&#34;quick-intro&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;QUICK INTRO&lt;/h3&gt;
+&lt;p&gt;Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data. Most popular clustering learners (e.g. k-means) expect you to specify the number of segments to be found. However, clusters as such don’t exist in firm reality, so more often than not you don’t know what is the optimal number of clusters for a given dataset.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;There are multiple methods you can use in order to determine what is the optimal number of segments for your data and that is what I’m going to review in this post.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’m not going to go into details of each algorithm’s workings, but will provide references for you to follow up if you want to find out more.&lt;/p&gt;
+&lt;p&gt;Keep in mind that this list is not complete (for more complete list check out this &lt;a href=&#34;http://stackoverflow.com/a/15376462&#34;&gt;excellent StackOverflow answer&lt;/a&gt; ) and that not all approaches will return the same answer. In such case, my advise would be: try several methods - the more consistency between different approaches, the better - pick the most commonly returned number of clusters, evaluate their consistency and structure (I’ll cover how to do it in the next post) and check if they make sense from the real world point of view.&lt;/p&gt;
+&lt;p&gt;So there we go!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wine-dataset&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;WINE DATASET&lt;/h3&gt;
+&lt;p&gt;For this exercise, I’ll use a popular &lt;code&gt;wine&lt;/code&gt; datasets that you can find built into R under several packages (e.g. &lt;code&gt;gclus&lt;/code&gt;, &lt;code&gt;HDclassif&lt;/code&gt; or &lt;code&gt;rattle&lt;/code&gt; packages). The full description of the dataset you can find &lt;a href=&#34;https://archive.ics.uci.edu/ml/datasets/Wine&#34;&gt;here&lt;/a&gt;, but essentially if contains results of a chemical analysis of 3 different types of wines grown in the same region in Italy. I’m &lt;strong&gt;guessing&lt;/strong&gt; that the three types of wine (described by &lt;code&gt;Class&lt;/code&gt; variable in the dataset) mean white, red and rose, but I couldn’t find anything to confirm it or to disclose which Class in the data corresponds to which wine type… Anyway! Let’s load the data and have a quick look at it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## loading packages
+library(dplyr)
+library(knitr)
+library(gclus)
+
+# loading data
+data(wine)
+head(wine) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Class&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.71&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;127&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.06&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.64&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1065&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;100&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.65&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.76&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.26&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.38&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.40&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1050&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.67&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18.6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;101&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.30&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.81&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.68&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.17&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1185&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.95&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;16.8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.18&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1480&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.59&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.87&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;21.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;118&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.69&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.32&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.93&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;735&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.76&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;112&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.27&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.34&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.97&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6.75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1450&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(wine$Class)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+##  1  2  3 
+## 59 71 48&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Next, I’ll remove the &lt;code&gt;Class&lt;/code&gt; variable, as I don’t want it to affect clustering, and scale the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;scaled_wine &amp;lt;- scale(wine) %&amp;gt;% as.data.frame()
+
+scaled_wine2 &amp;lt;- scaled_wine[-1]
+
+head(scaled_wine2) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.5143408&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5606682&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2313998&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.1663032&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.9085215&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0319081&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.6577078&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2214385&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2510088&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.8427215&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0101594&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.2455968&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4980086&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8256672&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.4838405&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0180940&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5670481&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7315653&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8184106&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5431887&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.2924962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1103172&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9625263&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.1963252&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0211715&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1062139&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.2679823&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0881098&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2121137&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4970050&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1299594&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2682629&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3173170&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7863692&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3912237&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.6867914&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3458351&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4865539&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8069748&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9282998&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.4844372&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4623994&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.9791134&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0292513&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1827317&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4264485&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1807407&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.3280068&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.2948684&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2270533&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.8352256&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4506745&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2783790&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.6614853&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2261576&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4002753&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3183774&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4483365&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0377675&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.4773871&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5159113&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3043010&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.2860793&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8582840&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5576991&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3622851&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1755994&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.6623487&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7298108&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3356589&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.2327407&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;br&gt; Keep in mind that many presented algorithms rely on random starts (e.g. k-means), so I set a seed wherever I can so that we have reproducible examples.&lt;/p&gt;
+&lt;p&gt;Now we can start clustering extravaganza!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;determining-the-optimal-number-of-clusters&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;DETERMINING THE OPTIMAL NUMBER OF CLUSTERS&lt;/h3&gt;
+&lt;div id=&#34;elbow-method&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1. ELBOW METHOD&lt;/h4&gt;
+&lt;p&gt;In short, the elbow method maps the within-cluster sum of squares onto the number of possible clusters. As a rule of thumb, you pick the number for which you see a significant decrease in the within-cluster dissimilarity, or so called ‘elbow’. You can find more details &lt;a href=&#34;https://www.coursera.org/learn/machine-learning/lecture/Ks0E9/choosing-the-number-of-clusters&#34;&gt;here&lt;/a&gt; or &lt;a href=&#34;https://rstudio-pubs-static.s3.amazonaws.com/92318_20357e6dd99742eb90232c60c626fa90.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s see what happens when we apply the Elbow Method to our dataset:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
+
+wss &amp;lt;- (nrow(scaled_wine2)-1)*sum(apply(scaled_wine2,2,var))
+for (i in 2:15) wss[i] &amp;lt;- sum(kmeans(scaled_wine2,
+                                     centers=i)$withinss)
+plot(1:15, wss, type=&amp;quot;b&amp;quot;, xlab=&amp;quot;Number of Clusters&amp;quot;,
+     ylab=&amp;quot;Within groups sum of squares&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In this example, we see an ‘elbow’ at 3 clusters. By adding more clusters than that we get relatively smaller gains. So… 3 clusters!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;silhouette-analysis&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;2. SILHOUETTE ANALYSIS&lt;/h4&gt;
+&lt;p&gt;The silhouette plots display a measure of how close each point in one cluster is to points in the neighboring clusters. This measure ranges from -1 to 1, where 1 means that points are very close to their own cluster and far from other clusters, whereas -1 indicates that points are close to the neighbouring clusters. You’ll find more details about silhouette analysis &lt;a href=&#34;https://en.wikipedia.org/wiki/Silhouette_(clustering)&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://kapilddatascience.wordpress.com/2015/11/10/using-silhouette-analysis-for-selecting-the-number-of-cluster-for-k-means-clustering/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When we run the silhouette analysis on our wine dataset, we get the following graphs with indication on the optimal number of clusters:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(fpc)
+
+set.seed(13)
+
+pamk.best2 &amp;lt;- pamk(scaled_wine2)
+cat(&amp;quot;number of clusters estimated by optimum average silhouette width:&amp;quot;, pamk.best2$nc, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## number of clusters estimated by optimum average silhouette width: 3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(pam(scaled_wine2, pamk.best2$nc))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Thus, it’s 3 clusters again.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gap-statistics&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3. GAP STATISTICS&lt;/h4&gt;
+&lt;p&gt;Gap statistic is a goodness of clustering measure, where for each hypothetical number of clusters k, it compares two functions: log of within-cluster sum of squares (wss) with its expectation under the null reference distribution of the data. In essence, it standardizes wss. It chooses the value where the log(wss) is the farthest below the reference curve, ergo the gap statistic is maximum. Pretty neat!&lt;/p&gt;
+&lt;p&gt;If you want to know more, check out &lt;a href=&#34;https://www.google.co.uk/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=8&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;ved=0ahUKEwjen9q-7rjTAhUeM8AKHcijBOEQFghpMAc&amp;amp;url=https%3A%2F%2Flabs.genetics.ucla.edu%2Fhorvath%2FBiostat278%2FGapStatistics.ppt&amp;amp;usg=AFQjCNFaWjeeR1F2UpJIskxYaBFt0eKZKg&amp;amp;sig2=sQflpWNvc8BPu7ovHLyKuQ&#34;&gt;this presentation&lt;/a&gt; for a very good explanation and visualization of what gap statistic is.&lt;/p&gt;
+&lt;p&gt;Also, for even more details, see &lt;a href=&#34;chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/https://web.stanford.edu/~hastie/Papers/gap.pdf&#34;&gt;the original paper&lt;/a&gt; where the gap statistic was first described, it’s like a good novel!&lt;/p&gt;
+&lt;p&gt;In the case of our wine dataset, gap analysis picks (again!) 3 cluster as an optimum:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cluster)
+
+set.seed(13)
+
+clusGap(scaled_wine2, kmeans, 10, B = 100, verbose = interactive())&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Clustering Gap statistic [&amp;quot;clusGap&amp;quot;] from call:
+## clusGap(x = scaled_wine2, FUNcluster = kmeans, K.max = 10, B = 100,     verbose = interactive())
+## B=100 simulated reference sets, k = 1..10; spaceH0=&amp;quot;scaledPCA&amp;quot;
+##  --&amp;gt; Number of clusters (method &amp;#39;firstSEmax&amp;#39;, SE.factor=1): 3
+##           logW   E.logW       gap     SE.sim
+##  [1,] 5.377557 5.864072 0.4865153 0.01261541
+##  [2,] 5.203502 5.757547 0.5540456 0.01356018
+##  [3,] 5.066921 5.697040 0.6301193 0.01404664
+##  [4,] 5.033404 5.651970 0.6185658 0.01410140
+##  [5,] 4.992739 5.616114 0.6233751 0.01342023
+##  [6,] 4.955442 5.584673 0.6292313 0.01304916
+##  [7,] 4.933420 5.556602 0.6231820 0.01250233
+##  [8,] 4.908585 5.531523 0.6229379 0.01299415
+##  [9,] 4.884336 5.508464 0.6241281 0.01209969
+## [10,] 4.858595 5.488182 0.6295870 0.01336910&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;hierarchical-clustering&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;4. HIERARCHICAL CLUSTERING&lt;/h4&gt;
+&lt;p&gt;Hierarchical clustering is usually used to better understand the structure and relationships in your data and based on them you decide what number of clusters seems appropriate for your purpose. The way the algorithm works is very well described &lt;a href=&#34;http://www.analytictech.com/networks/hiclus.htm&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.saedsayad.com/clustering_hierarchical.htm&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;How to choose the optimal number of clusters based on the output of this analysis, the dendogram? As a rule of thumb, look for the clusters with the longest ‘branches’, the shorter they are, the more similar they are to following ‘twigs’ and ‘leaves’. But keep in mind that, as always, the optimal number will also depend on the context, expert knowledge, application, etc.&lt;/p&gt;
+&lt;p&gt;In our case, the solution is rather blurred:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
+
+wine_dist2 &amp;lt;- dist(as.matrix(scaled_wine2))   # find distance matrix
+plot(hclust(wine_dist2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Personally, I would go for something between 2 and 4 clusters. What do you think? :-)&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;calinsky-criterion&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;5. CALINSKY CRITERION&lt;/h4&gt;
+&lt;p&gt;yet another method evaluating optimal number of clusters based on within- and between-cluster distances. For more details, see &lt;a href=&#34;http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In the example below we set the number of clusters to test between 1 and 10 and we iterated the test 1000 times.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)
+
+set.seed(13)
+
+cal_fit2 &amp;lt;- cascadeKM(scaled_wine2, 1, 10, iter = 1000)
+plot(cal_fit2, sortg = TRUE, grpmts.plot = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;calinski.best2 &amp;lt;- as.numeric(which.max(cal_fit2$results[2,]))
+cat(&amp;quot;Calinski criterion optimal number of clusters:&amp;quot;, calinski.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Calinski criterion optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt; Again, 3 clusters!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bayesian-information-criterion-for-expectation---maximization&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;6. BAYESIAN INFORMATION CRITERION FOR EXPECTATION - MAXIMIZATION&lt;/h4&gt;
+&lt;p&gt;This time in order to determine the optimal number of cluters we simultaneously run and compare several probabilistic models and pick the best one based on their BIC (Bayesian Information Criterion) score. For more details, make sure to read &lt;a href=&#34;http://rstudio-pubs-static.s3.amazonaws.com/154174_78c021bc71ab42f8add0b2966938a3b8.html&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.7.8739&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In the example below, we set the search of optimal number of clusters to be between 1 and 20.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mclust)
+
+set.seed(13)
+
+d_clust2 &amp;lt;- Mclust(as.matrix(scaled_wine2), G=1:20)
+m.best2 &amp;lt;- dim(d_clust2$z)[2]
+
+cat(&amp;quot;model-based optimal number of clusters:&amp;quot;, m.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## model-based optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d_clust2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-1.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-2.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-3.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-4.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;And this time, the optimal number of clusters seems to be 4.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;affinity-propagation-clustering&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;7. AFFINITY PROPAGATION CLUSTERING&lt;/h4&gt;
+&lt;p&gt;I’ll be quite honest with you: I’ve struggled to get my head around what affinity propagation is about! I understood that it clusters data by identifying a subset of representative examples, so called &lt;strong&gt;exemplars&lt;/strong&gt;. And it does so by considering all data points as potential exemplars, but the rest is magic to me..&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[and\]&lt;/span&gt; exchanging real-valued messages between data points until a high-quality set of exemplars and corresponding clusters gradually emerges.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;(according to &lt;a href=&#34;www.cs.columbia.edu/~delbert/docs/DDueck-thesis_small.pdf&#34;&gt;Delbert Dueck&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;So if you have a better explanation or better materials.. send them over!&lt;/p&gt;
+&lt;p&gt;In our particular case, this algorithm identified&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(apcluster)
+
+set.seed(13)
+
+d.apclus2 &amp;lt;- apcluster(negDistMat(r=2), scaled_wine2)
+cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length(d.apclus2@clusters), &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## affinity propogation optimal number of clusters: 15&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;heatmap(d.apclus2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d.apclus2, scaled_wine2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;SUMMARY&lt;/h3&gt;
+&lt;p&gt;At least 4 (5, if including hierarchical clustering results) out of 7 tested algorithms suggested 3 as an optimal number of clusters for our data, which is a reasonable way forward, given that the analysed data contained information for 3 classes of wines ;-) In the next post I’ll evaluate those clusters in terms of their stability: how dissolved they are or how often they get recovered.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Determining the optimal number of clusters in your datasets</title>
+      <link>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</guid>
+      <description>&lt;p&gt;Recently, I worked a bit with &lt;strong&gt;cluster analysis&lt;/strong&gt;: the common method in &lt;a href=&#34;https://en.wikipedia.org/wiki/Unsupervised_learning&#34;&gt;unsupervised learning&lt;/a&gt; that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.&lt;/p&gt;
+&lt;div id=&#34;quick-intro&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;QUICK INTRO&lt;/h3&gt;
+&lt;p&gt;Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data. Most popular clustering learners (e.g. k-means) expect you to specify the number of segments to be found. However, clusters as such don’t exist in firm reality, so more often than not you don’t know what is the optimal number of clusters for a given dataset.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;There are multiple methods you can use in order to determine what is the optimal number of segments for your data and that is what I’m going to review in this post.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’m not going to go into details of each algorithm’s workings, but will provide references for you to follow up if you want to find out more.&lt;/p&gt;
+&lt;p&gt;Keep in mind that this list is not complete (for more complete list check out this &lt;a href=&#34;http://stackoverflow.com/a/15376462&#34;&gt;excellent StackOverflow answer&lt;/a&gt; ) and that not all approaches will return the same answer. In such case, my advise would be: try several methods - the more consistency between different approaches, the better - pick the most commonly returned number of clusters, evaluate their consistency and structure (I’ll cover how to do it in the next post) and check if they make sense from the real world point of view.&lt;/p&gt;
+&lt;p&gt;So there we go!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wine-dataset&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;WINE DATASET&lt;/h3&gt;
+&lt;p&gt;For this exercise, I’ll use a popular &lt;code&gt;wine&lt;/code&gt; datasets that you can find built into R under several packages (e.g. &lt;code&gt;gclus&lt;/code&gt;, &lt;code&gt;HDclassif&lt;/code&gt; or &lt;code&gt;rattle&lt;/code&gt; packages). The full description of the dataset you can find &lt;a href=&#34;https://archive.ics.uci.edu/ml/datasets/Wine&#34;&gt;here&lt;/a&gt;, but essentially if contains results of a chemical analysis of 3 different types of wines grown in the same region in Italy. I’m &lt;strong&gt;guessing&lt;/strong&gt; that the three types of wine (described by &lt;code&gt;Class&lt;/code&gt; variable in the dataset) mean white, red and rose, but I couldn’t find anything to confirm it or to disclose which Class in the data corresponds to which wine type… Anyway! Let’s load the data and have a quick look at it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+library(knitr)
+library(gclus)
+
+
+data(wine)
+head(wine) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table style=&#34;width:100%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;9%&#34; /&gt;
+&lt;col width=&#34;11%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Class&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.71&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;127&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.06&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.64&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1065&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;100&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.65&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.76&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.26&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.38&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.40&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1050&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.67&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18.6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;101&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.30&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.81&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.68&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.17&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1185&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.95&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;16.8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.18&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1480&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.59&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.87&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;21.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;118&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.69&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.32&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.93&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;735&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.76&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;112&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.27&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.34&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.97&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6.75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1450&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;br&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(wine$Class)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##
+##  1  2  3
+## 59 71 48&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Next, I’ll remove the &lt;code&gt;Class&lt;/code&gt; variable, as I don’t want it to affect clustering, and scale the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;scaled_wine &amp;lt;- scale(wine) %&amp;gt;% as.data.frame()
+
+scaled_wine2 &amp;lt;- scaled_wine[-1]
+
+head(scaled_wine2) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table style=&#34;width:100%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;10%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;7%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.5143408&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5606682&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2313998&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.1663032&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.9085215&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0319081&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.6577078&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2214385&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2510088&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.8427215&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0101594&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.2455968&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4980086&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8256672&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.4838405&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0180940&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5670481&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7315653&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8184106&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5431887&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.2924962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1103172&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9625263&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.1963252&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0211715&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1062139&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.2679823&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0881098&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2121137&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4970050&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1299594&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2682629&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3173170&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7863692&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3912237&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.6867914&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3458351&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4865539&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8069748&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9282998&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.4844372&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4623994&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.9791134&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0292513&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1827317&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4264485&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1807407&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.3280068&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.2948684&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2270533&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.8352256&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4506745&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2783790&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.6614853&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2261576&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4002753&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3183774&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4483365&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0377675&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.4773871&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5159113&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3043010&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.2860793&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8582840&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5576991&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3622851&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1755994&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.6623487&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7298108&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.3356589&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.2327407&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;br&gt; Keep in mind that many presented algorithms rely on random starts (e.g. k-means), so I set a seed wherever I can so that we have reproducible examples.&lt;/p&gt;
+&lt;p&gt;Now we can start clustering extravaganza!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;determining-the-optimal-number-of-clusters&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;DETERMINING THE OPTIMAL NUMBER OF CLUSTERS&lt;/h3&gt;
+&lt;div id=&#34;elbow-method&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1. ELBOW METHOD&lt;/h4&gt;
+&lt;p&gt;In short, the elbow method maps the within-cluster sum of squares onto the number of possible clusters. As a rule of thumb, you pick the number for which you see a significant decrease in the within-cluster dissimilarity, or so called ‘elbow’. You can find more details &lt;a href=&#34;https://www.coursera.org/learn/machine-learning/lecture/Ks0E9/choosing-the-number-of-clusters&#34;&gt;here&lt;/a&gt; or &lt;a href=&#34;https://rstudio-pubs-static.s3.amazonaws.com/92318_20357e6dd99742eb90232c60c626fa90.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s see what happens when we apply the Elbow Method to our dataset:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
+
+wss &amp;lt;- (nrow(scaled_wine2)-1)*sum(apply(scaled_wine2,2,var))
+for (i in 2:15) wss[i] &amp;lt;- sum(kmeans(scaled_wine2,
+                                     centers=i)$withinss)
+plot(1:15, wss, type=&amp;quot;b&amp;quot;, xlab=&amp;quot;Number of Clusters&amp;quot;,
+     ylab=&amp;quot;Within groups sum of squares&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/elbow-1.png&#34; alt=&#34;wss&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;wss&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In this example, we see an ‘elbow’ at 3 clusters. By adding more clusters than that we get relatively smaller gains. So… 3 clusters!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;silhouette-analysis&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;2. SILHOUETTE ANALYSIS&lt;/h4&gt;
+&lt;p&gt;The silhouette plots display a measure of how close each point in one cluster is to points in the neighboring clusters. This measure ranges from -1 to 1, where 1 means that points are very close to their own cluster and far from other clusters, whereas -1 indicates that points are close to the neighbouring clusters. You’ll find more details about silhouette analysis &lt;a href=&#34;https://en.wikipedia.org/wiki/Silhouette_(clustering)&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://kapilddatascience.wordpress.com/2015/11/10/using-silhouette-analysis-for-selecting-the-number-of-cluster-for-k-means-clustering/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When we run the silhouette analysis on our wine dataset, we get the following graphs with indication on the optimal number of clusters:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(fpc)
+
+set.seed(13)
+
+pamk.best2 &amp;lt;- pamk(scaled_wine2)
+cat(&amp;quot;number of clusters estimated by optimum average silhouette width:&amp;quot;, pamk.best2$nc, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## number of clusters estimated by optimum average silhouette width: 3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(pam(scaled_wine2, pamk.best2$nc))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/medoids-1.png&#34; alt=&#34;pamk&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/medoids-2.png&#34; alt=&#34;pamk2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt; Thus, it’s 3 clusters again.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gap-statistics&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3. GAP STATISTICS&lt;/h4&gt;
+&lt;p&gt;Gap statistic is a goodness of clustering measure, where for each hypothetical number of clusters k, it compares two functions: log of within-cluster sum of squares (wss) with its expectation under the null reference distribution of the data. In essence, it standardizes wss. It chooses the value where the log(wss) is the farthest below the reference curve, ergo the gap statistic is maximum. Pretty neat!&lt;/p&gt;
+&lt;p&gt;If you want to know more, check out &lt;a href=&#34;https://www.google.co.uk/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=8&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;ved=0ahUKEwjen9q-7rjTAhUeM8AKHcijBOEQFghpMAc&amp;amp;url=https%3A%2F%2Flabs.genetics.ucla.edu%2Fhorvath%2FBiostat278%2FGapStatistics.ppt&amp;amp;usg=AFQjCNFaWjeeR1F2UpJIskxYaBFt0eKZKg&amp;amp;sig2=sQflpWNvc8BPu7ovHLyKuQ&#34;&gt;this presentation&lt;/a&gt; for a very good explanation and visualization of what gap statistic is.&lt;/p&gt;
+&lt;p&gt;Also, for even more details, see &lt;a href=&#34;chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/https://web.stanford.edu/~hastie/Papers/gap.pdf&#34;&gt;the original paper&lt;/a&gt; where the gap statistic was first described, it’s like a good novel!&lt;/p&gt;
+&lt;p&gt;In the case of our wine dataset, gap analysis picks (again!) 3 cluster as an optimum:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cluster)
+
+set.seed(13)
+
+clusGap(scaled_wine2, kmeans, 10, B = 100, verbose = interactive())&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Clustering Gap statistic [&amp;quot;clusGap&amp;quot;] from call:
+## clusGap(x = scaled_wine2, FUNcluster = kmeans, K.max = 10, B = 100,     verbose = interactive())
+## B=100 simulated reference sets, k = 1..10; spaceH0=&amp;quot;scaledPCA&amp;quot;
+##  --&amp;gt; Number of clusters (method &amp;#39;firstSEmax&amp;#39;, SE.factor=1): 3
+##           logW   E.logW       gap     SE.sim
+##  [1,] 5.377557 5.864072 0.4865153 0.01261541
+##  [2,] 5.203502 5.757547 0.5540456 0.01356018
+##  [3,] 5.066921 5.697040 0.6301193 0.01404664
+##  [4,] 5.033404 5.651970 0.6185658 0.01410140
+##  [5,] 4.992739 5.616114 0.6233751 0.01342023
+##  [6,] 4.955442 5.584673 0.6292313 0.01304916
+##  [7,] 4.933420 5.556602 0.6231820 0.01250233
+##  [8,] 4.908585 5.531523 0.6229379 0.01299415
+##  [9,] 4.884336 5.508464 0.6241281 0.01209969
+## [10,] 4.858595 5.488182 0.6295870 0.01336910&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;hierarchical-clustering&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;4. HIERARCHICAL CLUSTERING&lt;/h4&gt;
+&lt;p&gt;Hierarchical clustering is usually used to better understand the structure and relationships in your data and based on them you decide what number of clusters seems appropriate for your purpose. The way the algorithm works is very well described &lt;a href=&#34;http://www.analytictech.com/networks/hiclus.htm&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.saedsayad.com/clustering_hierarchical.htm&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;How to choose the optimal number of clusters based on the output of this analysis, the dendogram? As a rule of thumb, look for the clusters with the longest ‘branches’, the shorter they are, the more similar they are to following ‘twigs’ and ‘leaves’. But keep in mind that, as always, the optimal number will also depend on the context, expert knowledge, application, etc.&lt;/p&gt;
+&lt;p&gt;In our case, the solution is rather blurred:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
+
+wine_dist2 &amp;lt;- dist(as.matrix(scaled_wine2))   # find distance matrix
+plot(hclust(wine_dist2))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/hclust-1.png&#34; alt=&#34;hclust&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;hclust&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Personally, I would go for something between 2 and 4 clusters. What do you think? :-)&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;calinsky-criterion&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;5. CALINSKY CRITERION&lt;/h4&gt;
+&lt;p&gt;yet another method evaluating optimal number of clusters based on within- and between-cluster distances. For more details, see &lt;a href=&#34;http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In the example below we set the number of clusters to test between 1 and 10 and we iterated the test 1000 times.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)
+
+set.seed(13)
+
+cal_fit2 &amp;lt;- cascadeKM(scaled_wine2, 1, 10, iter = 1000)
+plot(cal_fit2, sortg = TRUE, grpmts.plot = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/calinsky-1.png&#34; alt=&#34;cal&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;cal&lt;/p&gt;
+&lt;/div&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;calinski.best2 &amp;lt;- as.numeric(which.max(cal_fit2$results[2,]))
+cat(&amp;quot;Calinski criterion optimal number of clusters:&amp;quot;, calinski.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Calinski criterion optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt; Again, 3 clusters!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bayesian-information-criterion-for-expectation---maximization&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;6. BAYESIAN INFORMATION CRITERION FOR EXPECTATION - MAXIMIZATION&lt;/h4&gt;
+&lt;p&gt;This time in order to determine the optimal number of cluters we simultaneously run and compare several probabilistic models and pick the best one based on their BIC (Bayesian Information Criterion) score. For more details, make sure to read &lt;a href=&#34;http://rstudio-pubs-static.s3.amazonaws.com/154174_78c021bc71ab42f8add0b2966938a3b8.html&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.7.8739&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In the example below, we set the search of optimal number of clusters to be between 1 and 20.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mclust)
+
+set.seed(13)
+
+d_clust2 &amp;lt;- Mclust(as.matrix(scaled_wine2), G=1:20)
+m.best2 &amp;lt;- dim(d_clust2$z)[2]
+
+cat(&amp;quot;model-based optimal number of clusters:&amp;quot;, m.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## model-based optimal number of clusters: 4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d_clust2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-1.png&#34; alt=&#34;bic&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-2.png&#34; alt=&#34;bBIC-2&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-3.png&#34; alt=&#34;BIC-3&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-4.png&#34; alt=&#34;BIC-4&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;And this time, the optimal number of clusters seems to be 4.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;affinity-propagation-clustering&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;7. AFFINITY PROPAGATION CLUSTERING&lt;/h4&gt;
+&lt;p&gt;I’ll be quite honest with you: I’ve struggled to get my head around what affinity propagation is about! I understood that it clusters data by identifying a subset of representative examples, so called &lt;strong&gt;exemplars&lt;/strong&gt;. And it does so by considering all data points as potential exemplars, but the rest is magic to me..&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[and\]&lt;/span&gt; exchanging real-valued messages between data points until a high-quality set of exemplars and corresponding clusters gradually emerges.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;(according to &lt;a href=&#34;www.cs.columbia.edu/~delbert/docs/DDueck-thesis_small.pdf&#34;&gt;Delbert Dueck&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;So if you have a better explanation or better materials.. send them over!&lt;/p&gt;
+&lt;p&gt;In our particular case, this algorithm identified&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(apcluster)
+
+set.seed(13)
+
+d.apclus2 &amp;lt;- apcluster(negDistMat(r=2), scaled_wine2)
+cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length(d.apclus2@clusters), &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## affinity propogation optimal number of clusters: 15&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;heatmap(d.apclus2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/ap-1.png&#34; alt=&#34;ap&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;ap&lt;/p&gt;
+&lt;/div&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d.apclus2, scaled_wine2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/ap-2.png&#34; alt=&#34;ap2&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;ap2&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;SUMMARY&lt;/h3&gt;
+&lt;p&gt;At least 4 (5, if including hierarchical clustering results) out of 7 tested algorithms suggested 3 as an optimal number of clusters for our data, which is a reasonable way forward, given that the analysed data contained information for 3 classes of wines ;-) In the next post I’ll evaluate those clusters in terms of their stability: how dissolved they are or how often they get recovered.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Scraping online table with info on R datasets</title>
       <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
@@ -1354,216 +2255,6 @@ wordcloud(words = names(freq), freq = freq, max.words=250,
 &lt;p&gt;&lt;img src=&#34;/post/2017-03-07-amazon-reviews-word-cloud_files/unnamed-chunk-10-1.png&#34; alt=&#34;wordcloud&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;As pretty as it looks, it&amp;rsquo;s not too informative regarding how positive / negative the reviews were. For this, in my next post I&amp;rsquo;ll run a &lt;a href=&#34;https://en.wikipedia.org/wiki/Sentiment_analysis&#34;&gt;sentiment analysis&lt;/a&gt; on reviews of both books, so watch this space!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Did Disney Princesses distort girl names in USA?</title>
-      <link>/post/did-disney-princesses-distort-girl-names-in-usa/</link>
-      <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/did-disney-princesses-distort-girl-names-in-usa/</guid>
-      <description>&lt;p&gt;My goal is to analyse how frequency of names found among Disney female characters changed over time in the US. Specifically, I want to see if the movie release had any impact on their popularity. For this purpose, I will use &lt;code&gt;babynames&lt;/code&gt; dataset that is available on CRAN.&lt;/p&gt;
-&lt;p&gt;The idea for the exercise was inspired by &lt;a href=&#34;http://seankross.com/notes/disney/&#34;&gt;Sean Kross’ blog post&lt;/a&gt;&lt;/p&gt;
-&lt;div id=&#34;short-description-of-the-dataset&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Short description of the dataset&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;from CRAN &lt;a href=&#34;%22https://cran.r-project.org/web/packages/babynames/index.html%22&#34;&gt;package description&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;The SSA baby names data comes from social security number (SSN) applications. SSA cards were first issued in 1936, but were only needed for people with an income. In 1986, the law changed effectively requiring all children to get an SSN at birth.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;The dataset is quite simple, covering US baby name records from late 1800’s until 2014. It specifies whether a name is male or female, number of respective names in a given year and what proportion they constituted.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(babynames)
-baby &amp;lt;- babynames
-baby$sex=as.factor(baby$sex)
-summary(baby)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##       year      sex             name                 n          
-##  Min.   :1880   F:1100858   Length:1858689     Min.   :    5.0  
-##  1st Qu.:1950   M: 757831   Class :character   1st Qu.:    7.0  
-##  Median :1983               Mode  :character   Median :   12.0  
-##  Mean   :1973                                  Mean   :  183.4  
-##  3rd Qu.:2002                                  3rd Qu.:   32.0  
-##  Max.   :2015                                  Max.   :99680.0  
-##       prop          
-##  Min.   :2.260e-06  
-##  1st Qu.:3.900e-06  
-##  Median :7.350e-06  
-##  Mean   :1.391e-04  
-##  3rd Qu.:2.324e-05  
-##  Max.   :8.155e-02&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;installing-packages&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Installing packages&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
-## 
-##     filter, lag&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:base&amp;#39;:
-## 
-##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;ggplot2&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;quick-data-pre-prep&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Quick data pre-prep&lt;/h2&gt;
-&lt;p&gt;I assign each name to a separate dataframe.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ariel &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Ariel&amp;quot;, sex == &amp;quot;F&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;bindrcpp&amp;#39; was built under R version 3.4.4&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;belle &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Belle&amp;quot;, sex == &amp;quot;F&amp;quot;)
-
-jasmine &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Jasmine&amp;quot;, sex == &amp;quot;F&amp;quot;)
-
-tiana &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Tiana&amp;quot;, sex == &amp;quot;F&amp;quot;)
-
-merida &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Merida&amp;quot;, sex == &amp;quot;F&amp;quot;)
-
-elsa &amp;lt;- baby %&amp;gt;%
-  filter(name == &amp;quot;Elsa&amp;quot;, sex == &amp;quot;F&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Next, I create variables specifying the release date of a movie with character’s name.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# The Little Mermaid
-ariel_release = 1989
-
-# Beauty and the Beast
-belle_release = 1991
-
-# Alladin
-jasmine_release = 1992
-
-# The Princess and the Frog
-tiana_release = 2009
-
-# Brave
-merida_release = 2012
-
-# Frozen
-elsa_release = 2013&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;plots&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Plots&lt;/h2&gt;
-&lt;p&gt;Finally, I plot the number of names for a given year. The arrows indicate when the movie was released, so that it’s easier to compare &lt;em&gt;before&lt;/em&gt; and &lt;em&gt;after&lt;/em&gt; trend. Additionally, I show the number of names and their proportion for a year proceeding and following the movie release. The numbers (and graphs!) say it all :-)&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;trends&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Trends&lt;/h2&gt;
-&lt;p&gt;Namely, the movie release indeed seems to have a positive impact on name popularity, at least short- , but often long-term. For example, Ariel, Belle showed much higher popularity that in pre-release days even a decade after the movie has been published.&lt;/p&gt;
-&lt;div id=&#34;ariel&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Ariel&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  ggplot(ariel, aes(x=year, y=n)) +
-  geom_line(col=&amp;quot;red&amp;quot;) +
-  xlab(&amp;quot;&amp;quot;) +
-  ylab(&amp;quot;&amp;quot;) +
-  ggtitle(&amp;quot;Ariel&amp;quot;) +
-  geom_segment(aes(x = ariel_release, y = 0, xend = ariel_release, yend = 500), arrow = arrow(length = unit(0.1, &amp;quot;cm&amp;quot;))) +
-  theme_minimal()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/ariel_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ariel %&amp;gt;%
-  filter(year %in% c(ariel_release - 1,  ariel_release + 1))  %&amp;gt;%
-  mutate(when = ifelse(year == ariel_release - 1, &amp;quot;1 yr before&amp;quot;,
-                      &amp;quot;1 yr after&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
-##    year sex   name      n     prop when       
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;      
-## 1 1988. F     Ariel   910 0.000473 1 yr before
-## 2 1990. F     Ariel  3605 0.00176  1 yr after&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;belle&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Belle&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/belle_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
-##    year sex   name      n       prop when       
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;      
-## 1 1990. F     Belle    13 0.00000633 1 yr before
-## 2 1992. F     Belle    19 0.00000948 1 yr after&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;jasmine&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Jasmine&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/jasmine_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
-##    year sex   name        n    prop when       
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;      
-## 1 1991. F     Jasmine 11522 0.00567 1 yr before
-## 2 1993. F     Jasmine 12059 0.00612 1 yr after&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;On the other hand, in case of Jasmine and Tiana, the positive effect of the Disney movie release on name’s popularity was rather short-term, although strong.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;tiana&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Tiana&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/tiana_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
-##    year sex   name      n     prop when       
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;      
-## 1 2008. F     Tiana   481 0.000231 1 yr before
-## 2 2010. F     Tiana   962 0.000492 1 yr after&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;merida&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Merida&lt;/h3&gt;
-&lt;p&gt;Finally, it’s difficult to judge the long-term effect for names Merida and Elsa, as both movies have been released very recently, but at least a year following the release showed a remarkable jump in names’ popularity.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/merida_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Here, the &lt;em&gt;1 year before and after&lt;/em&gt; comparison is not possible, as the movie was released in 2012 and no baby was called Merida in the US between 2002 and 2012. This still proves how powerful Disney movies can be!&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tail(merida)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 5
-##    year sex   name       n       prop
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;      &amp;lt;dbl&amp;gt;
-## 1 2001. F     Merida     5 0.00000253
-## 2 2002. F     Merida     5 0.00000253
-## 3 2012. F     Merida    19 0.00000982
-## 4 2013. F     Merida   109 0.0000567 
-## 5 2014. F     Merida   103 0.0000529 
-## 6 2015. F     Merida    99 0.0000512&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;elsa&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Elsa&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-02-28-did-disney-princesses-distort-girl-names-in-usa_files/figure-html/elsa_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
-##    year sex   name      n     prop when       
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;      
-## 1 2012. F     Elsa    540 0.000279 1 yr before
-## 2 2014. F     Elsa   1138 0.000584 1 yr after&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All in all, it goes to show that Disney movies are an important part of our culture that has the power to influence our lives in surprising ways :)&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Contact</title>
-      <link>/contact/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/contact/</guid>
-      <description>&lt;form class=&#34;pure-form pure-form-stacked&#34;&gt;
-  &lt;fieldset&gt;
-    &lt;div class=&#34;pure-g&#34;&gt;
-      &lt;div class=&#34;pure-u-1 pure-u-md-1-3&#34;&gt;
-        &lt;label for=&#34;first-name&#34;&gt;First Name&lt;/label&gt;
-        &lt;input id=&#34;first-name&#34; class=&#34;pure-u-23-24&#34; type=&#34;text&#34;&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&#34;pure-u-1 pure-u-md-1-3&#34;&gt;
-        &lt;label for=&#34;last-name&#34;&gt;Last Name&lt;/label&gt;
-        &lt;input id=&#34;last-name&#34; class=&#34;pure-u-23-24&#34; type=&#34;text&#34;&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&#34;pure-u-1 pure-u-md-1-3&#34;&gt;
-        &lt;label for=&#34;email&#34;&gt;E-Mail&lt;/label&gt;
-        &lt;input id=&#34;email&#34; class=&#34;pure-u-23-24&#34; type=&#34;email&#34; required&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&#34;pure-u-1 pure-u-md-1-3&#34;&gt;
-        &lt;label for=&#34;city&#34;&gt;City&lt;/label&gt;
-        &lt;input id=&#34;city&#34; class=&#34;pure-u-23-24&#34; type=&#34;text&#34;&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;fieldset class=&#34;pure-group&#34;&gt;
-      &lt;input type=&#34;text&#34; class=&#34;pure-input-1-2&#34; placeholder=&#34;A title&#34;&gt;
-      &lt;textarea class=&#34;pure-input-1-2&#34; placeholder=&#34;Your message&#34;&gt;&lt;/textarea&gt;
-    &lt;/fieldset&gt;
-    &lt;button type=&#34;submit&#34; class=&#34;pure-button pure-button-primary&#34;&gt;Send&lt;/button&gt;
-  &lt;/fieldset&gt;
-&lt;/form&gt;
 </description>
     </item>
     

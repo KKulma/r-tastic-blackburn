@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Best Practice on r-tastic</title>
-    <link>/tags/best-practice/</link>
-    <description>Recent content in Best Practice on r-tastic</description>
+    <title>Clustering on r-tastic</title>
+    <link>/tags/clustering/</link>
+    <description>Recent content in Clustering on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Sun, 18 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 24 Apr 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/best-practice/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/clustering/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Prime hints for running a data project in R</title>
-      <link>/post/prime-hints/</link>
-      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/prime-hints/</guid>
-      <description>I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.</description>
-    </item>
     
     <item>
       <title>Determining the optimal number of clusters in your dataset</title>

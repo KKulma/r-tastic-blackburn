@@ -33,6 +33,16 @@
   </url>
   
   <url>
+    <loc>/post/optimal-number-of-clusters/</loc>
+    <lastmod>2017-04-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</loc>
+    <lastmod>2017-04-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/scraping-online-table-with-info-on-r-datasets/</loc>
     <lastmod>2017-03-30T00:00:00+00:00</lastmod>
   </url>
@@ -78,6 +88,12 @@
   
   <url>
     <loc>/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/clustering/</loc>
+    <lastmod>2017-04-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
