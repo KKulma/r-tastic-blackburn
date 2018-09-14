@@ -22,21 +22,22 @@
     </item>
     
     <item>
+      <title>Cluster Validation In Unsupervised Machine Learning</title>
+      <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
+      <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/cluster-validation-in-unsupervised-machine-learning/</guid>
+      <description>In the previous post I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.
+In this post I’ll show a couple of tests for cluster validation that can be easily run in R.
+Let’s start!</description>
+    </item>
+    
+    <item>
       <title>Determining the optimal number of clusters in your dataset</title>
       <link>/post/optimal-number-of-clusters/</link>
       <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/optimal-number-of-clusters/</guid>
-      <description>Recently, I worked a bit with cluster analysis: the common method in unsupervised learning that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.
-QUICK INTRO Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
-    </item>
-    
-    <item>
-      <title>Determining the optimal number of clusters in your datasets</title>
-      <link>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</link>
-      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</guid>
       <description>Recently, I worked a bit with cluster analysis: the common method in unsupervised learning that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.
 QUICK INTRO Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
     </item>

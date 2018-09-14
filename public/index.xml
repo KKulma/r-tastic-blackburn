@@ -958,6 +958,203 @@ final_tokens %&amp;gt;%
     </item>
     
     <item>
+      <title>Cluster Validation In Unsupervised Machine Learning</title>
+      <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
+      <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/cluster-validation-in-unsupervised-machine-learning/</guid>
+      <description>&lt;p&gt;In the &lt;a href=&#34;https://kkulma.github.io/2017-04-24-determining-optimal-number-of-clusters-in-your-data/&#34;&gt;previous post&lt;/a&gt; I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;In this post I’ll show a couple of tests for cluster validation that can be easily run in &lt;code&gt;R&lt;/code&gt;.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Let’s start!&lt;/p&gt;
+&lt;div id=&#34;validation-measures&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;VALIDATION MEASURES&lt;/h2&gt;
+&lt;div id=&#34;internal-measures&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;INTERNAL MEASURES&lt;/h3&gt;
+&lt;p&gt;As the name suggests, internal validation measures rely on information in the data only, that is the characteristics of the clusters themselves, such as compactness and separation. In the perfect world we want our clusters to be as compact and separated as possible. How can this be measured?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CONNECTIVITY&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This measure reflects the extent to which items that are placed in the same cluster are also considered their nearest neighbors in the data space - or, in other words, the degree of connectedness of the clusters. And yes, you guessed it, &lt;strong&gt;it should be minimised&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;SILHOUETTE WIDTH&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This index defines compactness based on the pairwise distances between all elements in the cluster, and separation based on pairwise distances between all points in the cluster and all points in the closest other cluster (&lt;a href=&#34;https://lirias.kuleuven.be/bitstream/123456789/504712/1/automl_camera.pdf&#34;&gt;Van Craenendonck &amp;amp; Blockeel 2015&lt;/a&gt;) We used &lt;code&gt;silhouette&lt;/code&gt; function to asses the optimal number of clusters in the previous post - and like there, &lt;strong&gt;the values as close to (+) 1 as possible are mose desirable&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;DUNN INDEX&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Dunn Index represents the ratio of the smallest distance between observations not in the same cluster to the largest intra-cluster distance. As you can imagine, the nominator should be maximised and the denomitor minimised, &lt;strong&gt;therefore the index should be maximized&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;(you can find a more detailed description of various internat cluster validation measures and their performance in this &lt;a href=&#34;datamining.rutgers.edu/publication/internalmeasures.pdf&#34;&gt;Hui Xiong’s paper&lt;/a&gt;.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stability-measures&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;STABILITY MEASURES&lt;/h2&gt;
+&lt;p&gt;A slightly different approach is to assess the suitability of clustering algorithm by testing how sensitive it is to perturbations in the input data. In &lt;code&gt;clValid&lt;/code&gt; package this means removing each column one at a time and re-rnning the clustering. There are several measures included, such as &lt;em&gt;average proportion of non-overlap&lt;/em&gt; (APN), the &lt;em&gt;average distance&lt;/em&gt; (AD),the &lt;em&gt;average distance between means&lt;/em&gt; (ADM), and the &lt;em&gt;figure of merit&lt;/em&gt; (FOM), all of which should be &lt;strong&gt;minimised&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Stability of clusters can be also computed using &lt;code&gt;fpc::clusterboot()&lt;/code&gt; function, however the &lt;em&gt;perturbations in the input data&lt;/em&gt; is a bit different here: it’s done by resampling the data in a chosen way (e.g. bootstraping).&lt;/p&gt;
+&lt;div id=&#34;biological-measures&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;BIOLOGICAL MEASURES&lt;/h3&gt;
+&lt;p&gt;These measures can be only applied to the narrow class of biological data, such as microarray or RNAseq data where observations correspond to genes. Essentially, biological validation evaluates the ability of a clustering algorithm to produce biologically meaningful clusters.&lt;/p&gt;
+&lt;p&gt;To find out more about all these measures, check out the &lt;code&gt;clValid&lt;/code&gt; vignette by opening the &lt;a href=&#34;https://www.google.co.uk/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=8&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;sqi=2&amp;amp;ved=0ahUKEwiSzaO5lNfTAhWKA8AKHVDRD88QFghaMAc&amp;amp;url=http%3A%2F%2Fhbanaszak.mjr.uw.edu.pl%2FTempTxt%2FBrockEtAl_2008_CIValidAnRPackageForClusterValidation.pdf&amp;amp;usg=AFQjCNGeuXuGr1_CugB1rLygXSojbs1DvQ&amp;amp;sig2=EkSz5W04IXOfCAUSQBLKvw&#34;&gt;link&lt;/a&gt; or by typing &lt;code&gt;?clValid&lt;/code&gt; in your R console.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;examples&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;EXAMPLES&lt;/h3&gt;
+&lt;p&gt;Enough of theory! Let’s have a look at the R code and some examples.&lt;/p&gt;
+&lt;p&gt;I’ll rely on the scaled &lt;code&gt;wine&lt;/code&gt; dataset that I used in my &lt;a href=&#34;https://kkulma.github.io/2017-04-24-determining-optimal-number-of-clusters-in-your-data/&#34;&gt;previous post&lt;/a&gt;). I’m not going to evaluate ALL clustering algorithms described there, but this will be enough to give you an idea how to run the cluster validation on your dataset.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;clusterwise-cluster-stability-assessment-by-resampling-fpcclusterboot&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Clusterwise cluster stability assessment by resampling (fpc::clusterboot())&lt;/h3&gt;
+&lt;p&gt;After preparing the data…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# loading packages
+library(gclus)
+library(ggplot2)
+library(dplyr)
+library(fpc)
+
+# loading data
+data(wine)
+scaled_wine &amp;lt;- scale(wine) %&amp;gt;% as.data.frame()
+scaled_wine2 &amp;lt;- scaled_wine[-1]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;… let’s validate a simple k-means algorithm using stability measures using &lt;code&gt;fpc::clusterboot()&lt;/code&gt;. In my previous post, depending on the clustering method, I obtained different number of possible “best” clusters: 2,3,4 and 15. I’ll now test each of these options by bootstrapping the orginal dataset 100 times:&lt;/p&gt;
+&lt;p&gt;Have a look at the results below. Keep in mind that&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Clusterwise Jaccard bootstrap mean should be &lt;strong&gt;maximised&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;number of dissolved clusters should be &lt;strong&gt;minimised&lt;/strong&gt; and&lt;/li&gt;
+&lt;li&gt;number of recovered clusters should be &lt;strong&gt;maximised&lt;/strong&gt; and as close to the number of pre-defined bootstraps as possible&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;print(km.boot2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  2 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.8865301 0.8737611
+## dissolved:
+## [1] 3 3
+## recovered:
+## [1] 87 79&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;print(km.boot3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  3 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.9784658 0.9532739 0.9693787
+## dissolved:
+## [1] 1 2 0
+## recovered:
+## [1] 99 98 99&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;print(km.boot4)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  4 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.5734544 0.4196592 0.8783064 0.6995180
+## dissolved:
+## [1] 30 85  2 10
+## recovered:
+## [1]  8  7 89 37&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;print(km.boot15)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  15 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+##  [1] 0.5906143 0.6545620 0.4729595 0.7117276 0.4056387 0.5572698 0.5706721
+##  [8] 0.5678161 0.7510311 0.4268624 0.4443128 0.5212228 0.5508409 0.6876913
+## [15] 0.3160002
+## dissolved:
+##  [1] 35 30 70 23 82 54 44 48 31 75 74 48 50 37 90
+## recovered:
+##  [1] 24 32 10 48  4 25 29 25 60  8  5  6 26 48  1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;According to the above guidelines, it looks like 3 clusters are most stable out of all tested options.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multivariate-validation-of-cluster-results-clvalid-package&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Multivariate validation of cluster results (clValid package)&lt;/h3&gt;
+&lt;p&gt;Now, let’s validate several different clustering algorithms at the same time using internal and stability measures. &lt;code&gt;clValid&lt;/code&gt; package makes it easy to compare all those measures for different clustering methods across different number of clusters (from 3 to 15). In fact, this can be done in 2 (rather long) lines of code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# loading packages
+library(clValid)
+library(kohonen)
+library(mclust)
+
+# transfrm data.frame into matrix
+m_wine &amp;lt;- as.matrix(scaled_wine2)
+
+valid_test &amp;lt;- clValid(m_wine, c(2:4, 15),
+                      clMethods = c(&amp;quot;hierarchical&amp;quot;, &amp;quot;kmeans&amp;quot;,  &amp;quot;pam&amp;quot; ),
+                      validation = c(&amp;quot;internal&amp;quot;, &amp;quot;stability&amp;quot;)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(valid_test)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Clustering Methods:
+##  hierarchical kmeans pam 
+## 
+## Cluster sizes:
+##  2 3 4 15 
+## 
+## Validation Measures:
+##                                   2        3        4       15
+##                                                               
+## hierarchical APN             0.0060   0.0349   0.0705   0.0991
+##              AD              4.8351   4.7541   4.6705   3.0421
+##              ADM             0.0567   0.1705   0.3321   0.4131
+##              FOM             0.9973   0.9923   0.9894   0.6834
+##              Connectivity    2.9290   9.9492  17.0651  75.0897
+##              Dunn            0.3711   0.2243   0.2307   0.3094
+##              Silhouette      0.2591   0.1575   0.1490   0.1781
+## kmeans       APN             0.1255   0.0470   0.1851   0.3079
+##              AD              4.2577   3.6137   3.6186   2.9210
+##              ADM             0.6454   0.2231   0.7547   0.9147
+##              FOM             0.9139   0.7842   0.7728   0.7000
+##              Connectivity   37.6512  28.0504  61.1659 160.6163
+##              Dunn            0.1357   0.2323   0.1621   0.2620
+##              Silhouette      0.2593   0.2849   0.2128   0.1516
+## pam          APN             0.0907   0.1191   0.1641   0.3514
+##              AD              4.1958   3.7183   3.6150   2.9652
+##              ADM             0.4359   0.4961   0.5622   1.0177
+##              FOM             0.8686   0.7909   0.7819   0.7092
+##              Connectivity   34.7790  45.0008  75.9865 184.7397
+##              Dunn            0.1919   0.2035   0.1564   0.1743
+##              Silhouette      0.2579   0.2676   0.1987   0.1117
+## 
+## Optimal Scores:
+## 
+##              Score  Method       Clusters
+## APN          0.0060 hierarchical 2       
+## AD           2.9210 kmeans       15      
+## ADM          0.0567 hierarchical 2       
+## FOM          0.6834 hierarchical 15      
+## Connectivity 2.9290 hierarchical 2       
+## Dunn         0.3711 hierarchical 2       
+## Silhouette   0.2849 kmeans       3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;I love this summary! Just look at it: it not only gives you a summary of all the specified validation measures across different clustering algorithms and number of inspected clusters, but also it lists those algorithms and number of clusters pairs that performed best in regard to a given validation metric. Very helpful, especially when evaluating more algorithms and possible numbers of clusters!&lt;/p&gt;
+&lt;p&gt;So, following the last summary, it looks like the hierarchical clustering with 2 clusters performed best in terms of stability and internal measures, as this pair appears in 2 out of 4 stability measures and 2 out of 3 internal measures.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;before-you-go&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;BEFORE YOU GO&lt;/h2&gt;
+&lt;p&gt;Coming to the end of this post, it’s important to stress that there are more packages and methods you can use to evaluate your clusters (for the start, I would explore &lt;a href=&#34;ftp://ftp.u-aizu.ac.jp/pub/lang/R/CRAN/web/packages/clusteval/index.html&#34;&gt;clusteval package&lt;/a&gt; ), but these quick glimpses can go a long way and give you a good idea of what works for your data and what doesn’t.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Determining the optimal number of clusters in your dataset</title>
       <link>/post/optimal-number-of-clusters/</link>
       <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
@@ -1376,479 +1573,6 @@ cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length
 &lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d.apclus2, scaled_wine2)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;summary&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;SUMMARY&lt;/h3&gt;
-&lt;p&gt;At least 4 (5, if including hierarchical clustering results) out of 7 tested algorithms suggested 3 as an optimal number of clusters for our data, which is a reasonable way forward, given that the analysed data contained information for 3 classes of wines ;-) In the next post I’ll evaluate those clusters in terms of their stability: how dissolved they are or how often they get recovered.&lt;/p&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Determining the optimal number of clusters in your datasets</title>
-      <link>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</link>
-      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/determining-the-optimal-number-of-clusters-in-your-datasets/</guid>
-      <description>&lt;p&gt;Recently, I worked a bit with &lt;strong&gt;cluster analysis&lt;/strong&gt;: the common method in &lt;a href=&#34;https://en.wikipedia.org/wiki/Unsupervised_learning&#34;&gt;unsupervised learning&lt;/a&gt; that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.&lt;/p&gt;
-&lt;div id=&#34;quick-intro&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;QUICK INTRO&lt;/h3&gt;
-&lt;p&gt;Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data. Most popular clustering learners (e.g. k-means) expect you to specify the number of segments to be found. However, clusters as such don’t exist in firm reality, so more often than not you don’t know what is the optimal number of clusters for a given dataset.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;There are multiple methods you can use in order to determine what is the optimal number of segments for your data and that is what I’m going to review in this post.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;I’m not going to go into details of each algorithm’s workings, but will provide references for you to follow up if you want to find out more.&lt;/p&gt;
-&lt;p&gt;Keep in mind that this list is not complete (for more complete list check out this &lt;a href=&#34;http://stackoverflow.com/a/15376462&#34;&gt;excellent StackOverflow answer&lt;/a&gt; ) and that not all approaches will return the same answer. In such case, my advise would be: try several methods - the more consistency between different approaches, the better - pick the most commonly returned number of clusters, evaluate their consistency and structure (I’ll cover how to do it in the next post) and check if they make sense from the real world point of view.&lt;/p&gt;
-&lt;p&gt;So there we go!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;wine-dataset&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;WINE DATASET&lt;/h3&gt;
-&lt;p&gt;For this exercise, I’ll use a popular &lt;code&gt;wine&lt;/code&gt; datasets that you can find built into R under several packages (e.g. &lt;code&gt;gclus&lt;/code&gt;, &lt;code&gt;HDclassif&lt;/code&gt; or &lt;code&gt;rattle&lt;/code&gt; packages). The full description of the dataset you can find &lt;a href=&#34;https://archive.ics.uci.edu/ml/datasets/Wine&#34;&gt;here&lt;/a&gt;, but essentially if contains results of a chemical analysis of 3 different types of wines grown in the same region in Italy. I’m &lt;strong&gt;guessing&lt;/strong&gt; that the three types of wine (described by &lt;code&gt;Class&lt;/code&gt; variable in the dataset) mean white, red and rose, but I couldn’t find anything to confirm it or to disclose which Class in the data corresponds to which wine type… Anyway! Let’s load the data and have a quick look at it:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
-library(knitr)
-library(gclus)
-
-
-data(wine)
-head(wine) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table style=&#34;width:100%;&#34;&gt;
-&lt;colgroup&gt;
-&lt;col width=&#34;5%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;5%&#34; /&gt;
-&lt;col width=&#34;4%&#34; /&gt;
-&lt;col width=&#34;8%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;8%&#34; /&gt;
-&lt;col width=&#34;9%&#34; /&gt;
-&lt;col width=&#34;11%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;4%&#34; /&gt;
-&lt;col width=&#34;5%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;Class&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.23&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.71&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;15.6&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;127&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.06&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.29&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;5.64&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1065&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.20&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.78&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.14&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;11.2&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;100&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.65&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.76&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.26&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.28&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4.38&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.40&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1050&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.16&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.36&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.67&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;18.6&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;101&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.30&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.81&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;5.68&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.03&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.17&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1185&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.37&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.95&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.50&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;16.8&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.85&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.49&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.18&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;7.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.45&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1480&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.59&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.87&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;21.0&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;118&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.69&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.82&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4.32&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.93&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;735&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.20&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.76&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.45&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;15.2&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;112&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.27&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.39&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.34&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.97&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;6.75&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.85&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1450&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;br&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(wine$Class)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##
-##  1  2  3
-## 59 71 48&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Next, I’ll remove the &lt;code&gt;Class&lt;/code&gt; variable, as I don’t want it to affect clustering, and scale the data.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;scaled_wine &amp;lt;- scale(wine) %&amp;gt;% as.data.frame()
-
-scaled_wine2 &amp;lt;- scaled_wine[-1]
-
-head(scaled_wine2) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table style=&#34;width:100%;&#34;&gt;
-&lt;colgroup&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;8%&#34; /&gt;
-&lt;col width=&#34;10%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;7%&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.5143408&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5606682&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2313998&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.1663032&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.9085215&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0319081&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.6577078&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2214385&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2510088&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.8427215&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0101594&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.2455968&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4980086&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8256672&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-2.4838405&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0180940&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5670481&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7315653&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8184106&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5431887&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.2924962&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1103172&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.9625263&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.1963252&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0211715&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1062139&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.2679823&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0881098&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2121137&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4970050&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.1299594&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2682629&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3173170&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7863692&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.3912237&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.6867914&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.3458351&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4865539&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8069748&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.9282998&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.4844372&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.4623994&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.9791134&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0292513&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1827317&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4264485&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1807407&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.3280068&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.2948684&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2270533&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.8352256&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4506745&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2783790&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.6614853&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2261576&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4002753&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.3183774&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4483365&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0377675&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.4773871&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5159113&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3043010&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.2860793&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8582840&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.5576991&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.3622851&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.1755994&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.6623487&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7298108&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3356589&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.2327407&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;br&gt; Keep in mind that many presented algorithms rely on random starts (e.g. k-means), so I set a seed wherever I can so that we have reproducible examples.&lt;/p&gt;
-&lt;p&gt;Now we can start clustering extravaganza!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;determining-the-optimal-number-of-clusters&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;DETERMINING THE OPTIMAL NUMBER OF CLUSTERS&lt;/h3&gt;
-&lt;div id=&#34;elbow-method&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;1. ELBOW METHOD&lt;/h4&gt;
-&lt;p&gt;In short, the elbow method maps the within-cluster sum of squares onto the number of possible clusters. As a rule of thumb, you pick the number for which you see a significant decrease in the within-cluster dissimilarity, or so called ‘elbow’. You can find more details &lt;a href=&#34;https://www.coursera.org/learn/machine-learning/lecture/Ks0E9/choosing-the-number-of-clusters&#34;&gt;here&lt;/a&gt; or &lt;a href=&#34;https://rstudio-pubs-static.s3.amazonaws.com/92318_20357e6dd99742eb90232c60c626fa90.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Let’s see what happens when we apply the Elbow Method to our dataset:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
-
-wss &amp;lt;- (nrow(scaled_wine2)-1)*sum(apply(scaled_wine2,2,var))
-for (i in 2:15) wss[i] &amp;lt;- sum(kmeans(scaled_wine2,
-                                     centers=i)$withinss)
-plot(1:15, wss, type=&amp;quot;b&amp;quot;, xlab=&amp;quot;Number of Clusters&amp;quot;,
-     ylab=&amp;quot;Within groups sum of squares&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/elbow-1.png&#34; alt=&#34;wss&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;wss&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;In this example, we see an ‘elbow’ at 3 clusters. By adding more clusters than that we get relatively smaller gains. So… 3 clusters!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;silhouette-analysis&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;2. SILHOUETTE ANALYSIS&lt;/h4&gt;
-&lt;p&gt;The silhouette plots display a measure of how close each point in one cluster is to points in the neighboring clusters. This measure ranges from -1 to 1, where 1 means that points are very close to their own cluster and far from other clusters, whereas -1 indicates that points are close to the neighbouring clusters. You’ll find more details about silhouette analysis &lt;a href=&#34;https://en.wikipedia.org/wiki/Silhouette_(clustering)&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://kapilddatascience.wordpress.com/2015/11/10/using-silhouette-analysis-for-selecting-the-number-of-cluster-for-k-means-clustering/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;When we run the silhouette analysis on our wine dataset, we get the following graphs with indication on the optimal number of clusters:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(fpc)
-
-set.seed(13)
-
-pamk.best2 &amp;lt;- pamk(scaled_wine2)
-cat(&amp;quot;number of clusters estimated by optimum average silhouette width:&amp;quot;, pamk.best2$nc, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## number of clusters estimated by optimum average silhouette width: 3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(pam(scaled_wine2, pamk.best2$nc))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/medoids-1.png&#34; alt=&#34;pamk&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/medoids-2.png&#34; alt=&#34;pamk2&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br&gt; Thus, it’s 3 clusters again.&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;gap-statistics&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;3. GAP STATISTICS&lt;/h4&gt;
-&lt;p&gt;Gap statistic is a goodness of clustering measure, where for each hypothetical number of clusters k, it compares two functions: log of within-cluster sum of squares (wss) with its expectation under the null reference distribution of the data. In essence, it standardizes wss. It chooses the value where the log(wss) is the farthest below the reference curve, ergo the gap statistic is maximum. Pretty neat!&lt;/p&gt;
-&lt;p&gt;If you want to know more, check out &lt;a href=&#34;https://www.google.co.uk/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=8&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;ved=0ahUKEwjen9q-7rjTAhUeM8AKHcijBOEQFghpMAc&amp;amp;url=https%3A%2F%2Flabs.genetics.ucla.edu%2Fhorvath%2FBiostat278%2FGapStatistics.ppt&amp;amp;usg=AFQjCNFaWjeeR1F2UpJIskxYaBFt0eKZKg&amp;amp;sig2=sQflpWNvc8BPu7ovHLyKuQ&#34;&gt;this presentation&lt;/a&gt; for a very good explanation and visualization of what gap statistic is.&lt;/p&gt;
-&lt;p&gt;Also, for even more details, see &lt;a href=&#34;chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/https://web.stanford.edu/~hastie/Papers/gap.pdf&#34;&gt;the original paper&lt;/a&gt; where the gap statistic was first described, it’s like a good novel!&lt;/p&gt;
-&lt;p&gt;In the case of our wine dataset, gap analysis picks (again!) 3 cluster as an optimum:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cluster)
-
-set.seed(13)
-
-clusGap(scaled_wine2, kmeans, 10, B = 100, verbose = interactive())&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Clustering Gap statistic [&amp;quot;clusGap&amp;quot;] from call:
-## clusGap(x = scaled_wine2, FUNcluster = kmeans, K.max = 10, B = 100,     verbose = interactive())
-## B=100 simulated reference sets, k = 1..10; spaceH0=&amp;quot;scaledPCA&amp;quot;
-##  --&amp;gt; Number of clusters (method &amp;#39;firstSEmax&amp;#39;, SE.factor=1): 3
-##           logW   E.logW       gap     SE.sim
-##  [1,] 5.377557 5.864072 0.4865153 0.01261541
-##  [2,] 5.203502 5.757547 0.5540456 0.01356018
-##  [3,] 5.066921 5.697040 0.6301193 0.01404664
-##  [4,] 5.033404 5.651970 0.6185658 0.01410140
-##  [5,] 4.992739 5.616114 0.6233751 0.01342023
-##  [6,] 4.955442 5.584673 0.6292313 0.01304916
-##  [7,] 4.933420 5.556602 0.6231820 0.01250233
-##  [8,] 4.908585 5.531523 0.6229379 0.01299415
-##  [9,] 4.884336 5.508464 0.6241281 0.01209969
-## [10,] 4.858595 5.488182 0.6295870 0.01336910&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;hierarchical-clustering&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;4. HIERARCHICAL CLUSTERING&lt;/h4&gt;
-&lt;p&gt;Hierarchical clustering is usually used to better understand the structure and relationships in your data and based on them you decide what number of clusters seems appropriate for your purpose. The way the algorithm works is very well described &lt;a href=&#34;http://www.analytictech.com/networks/hiclus.htm&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.saedsayad.com/clustering_hierarchical.htm&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;How to choose the optimal number of clusters based on the output of this analysis, the dendogram? As a rule of thumb, look for the clusters with the longest ‘branches’, the shorter they are, the more similar they are to following ‘twigs’ and ‘leaves’. But keep in mind that, as always, the optimal number will also depend on the context, expert knowledge, application, etc.&lt;/p&gt;
-&lt;p&gt;In our case, the solution is rather blurred:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
-
-wine_dist2 &amp;lt;- dist(as.matrix(scaled_wine2))   # find distance matrix
-plot(hclust(wine_dist2))&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/hclust-1.png&#34; alt=&#34;hclust&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;hclust&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Personally, I would go for something between 2 and 4 clusters. What do you think? :-)&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;calinsky-criterion&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;5. CALINSKY CRITERION&lt;/h4&gt;
-&lt;p&gt;yet another method evaluating optimal number of clusters based on within- and between-cluster distances. For more details, see &lt;a href=&#34;http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In the example below we set the number of clusters to test between 1 and 10 and we iterated the test 1000 times.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)
-
-set.seed(13)
-
-cal_fit2 &amp;lt;- cascadeKM(scaled_wine2, 1, 10, iter = 1000)
-plot(cal_fit2, sortg = TRUE, grpmts.plot = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/calinsky-1.png&#34; alt=&#34;cal&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;cal&lt;/p&gt;
-&lt;/div&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;calinski.best2 &amp;lt;- as.numeric(which.max(cal_fit2$results[2,]))
-cat(&amp;quot;Calinski criterion optimal number of clusters:&amp;quot;, calinski.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Calinski criterion optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt; Again, 3 clusters!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;bayesian-information-criterion-for-expectation---maximization&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;6. BAYESIAN INFORMATION CRITERION FOR EXPECTATION - MAXIMIZATION&lt;/h4&gt;
-&lt;p&gt;This time in order to determine the optimal number of cluters we simultaneously run and compare several probabilistic models and pick the best one based on their BIC (Bayesian Information Criterion) score. For more details, make sure to read &lt;a href=&#34;http://rstudio-pubs-static.s3.amazonaws.com/154174_78c021bc71ab42f8add0b2966938a3b8.html&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.7.8739&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In the example below, we set the search of optimal number of clusters to be between 1 and 20.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mclust)
-
-set.seed(13)
-
-d_clust2 &amp;lt;- Mclust(as.matrix(scaled_wine2), G=1:20)
-m.best2 &amp;lt;- dim(d_clust2$z)[2]
-
-cat(&amp;quot;model-based optimal number of clusters:&amp;quot;, m.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## model-based optimal number of clusters: 4&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d_clust2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-1.png&#34; alt=&#34;bic&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-2.png&#34; alt=&#34;bBIC-2&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-3.png&#34; alt=&#34;BIC-3&#34; /&gt;&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/BIC-4.png&#34; alt=&#34;BIC-4&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;And this time, the optimal number of clusters seems to be 4.&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;affinity-propagation-clustering&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;7. AFFINITY PROPAGATION CLUSTERING&lt;/h4&gt;
-&lt;p&gt;I’ll be quite honest with you: I’ve struggled to get my head around what affinity propagation is about! I understood that it clusters data by identifying a subset of representative examples, so called &lt;strong&gt;exemplars&lt;/strong&gt;. And it does so by considering all data points as potential exemplars, but the rest is magic to me..&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[and\]&lt;/span&gt; exchanging real-valued messages between data points until a high-quality set of exemplars and corresponding clusters gradually emerges.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;em&gt;(according to &lt;a href=&#34;www.cs.columbia.edu/~delbert/docs/DDueck-thesis_small.pdf&#34;&gt;Delbert Dueck&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;So if you have a better explanation or better materials.. send them over!&lt;/p&gt;
-&lt;p&gt;In our particular case, this algorithm identified&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(apcluster)
-
-set.seed(13)
-
-d.apclus2 &amp;lt;- apcluster(negDistMat(r=2), scaled_wine2)
-cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length(d.apclus2@clusters), &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## affinity propogation optimal number of clusters: 15&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;heatmap(d.apclus2)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/ap-1.png&#34; alt=&#34;ap&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;ap&lt;/p&gt;
-&lt;/div&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d.apclus2, scaled_wine2)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2017-04-24-determining-optimal-number-of-clusters-in-your-data_files/figure-markdown_github/ap-2.png&#34; alt=&#34;ap2&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;ap2&lt;/p&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;summary&#34; class=&#34;section level3&#34;&gt;

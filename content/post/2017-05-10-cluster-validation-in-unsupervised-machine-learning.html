@@ -1,0 +1,204 @@
+---
+title: Cluster Validation In Unsupervised Machine Learning
+author: Kasia Kulma
+date: '2017-05-10'
+slug: cluster-validation-in-unsupervised-machine-learning
+categories:
+  - r
+tags:
+  - clustering
+  - best practice
+description: ''
+topics: []
+---
+
+
+
+<p>In the <a href="https://kkulma.github.io/2017-04-24-determining-optimal-number-of-clusters-in-your-data/">previous post</a> I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.</p>
+<p><strong>In this post I’ll show a couple of tests for cluster validation that can be easily run in <code>R</code>.</strong></p>
+<p>Let’s start!</p>
+<div id="validation-measures" class="section level2">
+<h2>VALIDATION MEASURES</h2>
+<div id="internal-measures" class="section level3">
+<h3>INTERNAL MEASURES</h3>
+<p>As the name suggests, internal validation measures rely on information in the data only, that is the characteristics of the clusters themselves, such as compactness and separation. In the perfect world we want our clusters to be as compact and separated as possible. How can this be measured?</p>
+<p><strong>CONNECTIVITY</strong></p>
+<p>This measure reflects the extent to which items that are placed in the same cluster are also considered their nearest neighbors in the data space - or, in other words, the degree of connectedness of the clusters. And yes, you guessed it, <strong>it should be minimised</strong>.</p>
+<p><strong>SILHOUETTE WIDTH</strong></p>
+<p>This index defines compactness based on the pairwise distances between all elements in the cluster, and separation based on pairwise distances between all points in the cluster and all points in the closest other cluster (<a href="https://lirias.kuleuven.be/bitstream/123456789/504712/1/automl_camera.pdf">Van Craenendonck &amp; Blockeel 2015</a>) We used <code>silhouette</code> function to asses the optimal number of clusters in the previous post - and like there, <strong>the values as close to (+) 1 as possible are mose desirable</strong>.</p>
+<p><strong>DUNN INDEX</strong></p>
+<p>Dunn Index represents the ratio of the smallest distance between observations not in the same cluster to the largest intra-cluster distance. As you can imagine, the nominator should be maximised and the denomitor minimised, <strong>therefore the index should be maximized</strong>.</p>
+<p>(you can find a more detailed description of various internat cluster validation measures and their performance in this <a href="datamining.rutgers.edu/publication/internalmeasures.pdf">Hui Xiong’s paper</a>.)</p>
+</div>
+</div>
+<div id="stability-measures" class="section level2">
+<h2>STABILITY MEASURES</h2>
+<p>A slightly different approach is to assess the suitability of clustering algorithm by testing how sensitive it is to perturbations in the input data. In <code>clValid</code> package this means removing each column one at a time and re-rnning the clustering. There are several measures included, such as <em>average proportion of non-overlap</em> (APN), the <em>average distance</em> (AD),the <em>average distance between means</em> (ADM), and the <em>figure of merit</em> (FOM), all of which should be <strong>minimised</strong>.</p>
+<p>Stability of clusters can be also computed using <code>fpc::clusterboot()</code> function, however the <em>perturbations in the input data</em> is a bit different here: it’s done by resampling the data in a chosen way (e.g. bootstraping).</p>
+<div id="biological-measures" class="section level3">
+<h3>BIOLOGICAL MEASURES</h3>
+<p>These measures can be only applied to the narrow class of biological data, such as microarray or RNAseq data where observations correspond to genes. Essentially, biological validation evaluates the ability of a clustering algorithm to produce biologically meaningful clusters.</p>
+<p>To find out more about all these measures, check out the <code>clValid</code> vignette by opening the <a href="https://www.google.co.uk/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=8&amp;cad=rja&amp;uact=8&amp;sqi=2&amp;ved=0ahUKEwiSzaO5lNfTAhWKA8AKHVDRD88QFghaMAc&amp;url=http%3A%2F%2Fhbanaszak.mjr.uw.edu.pl%2FTempTxt%2FBrockEtAl_2008_CIValidAnRPackageForClusterValidation.pdf&amp;usg=AFQjCNGeuXuGr1_CugB1rLygXSojbs1DvQ&amp;sig2=EkSz5W04IXOfCAUSQBLKvw">link</a> or by typing <code>?clValid</code> in your R console.</p>
+</div>
+<div id="examples" class="section level3">
+<h3>EXAMPLES</h3>
+<p>Enough of theory! Let’s have a look at the R code and some examples.</p>
+<p>I’ll rely on the scaled <code>wine</code> dataset that I used in my <a href="https://kkulma.github.io/2017-04-24-determining-optimal-number-of-clusters-in-your-data/">previous post</a>). I’m not going to evaluate ALL clustering algorithms described there, but this will be enough to give you an idea how to run the cluster validation on your dataset.</p>
+</div>
+<div id="clusterwise-cluster-stability-assessment-by-resampling-fpcclusterboot" class="section level3">
+<h3>Clusterwise cluster stability assessment by resampling (fpc::clusterboot())</h3>
+<p>After preparing the data…</p>
+<pre class="r"><code># loading packages
+library(gclus)
+library(ggplot2)
+library(dplyr)
+library(fpc)
+
+# loading data
+data(wine)
+scaled_wine &lt;- scale(wine) %&gt;% as.data.frame()
+scaled_wine2 &lt;- scaled_wine[-1]</code></pre>
+<p>… let’s validate a simple k-means algorithm using stability measures using <code>fpc::clusterboot()</code>. In my previous post, depending on the clustering method, I obtained different number of possible “best” clusters: 2,3,4 and 15. I’ll now test each of these options by bootstrapping the orginal dataset 100 times:</p>
+<p>Have a look at the results below. Keep in mind that</p>
+<ol style="list-style-type: decimal">
+<li>Clusterwise Jaccard bootstrap mean should be <strong>maximised</strong></li>
+<li>number of dissolved clusters should be <strong>minimised</strong> and</li>
+<li>number of recovered clusters should be <strong>maximised</strong> and as close to the number of pre-defined bootstraps as possible</li>
+</ol>
+<pre class="r"><code>print(km.boot2)</code></pre>
+<pre><code>## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  2 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.8865301 0.8737611
+## dissolved:
+## [1] 3 3
+## recovered:
+## [1] 87 79</code></pre>
+<pre class="r"><code>print(km.boot3)</code></pre>
+<pre><code>## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  3 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.9784658 0.9532739 0.9693787
+## dissolved:
+## [1] 1 2 0
+## recovered:
+## [1] 99 98 99</code></pre>
+<pre class="r"><code>print(km.boot4)</code></pre>
+<pre><code>## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  4 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+## [1] 0.5734544 0.4196592 0.8783064 0.6995180
+## dissolved:
+## [1] 30 85  2 10
+## recovered:
+## [1]  8  7 89 37</code></pre>
+<pre class="r"><code>print(km.boot15)</code></pre>
+<pre><code>## * Cluster stability assessment *
+## Cluster method:  kmeans 
+## Full clustering results are given as parameter result
+## of the clusterboot object, which also provides further statistics
+## of the resampling results.
+## Number of resampling runs:  100 
+## 
+## Number of clusters found in data:  15 
+## 
+##  Clusterwise Jaccard bootstrap (omitting multiple points) mean:
+##  [1] 0.5906143 0.6545620 0.4729595 0.7117276 0.4056387 0.5572698 0.5706721
+##  [8] 0.5678161 0.7510311 0.4268624 0.4443128 0.5212228 0.5508409 0.6876913
+## [15] 0.3160002
+## dissolved:
+##  [1] 35 30 70 23 82 54 44 48 31 75 74 48 50 37 90
+## recovered:
+##  [1] 24 32 10 48  4 25 29 25 60  8  5  6 26 48  1</code></pre>
+<p><br></p>
+<p>According to the above guidelines, it looks like 3 clusters are most stable out of all tested options.</p>
+</div>
+<div id="multivariate-validation-of-cluster-results-clvalid-package" class="section level3">
+<h3>Multivariate validation of cluster results (clValid package)</h3>
+<p>Now, let’s validate several different clustering algorithms at the same time using internal and stability measures. <code>clValid</code> package makes it easy to compare all those measures for different clustering methods across different number of clusters (from 3 to 15). In fact, this can be done in 2 (rather long) lines of code:</p>
+<pre class="r"><code># loading packages
+library(clValid)
+library(kohonen)
+library(mclust)
+
+# transfrm data.frame into matrix
+m_wine &lt;- as.matrix(scaled_wine2)
+
+valid_test &lt;- clValid(m_wine, c(2:4, 15),
+                      clMethods = c(&quot;hierarchical&quot;, &quot;kmeans&quot;,  &quot;pam&quot; ),
+                      validation = c(&quot;internal&quot;, &quot;stability&quot;)
+)</code></pre>
+<pre class="r"><code>summary(valid_test)</code></pre>
+<pre><code>## 
+## Clustering Methods:
+##  hierarchical kmeans pam 
+## 
+## Cluster sizes:
+##  2 3 4 15 
+## 
+## Validation Measures:
+##                                   2        3        4       15
+##                                                               
+## hierarchical APN             0.0060   0.0349   0.0705   0.0991
+##              AD              4.8351   4.7541   4.6705   3.0421
+##              ADM             0.0567   0.1705   0.3321   0.4131
+##              FOM             0.9973   0.9923   0.9894   0.6834
+##              Connectivity    2.9290   9.9492  17.0651  75.0897
+##              Dunn            0.3711   0.2243   0.2307   0.3094
+##              Silhouette      0.2591   0.1575   0.1490   0.1781
+## kmeans       APN             0.1255   0.0470   0.1851   0.3079
+##              AD              4.2577   3.6137   3.6186   2.9210
+##              ADM             0.6454   0.2231   0.7547   0.9147
+##              FOM             0.9139   0.7842   0.7728   0.7000
+##              Connectivity   37.6512  28.0504  61.1659 160.6163
+##              Dunn            0.1357   0.2323   0.1621   0.2620
+##              Silhouette      0.2593   0.2849   0.2128   0.1516
+## pam          APN             0.0907   0.1191   0.1641   0.3514
+##              AD              4.1958   3.7183   3.6150   2.9652
+##              ADM             0.4359   0.4961   0.5622   1.0177
+##              FOM             0.8686   0.7909   0.7819   0.7092
+##              Connectivity   34.7790  45.0008  75.9865 184.7397
+##              Dunn            0.1919   0.2035   0.1564   0.1743
+##              Silhouette      0.2579   0.2676   0.1987   0.1117
+## 
+## Optimal Scores:
+## 
+##              Score  Method       Clusters
+## APN          0.0060 hierarchical 2       
+## AD           2.9210 kmeans       15      
+## ADM          0.0567 hierarchical 2       
+## FOM          0.6834 hierarchical 15      
+## Connectivity 2.9290 hierarchical 2       
+## Dunn         0.3711 hierarchical 2       
+## Silhouette   0.2849 kmeans       3</code></pre>
+<p><br></p>
+<p>I love this summary! Just look at it: it not only gives you a summary of all the specified validation measures across different clustering algorithms and number of inspected clusters, but also it lists those algorithms and number of clusters pairs that performed best in regard to a given validation metric. Very helpful, especially when evaluating more algorithms and possible numbers of clusters!</p>
+<p>So, following the last summary, it looks like the hierarchical clustering with 2 clusters performed best in terms of stability and internal measures, as this pair appears in 2 out of 4 stability measures and 2 out of 3 internal measures.</p>
+<p><br></p>
+</div>
+</div>
+<div id="before-you-go" class="section level2">
+<h2>BEFORE YOU GO</h2>
+<p>Coming to the end of this post, it’s important to stress that there are more packages and methods you can use to evaluate your clusters (for the start, I would explore <a href="ftp://ftp.u-aizu.ac.jp/pub/lang/R/CRAN/web/packages/clusteval/index.html">clusteval package</a> ), but these quick glimpses can go a long way and give you a good idea of what works for your data and what doesn’t.</p>
+</div>
