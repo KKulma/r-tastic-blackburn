@@ -367,7 +367,7 @@ evaluate(&quot;london_map = get_map(location = 'London', maptype='toner',  zoom 
 weapon_london_heat_map
 </code></pre>
 
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" /></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="120%" height="120%"/></p>
 
 <p>Not bad at all! We can now identify the crime hotspots, but there&rsquo;s no way we can infer anything about the crime seasonality. And here&rsquo;s where the first serious use of animated graphs comes in!</p>
 
@@ -391,7 +391,7 @@ map_anime&lt;- ggmap(london_map, extent = &quot;device&quot;) +
 <pre><code>gganimate(map_anime)
 </code></pre>
 
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" /></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="110%" height="110%"/></p>
 
 <p>From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to &lsquo;focus&rsquo; on more central areas, supposedly while keeping up with their criminal activity&hellip;?</p>
 
@@ -415,7 +415,7 @@ all_london_heat_map&lt;- ggmap(london_map, extent = &quot;device&quot;) +
 gganimate(all_london_heat_map)
 </code></pre>
 
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" /></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" width="105%" height="105%"/></p>
 
 <p>So, there you go! At the first glance it may look a bit chaotic, but such visualization will quickly make you realise that some crimes always have a narrow geographical range ( <em>Theft from the person</em> or <em>Other theft</em>, for example), especially compared to some with universally wide range (e.g. <em>Burglary</em> or <em>Criminal damage and arson</em>). And this is the first step for generating new questions and hypotheses, the integral (and very desirable) part of any exploratory analysis!</p>
 

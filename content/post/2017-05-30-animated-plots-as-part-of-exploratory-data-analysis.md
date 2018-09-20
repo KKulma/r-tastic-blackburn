@@ -147,7 +147,7 @@ weapon_london_heat_map<- ggmap(london_map, extent = "device") +
 weapon_london_heat_map
 ```
 
-![](/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png)
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="120%" height="120%"/>
 
 Not bad at all! We can now identify the crime hotspots, but there's no way we can infer anything about the crime seasonality. And here's where the first serious use of animated graphs comes in!
 
@@ -173,7 +173,7 @@ map_anime<- ggmap(london_map, extent = "device") +
 gganimate(map_anime)
 ```
 
-![](/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif)
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="110%" height="110%"/>
 
 From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to 'focus' on more central areas, supposedly while keeping up with their criminal activity...?
 
@@ -198,7 +198,7 @@ all_london_heat_map<- ggmap(london_map, extent = "device") +
 gganimate(all_london_heat_map)
 ```
 
-![](/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif)
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" width="105%" height="105%"/>
 
 So, there you go! At the first glance it may look a bit chaotic, but such visualization will quickly make you realise that some crimes always have a narrow geographical range ( *Theft from the person* or *Other theft*, for example), especially compared to some with universally wide range (e.g. *Burglary* or *Criminal damage and arson*). And this is the first step for generating new questions and hypotheses, the integral (and very desirable) part of any exploratory analysis!
 
