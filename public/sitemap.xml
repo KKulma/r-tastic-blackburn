@@ -43,6 +43,11 @@
   </url>
   
   <url>
+    <loc>/post/friendships-among-top-twitterers/</loc>
+    <lastmod>2017-08-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/cluster-validation-in-unsupervised-machine-learning/</loc>
     <lastmod>2017-05-10T00:00:00+00:00</lastmod>
   </url>
@@ -134,6 +139,12 @@
   <url>
     <loc>/tags/machine-learning/</loc>
     <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/network-analysis/</loc>
+    <lastmod>2017-08-13T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

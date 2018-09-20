@@ -79,6 +79,16 @@
     </item>
     
     <item>
+      <title>Friendships among top R-twitterers</title>
+      <link>/post/friendships-among-top-twitterers/</link>
+      <pubDate>Sun, 13 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/friendships-among-top-twitterers/</guid>
+      <description>Have you ever wondered whether the most active/popular R-twitterers are virtual friends? :) And by friends here I simply mean mutual followers on Twitter. In this post, I score and pick top 30 #rstats twitter users and analyse their Twitter friends&amp;rsquo; network. You&amp;rsquo;ll see a lot of applications of rtweet and ggraph packages, as well as a very useful twist using purrr library, so let&amp;rsquo;s begin!
+BEFORE I START: OFF - TOPIC ON PERFECTIONISM After weeks and months (!</description>
+    </item>
+    
+    <item>
       <title>Cluster Validation In Unsupervised Machine Learning</title>
       <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
@@ -97,15 +107,6 @@ Let’s start!</description>
       <guid>/post/optimal-number-of-clusters/</guid>
       <description>Recently, I worked a bit with cluster analysis: the common method in unsupervised learning that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.
 QUICK INTRO Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
-    </item>
-    
-    <item>
-      <title>Scraping online table with info on R datasets</title>
-      <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
-      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
-      <description>It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from here using rvest and xml2 packages:</description>
     </item>
     
   </channel>

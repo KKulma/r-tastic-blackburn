@@ -1512,6 +1512,352 @@ plot_features(explanation_wrong)
     </item>
     
     <item>
+      <title>Friendships among top R-twitterers</title>
+      <link>/post/friendships-among-top-twitterers/</link>
+      <pubDate>Sun, 13 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/friendships-among-top-twitterers/</guid>
+      <description>
+
+&lt;p&gt;Have you ever wondered whether the most active/popular R-twitterers are virtual friends? :) And by friends here I simply mean mutual followers on Twitter. In this post, I score and pick top 30 #rstats twitter users and analyse their Twitter friends&amp;rsquo; network. You&amp;rsquo;ll see a lot of applications of &lt;code&gt;rtweet&lt;/code&gt; and &lt;code&gt;ggraph&lt;/code&gt; packages, as well as a very useful twist using &lt;code&gt;purrr&lt;/code&gt; library, so let&amp;rsquo;s begin!&lt;/p&gt;
+
+&lt;h3 id=&#34;before-i-start-off-topic-on-perfectionism&#34;&gt;BEFORE I START: OFF - TOPIC ON PERFECTIONISM&lt;/h3&gt;
+
+&lt;p&gt;After weeks and months (!!!) of not publishing anything, finally this post sees the light of day! It went through so many tests and changes - including conceptual ones! - that I&amp;rsquo;m relieved now that it&amp;rsquo;s out and I can move on to another project. But I learned my lesson: perfectionism can be a real hurdle for any developer/data scientist and clearly, &lt;a href=&#34;https://getpocket.com/a/read/1845363129&#34;&gt;I&amp;rsquo;m not alone with this experience&lt;/a&gt;. So, next time I&amp;rsquo;m not going to take that long to push something out - imperfect projects can improve and refine once they&amp;rsquo;re out and I suppose they engage more people by provoking them to give ideas and suggest better solutions. Anyway, where were we&amp;hellip;? :)&lt;/p&gt;
+
+&lt;h3 id=&#34;importing-rstats-users&#34;&gt;IMPORTING #RSTATS USERS&lt;/h3&gt;
+
+&lt;p&gt;After loading my precious packages&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;library(rtweet)
+library(dplyr)
+library(purrr)
+library(igraph)
+library(ggraph)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; I searched for Twitter users that have &lt;code&gt;rstats&lt;/code&gt; in their profile description. It definitely doesn&amp;rsquo;t include ALL active and popular R - users, but it&amp;rsquo;s a pretty reliable way of picking definite R - fans.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r_users &amp;lt;- search_users(&amp;quot;#rstats&amp;quot;, n = 1000)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s important to say, that in &lt;code&gt;rtweet::search_users()&lt;/code&gt; even if you specify 1000 users to be extracted, I ended up with quite a few duplicates and the actual number of users I got was much smaller: 565&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r_users %&amp;gt;% summarise(n_users = n_distinct(screen_name))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##   n_users
+## 1     564
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Funnily enough, even though my profile description contains &lt;code&gt;#rstats&lt;/code&gt;, I was not included in the search results (@KKulma), sic! Were you? :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; r_users %&amp;gt;% select(screen_name) %&amp;gt;% unique() %&amp;gt;%  arrange(screen_name)  %&amp;gt;% DT::datatable()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(the complete table can be viewed in my old blog, &lt;a href=&#34;https://kkulma.github.io/2017-08-13-friendships-among-top-r-twitterers/&#34;&gt;here&lt;/a&gt;)&lt;/p&gt;
+
+&lt;h4 id=&#34;scoring-and-choosing-top-rstats-users&#34;&gt;SCORING AND CHOOSING TOP #RSTATS USERS&lt;/h4&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s extract some useful information about those users:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r_users_info &amp;lt;- lookup_users(r_users$screen_name)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You&amp;rsquo;ll notice, that created data frame holds information about number of followers, friends (users they follow), lists they belong to, number of tweets (statuses) or how many times sometimes marked those tweets as their favourite.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r_users_info %&amp;gt;% select(dplyr::contains(&amp;quot;count&amp;quot;)) %&amp;gt;% head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##   followers_count friends_count listed_count favourites_count
+## 1            8311           366          580             9325
+## 2           44474            11         1298                3
+## 3           11106           524          467            18495
+## 4           12481           431          542             7222
+## 5           15345          1872          680            27971
+## 6            5122           700          549             2796
+##   statuses_count
+## 1          66117
+## 2           1700
+## 3           8853
+## 4           6388
+## 5          22194
+## 6          10010
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And these variables I use for building my &amp;lsquo;top score&amp;rsquo;: I simply calculate a percentile for each of those variables and sum it altogether. Given that each variable&amp;rsquo;s percentile will give me a value between 0 and 1, The final score can have a maximum value of 5.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r_users_ranking &amp;lt;- r_users_info %&amp;gt;%
+  filter(protected == FALSE) %&amp;gt;% 
+  select(screen_name, dplyr::contains(&amp;quot;count&amp;quot;)) %&amp;gt;% 
+  unique() %&amp;gt;% 
+  mutate(followers_percentile = ecdf(followers_count)(followers_count),
+         friends_percentile = ecdf(friends_count)(friends_count),
+         listed_percentile = ecdf(listed_count)(listed_count),
+         favourites_percentile = ecdf(favourites_count)(favourites_count),
+         statuses_percentile = ecdf(statuses_count)(statuses_count)
+         ) %&amp;gt;% 
+  group_by(screen_name) %&amp;gt;% 
+  summarise(top_score = followers_percentile + friends_percentile + listed_percentile + favourites_percentile + statuses_percentile) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  mutate(ranking = rank(-top_score))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All I need to do now is to pick top 30 users based on the score I calculated. Did you manage get onto the top 30 list? :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;top_30 &amp;lt;- r_users_ranking %&amp;gt;% arrange(desc(top_score)) %&amp;gt;% head(30) %&amp;gt;% arrange(desc(top_score))
+top_30 %&amp;gt;% as.data.frame() %&amp;gt;% select(screen_name) %&amp;gt;% DT::datatable()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(Again, you can view the complete table &lt;a href=&#34;https://kkulma.github.io/2017-08-13-friendships-among-top-r-twitterers/&#34;&gt;here&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;I must say I&amp;rsquo;m incredibly impressed by these scores: @hpster, THE top R - twitterer managed to obtain a score of over 4.8 out of 5! Also, @Physical_Prep and @TheSmartJokes managed to tie 8th place, which I thought was unlikely to happed, given how granular the score is.&lt;/p&gt;
+
+&lt;p&gt;Anyway! To add some more depth to my list, I tried to identify those users&amp;rsquo; gender, to see how many top users are women. I had to do it manually (sic!), as the Twitter API&amp;rsquo;s data doesn&amp;rsquo;t provide this, AFAIK. Let me know if you spot any mistakes!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;top30_lookup &amp;lt;- r_users_info %&amp;gt;%
+  filter(screen_name %in% top_30$screen_name) %&amp;gt;% 
+  select(screen_name, user_id)
+
+top30_lookup$gender &amp;lt;- c(&amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;, &amp;quot;F&amp;quot;, &amp;quot;F&amp;quot;, &amp;quot;F&amp;quot;,
+                         &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;, &amp;quot;F&amp;quot;, 
+                         &amp;quot;F&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;, 
+                         &amp;quot;F&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, 
+                         &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;, &amp;quot;M&amp;quot;,
+                         &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;, &amp;quot;M&amp;quot;)
+
+table(top30_lookup$gender)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## 
+##  F  M 
+## 10 20
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It looks like a third of all top users are womes, but in the top 10 users there are 6 women. Better than I expected, actually. So, well done, ladies!&lt;/p&gt;
+
+&lt;h4 id=&#34;getting-friends-network&#34;&gt;GETTING FRIENDS NETWORK&lt;/h4&gt;
+
+&lt;p&gt;Now, this was the trickiest part of this project: extracting top users&amp;rsquo; friends list and putting it all in one data frame. As you ma be aware, Twitter API has a limit od downloading information on 15 accounts in 15 minutes. So for my list, I had to break it up into 2 steps, 15 users each and then I named each list according to the top user they refer to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;top_30_usernames &amp;lt;- top30_lookup$screen_name
+
+friends_top30a &amp;lt;-   map(top_30_usernames[1:15 ], get_friends)
+names(friends_top30a) &amp;lt;- top_30_usernames[1:15]
+
+# 15 minutes later....
+friends_top30b &amp;lt;- map(top_30_usernames[16:30], get_friends)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After this I end up with two lists, each containing all friends&amp;rsquo; IDs for top and bottom 15 users respectively. Here&amp;rsquo;s an example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;str(friends_top30b)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## List of 15
+##  $ modernscientist:&#39;data.frame&#39;:	1752 obs. of  1 variable:
+##   ..$ user_id: chr [1:1752] &amp;quot;18153864&amp;quot; &amp;quot;19187806&amp;quot; &amp;quot;2785337469&amp;quot; &amp;quot;586883143&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ Physical_Prep  :&#39;data.frame&#39;:	2390 obs. of  1 variable:
+##   ..$ user_id: chr [1:2390] &amp;quot;62836649&amp;quot; &amp;quot;228664938&amp;quot; &amp;quot;1941843097&amp;quot; &amp;quot;2523165143&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ BillPetti      :&#39;data.frame&#39;:	1140 obs. of  1 variable:
+##   ..$ user_id: chr [1:1140] &amp;quot;119802433&amp;quot; &amp;quot;109303284&amp;quot; &amp;quot;482232051&amp;quot; &amp;quot;49155222&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ JonathanAFrye  :&#39;data.frame&#39;:	2611 obs. of  1 variable:
+##   ..$ user_id: chr [1:2611] &amp;quot;34006491&amp;quot; &amp;quot;23342797&amp;quot; &amp;quot;64229716&amp;quot; &amp;quot;75051887&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ ChetanChawla   :&#39;data.frame&#39;:	1365 obs. of  1 variable:
+##   ..$ user_id: chr [1:1365] &amp;quot;3362913279&amp;quot; &amp;quot;851583986270957568&amp;quot; &amp;quot;449588356&amp;quot; &amp;quot;15227791&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ rogierK        :&#39;data.frame&#39;:	1359 obs. of  1 variable:
+##   ..$ user_id: chr [1:1359] &amp;quot;4427052929&amp;quot; &amp;quot;3315236924&amp;quot; &amp;quot;2976444713&amp;quot; &amp;quot;3865005196&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ AriBFriedman   :&#39;data.frame&#39;:	1414 obs. of  1 variable:
+##   ..$ user_id: chr [1:1414] &amp;quot;805181039245225984&amp;quot; &amp;quot;740985271026491392&amp;quot; &amp;quot;2534410031&amp;quot; &amp;quot;720675478193971200&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ yrochat        :&#39;data.frame&#39;:	533 obs. of  1 variable:
+##   ..$ user_id: chr [1:533] &amp;quot;2827803498&amp;quot; &amp;quot;311905244&amp;quot; &amp;quot;74398697&amp;quot; &amp;quot;3645507015&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ TheSmartJokes  :&#39;data.frame&#39;:	5000 obs. of  1 variable:
+##   ..$ user_id: chr [1:5000] &amp;quot;891529978201780224&amp;quot; &amp;quot;811251016410664960&amp;quot; &amp;quot;891556417739608064&amp;quot; &amp;quot;843245938449833984&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;1545261800668264448&amp;quot;
+##  $ mikkopiippo    :&#39;data.frame&#39;:	4860 obs. of  1 variable:
+##   ..$ user_id: chr [1:4860] &amp;quot;770326630145282048&amp;quot; &amp;quot;703923734&amp;quot; &amp;quot;49542761&amp;quot; &amp;quot;122129148&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ rtraborn       :&#39;data.frame&#39;:	1073 obs. of  1 variable:
+##   ..$ user_id: chr [1:1073] &amp;quot;369101147&amp;quot; &amp;quot;81882372&amp;quot; &amp;quot;2639088547&amp;quot; &amp;quot;33867913&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ b_prasad26     :&#39;data.frame&#39;:	2426 obs. of  1 variable:
+##   ..$ user_id: chr [1:2426] &amp;quot;75321229&amp;quot; &amp;quot;15851807&amp;quot; &amp;quot;484023344&amp;quot; &amp;quot;177444328&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ ozjimbob       :&#39;data.frame&#39;:	980 obs. of  1 variable:
+##   ..$ user_id: chr [1:980] &amp;quot;17707546&amp;quot; &amp;quot;804157677177868288&amp;quot; &amp;quot;916685508&amp;quot; &amp;quot;2546258378&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ ricobert1      :&#39;data.frame&#39;:	707 obs. of  1 variable:
+##   ..$ user_id: chr [1:707] &amp;quot;88731801&amp;quot; &amp;quot;153234994&amp;quot; &amp;quot;19878055&amp;quot; &amp;quot;2743609942&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+##  $ PlethodoNick   :&#39;data.frame&#39;:	1961 obs. of  1 variable:
+##   ..$ user_id: chr [1:1961] &amp;quot;42486688&amp;quot; &amp;quot;15576928&amp;quot; &amp;quot;2154127088&amp;quot; &amp;quot;337318821&amp;quot; ...
+##   ..- attr(*, &amp;quot;next_cursor&amp;quot;)= chr &amp;quot;0&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So what I need to do now is i) append the two lists, ii) create a variable stating top users&amp;rsquo; name in each of those lists and iii) turn lists into data frames. All this can be done in 3 lines of code. And brace yourself: here comes the &lt;code&gt;purrr&lt;/code&gt; trick I&amp;rsquo;ve been going on about! Simply using &lt;code&gt;purrr:::map2_df&lt;/code&gt; I can take a single list of lists, create a name variable in each of those lists based on the list name (&lt;code&gt;twitter_top_user&lt;/code&gt;) and convert the result into the data frame. BRILLIANT!!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# turning lists into data frames and putting them together
+friends_top30 &amp;lt;- append(friends_top30a, friends_top30b)
+names(friends_top30) &amp;lt;- top_30_usernames
+
+# purrr - trick I&#39;ve been banging on about!
+friends_top &amp;lt;- map2_df(friends_top30, names(friends_top30), ~ mutate(.x, twitter_top_user = .y)) %&amp;gt;% 
+  rename(friend_id = user_id) %&amp;gt;% select(twitter_top_user, friend_id)
+
+# are we missing any users?
+friends_top %&amp;gt;% summarize(dist = n_distinct(twitter_top_user))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##   dist
+## 1   30
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the last bit that I need to correct before we move to plotting the friends networks: for some reason, using &lt;code&gt;purrr::map()&lt;/code&gt; with &lt;code&gt;rtweet:::get_friends()&lt;/code&gt; gives me only 5000 friends, whereas the true value is over 8000. As it&amp;rsquo;s the only top user with more than 5000 friends, I&amp;rsquo;ll download his friends separately&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# getting a full list of friends
+SJ1 &amp;lt;- get_friends(&amp;quot;TheSmartJokes&amp;quot;)
+SJ2 &amp;lt;- get_friends(&amp;quot;TheSmartJokes&amp;quot;, page = next_cursor(SJ1))
+
+# putting the data frames together 
+SJ_friends &amp;lt;-rbind(SJ1, SJ2) %&amp;gt;%  
+  rename(friend_id = user_id) %&amp;gt;% 
+  mutate(twitter_top_user = &amp;quot;TheSmartJokes&amp;quot;) %&amp;gt;% 
+  select(twitter_top_user, friend_id)
+
+# the final results - over 8000 friends, rather than 5000
+str(SJ_friends) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:	0 obs. of  2 variables:
+##  $ twitter_top_user: chr 
+##  $ friend_id       : chr
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and use it to replace those that are already in the final friends list.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;friends_top30 &amp;lt;- friends_top %&amp;gt;% 
+  filter(twitter_top_user != &amp;quot;TheSmartJokes&amp;quot;) %&amp;gt;% 
+  rbind(SJ_friends) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Some final data cleaning: filtering out friends that are not among the top 30 R - users, replacing their IDs with twitter names and adding gender for top users and their friends&amp;hellip; Tam, tam, tam: here we are! Here&amp;rsquo;s the final data frame we&amp;rsquo;ll use for visualising the friends networks!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# select friends that are top30 users
+final_friends_top30 &amp;lt;- friends_top  %&amp;gt;% 
+  filter(friend_id %in% top30_lookup$user_id)
+
+# add friends&#39; screen_name
+final_friends_top30$friend_name &amp;lt;- top30_lookup$screen_name[match(final_friends_top30$friend_id, top30_lookup$user_id)]
+
+# add users&#39; and friends&#39; gender
+final_friends_top30$user_gender &amp;lt;- top30_lookup$gender[match(final_friends_top30$twitter_top_user, top30_lookup$screen_name)]
+final_friends_top30$friend_gender &amp;lt;- top30_lookup$gender[match(final_friends_top30$friend_name, top30_lookup$screen_name)]
+
+## final product!!!
+final &amp;lt;- final_friends_top30 %&amp;gt;% select(-friend_id)
+
+head(final)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##   twitter_top_user     friend_name user_gender friend_gender
+## 1         hrbrmstr nicoleradziwill           M             F
+## 2         hrbrmstr        kara_woo           M             F
+## 3         hrbrmstr      juliasilge           M             F
+## 4         hrbrmstr        noamross           M             M
+## 5         hrbrmstr      JennyBryan           M             F
+## 6         hrbrmstr     thosjleeper           M             M
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;visualizating-friends-networks&#34;&gt;VISUALIZATING FRIENDS NETWORKS&lt;/h4&gt;
+
+&lt;p&gt;After turning our data frame into something more usable by &lt;code&gt;igraph&lt;/code&gt; and &lt;code&gt;ggraph&lt;/code&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;f1 &amp;lt;- graph_from_data_frame(final, directed = TRUE, vertices = NULL)
+V(f1)$Popularity &amp;lt;- degree(f1, mode = &#39;in&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; let&amp;rsquo;s have a quick overview of all the connections:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ggraph(f1, layout=&#39;kk&#39;) + 
+  geom_edge_fan(aes(alpha = ..index..), show.legend = FALSE) +
+  geom_node_point(aes(size = Popularity)) +
+  theme_graph( fg_text_colour = &#39;black&#39;) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-08-13-friendships-among-top-twitterers_files/pure_graph-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Keep in mind that &lt;code&gt;Popularity&lt;/code&gt; -  defined as the number of edges that go &lt;strong&gt;into&lt;/strong&gt; the node - determines node size. It&amp;rsquo;s all pretty, but I&amp;rsquo;d like to see how nodes correspond to Twitter users&amp;rsquo; names:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ggraph(f1, layout=&#39;kk&#39;) + 
+  geom_edge_fan(aes(alpha = ..index..), show.legend = FALSE) +
+  geom_node_point(aes(size = Popularity)) +
+  geom_node_text(aes(label = name, fontface=&#39;bold&#39;), 
+                 color = &#39;white&#39;, size = 3) +
+  theme_graph(background = &#39;dimgray&#39;, text_colour = &#39;white&#39;,title_size = 30) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-08-13-friendships-among-top-twitterers_files/names_graph-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So interesting! You see the core of the graph consisting of mainly female users: @hpster, @JennyBryan, @juliasilge, @karawoo, but also a couple of male R - users: @hrbrmstr and @noamross. Who do they follow? Men or women?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ggraph(f1, layout=&#39;kk&#39;) + 
+  geom_edge_fan(aes(alpha = ..index..), show.legend = FALSE) +
+  geom_node_point(aes(size = Popularity)) +
+  theme_graph( fg_text_colour = &#39;black&#39;) +
+  geom_edge_link(aes(colour = friend_gender)) +
+  scale_edge_color_brewer(palette = &#39;Set1&#39;) + 
+  labs(title=&#39;Top 30 #rstats users and gender of their friends&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-08-13-friendships-among-top-twitterers_files/user_gender-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s difficult to say definitely, but superficially I see A LOT of red, suggesting that our top R - users often follow female top twitterers. Let&amp;rsquo;s have a closer look and split graphs by user gender and see if there&amp;rsquo;s any difference in the gender of users they follow:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ggraph(f1, layout=&#39;kk&#39;) + 
+  geom_edge_fan(aes(alpha = ..index..), show.legend = FALSE) +
+  geom_node_point(aes(size = Popularity)) +
+  theme_graph( fg_text_colour = &#39;black&#39;) +
+  facet_edges(~user_gender) +
+  geom_edge_link(aes(colour = friend_gender)) +
+  scale_edge_color_brewer(palette = &#39;Set1&#39;) +
+  labs(title=&#39;Top 30 #rstats users and gender of their friends&#39;, subtitle=&#39;Graphs are separated by top user gender, edge colour indicates their friend gender&#39; )
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-08-13-friendships-among-top-twitterers_files/user_gender2-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ha! look at this! Obviously, Female users&amp;rsquo; graph will be less dense as there are fewer of them in the dataset, however, you can see that they tend to follow male users more often than male top users do. Is that impression supported by raw numbers?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;final %&amp;gt;% 
+  group_by(user_gender, friend_gender) %&amp;gt;% 
+  summarize(n = n()) %&amp;gt;% 
+  group_by(user_gender) %&amp;gt;% 
+  mutate(sum = sum(n),
+         percent = round(n/sum, 2)) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 5
+## # Groups:   user_gender [2]
+##   user_gender friend_gender     n   sum percent
+##         &amp;lt;chr&amp;gt;         &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1           F             F    26    57    0.46
+## 2           F             M    31    57    0.54
+## 3           M             F    55   101    0.54
+## 4           M             M    46   101    0.46
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It looks so, although to the lesser extend than suggested by the network graphs: Female top users follower other female top users 46% of time, whereas male top users follow female top user 54% of time. So what do you have to say about that?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Cluster Validation In Unsupervised Machine Learning</title>
       <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
@@ -1704,434 +2050,6 @@ valid_test &amp;lt;- clValid(m_wine, c(2:4, 15),
 &lt;div id=&#34;before-you-go&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;BEFORE YOU GO&lt;/h2&gt;
 &lt;p&gt;Coming to the end of this post, it’s important to stress that there are more packages and methods you can use to evaluate your clusters (for the start, I would explore &lt;a href=&#34;ftp://ftp.u-aizu.ac.jp/pub/lang/R/CRAN/web/packages/clusteval/index.html&#34;&gt;clusteval package&lt;/a&gt; ), but these quick glimpses can go a long way and give you a good idea of what works for your data and what doesn’t.&lt;/p&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Determining the optimal number of clusters in your dataset</title>
-      <link>/post/optimal-number-of-clusters/</link>
-      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/optimal-number-of-clusters/</guid>
-      <description>&lt;p&gt;Recently, I worked a bit with &lt;strong&gt;cluster analysis&lt;/strong&gt;: the common method in &lt;a href=&#34;https://en.wikipedia.org/wiki/Unsupervised_learning&#34;&gt;unsupervised learning&lt;/a&gt; that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.&lt;/p&gt;
-&lt;div id=&#34;quick-intro&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;QUICK INTRO&lt;/h3&gt;
-&lt;p&gt;Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data. Most popular clustering learners (e.g. k-means) expect you to specify the number of segments to be found. However, clusters as such don’t exist in firm reality, so more often than not you don’t know what is the optimal number of clusters for a given dataset.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;There are multiple methods you can use in order to determine what is the optimal number of segments for your data and that is what I’m going to review in this post.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;I’m not going to go into details of each algorithm’s workings, but will provide references for you to follow up if you want to find out more.&lt;/p&gt;
-&lt;p&gt;Keep in mind that this list is not complete (for more complete list check out this &lt;a href=&#34;http://stackoverflow.com/a/15376462&#34;&gt;excellent StackOverflow answer&lt;/a&gt; ) and that not all approaches will return the same answer. In such case, my advise would be: try several methods - the more consistency between different approaches, the better - pick the most commonly returned number of clusters, evaluate their consistency and structure (I’ll cover how to do it in the next post) and check if they make sense from the real world point of view.&lt;/p&gt;
-&lt;p&gt;So there we go!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;wine-dataset&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;WINE DATASET&lt;/h3&gt;
-&lt;p&gt;For this exercise, I’ll use a popular &lt;code&gt;wine&lt;/code&gt; datasets that you can find built into R under several packages (e.g. &lt;code&gt;gclus&lt;/code&gt;, &lt;code&gt;HDclassif&lt;/code&gt; or &lt;code&gt;rattle&lt;/code&gt; packages). The full description of the dataset you can find &lt;a href=&#34;https://archive.ics.uci.edu/ml/datasets/Wine&#34;&gt;here&lt;/a&gt;, but essentially if contains results of a chemical analysis of 3 different types of wines grown in the same region in Italy. I’m &lt;strong&gt;guessing&lt;/strong&gt; that the three types of wine (described by &lt;code&gt;Class&lt;/code&gt; variable in the dataset) mean white, red and rose, but I couldn’t find anything to confirm it or to disclose which Class in the data corresponds to which wine type… Anyway! Let’s load the data and have a quick look at it:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## loading packages
-library(dplyr)
-library(knitr)
-library(gclus)
-
-# loading data
-data(wine)
-head(wine) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;Class&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.23&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.71&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;15.6&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;127&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.06&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.29&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;5.64&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1065&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.20&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.78&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.14&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;11.2&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;100&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.65&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.76&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.26&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.28&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4.38&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.40&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1050&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.16&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.36&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.67&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;18.6&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;101&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.30&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.81&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;5.68&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.03&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.17&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1185&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.37&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.95&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.50&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;16.8&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.85&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.49&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.18&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;7.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.45&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1480&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;13.24&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.59&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.87&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;21.0&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;118&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.80&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.69&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.82&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4.32&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.04&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.93&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;735&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;14.20&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.76&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.45&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;15.2&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;112&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.27&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3.39&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.34&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.97&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;6.75&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.85&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1450&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(wine$Class)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-##  1  2  3 
-## 59 71 48&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Next, I’ll remove the &lt;code&gt;Class&lt;/code&gt; variable, as I don’t want it to affect clustering, and scale the data.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;scaled_wine &amp;lt;- scale(wine) %&amp;gt;% as.data.frame()
-
-scaled_wine2 &amp;lt;- scaled_wine[-1]
-
-head(scaled_wine2) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;Alcohol&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Malic&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Ash&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Alcalinity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Magnesium&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Phenols&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Flavanoids&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Nonflavanoid&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proanthocyanins&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Intensity&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Hue&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;OD280&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Proline&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.5143408&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5606682&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2313998&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.1663032&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.9085215&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0319081&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.6577078&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2214385&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2510088&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.8427215&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0101594&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.2455968&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4980086&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8256672&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-2.4838405&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0180940&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5670481&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7315653&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8184106&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5431887&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.2924962&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1103172&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.9625263&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.1963252&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0211715&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1062139&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.2679823&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0881098&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2121137&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4970050&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.1299594&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2682629&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3173170&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7863692&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.3912237&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.6867914&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.3458351&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4865539&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8069748&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.9282998&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.4844372&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.4623994&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.9791134&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.0292513&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1827317&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4264485&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1807407&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.3280068&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.2948684&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2270533&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.8352256&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4506745&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.2783790&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8067217&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.6614853&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.2261576&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4002753&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.3183774&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3610679&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4483365&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0377675&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1.4773871&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.5159113&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3043010&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.2860793&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.8582840&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.5576991&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.3622851&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.1755994&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.6623487&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7298108&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.4048188&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.3356589&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;2.2327407&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;br&gt; Keep in mind that many presented algorithms rely on random starts (e.g. k-means), so I set a seed wherever I can so that we have reproducible examples.&lt;/p&gt;
-&lt;p&gt;Now we can start clustering extravaganza!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;determining-the-optimal-number-of-clusters&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;DETERMINING THE OPTIMAL NUMBER OF CLUSTERS&lt;/h3&gt;
-&lt;div id=&#34;elbow-method&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;1. ELBOW METHOD&lt;/h4&gt;
-&lt;p&gt;In short, the elbow method maps the within-cluster sum of squares onto the number of possible clusters. As a rule of thumb, you pick the number for which you see a significant decrease in the within-cluster dissimilarity, or so called ‘elbow’. You can find more details &lt;a href=&#34;https://www.coursera.org/learn/machine-learning/lecture/Ks0E9/choosing-the-number-of-clusters&#34;&gt;here&lt;/a&gt; or &lt;a href=&#34;https://rstudio-pubs-static.s3.amazonaws.com/92318_20357e6dd99742eb90232c60c626fa90.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Let’s see what happens when we apply the Elbow Method to our dataset:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
-
-wss &amp;lt;- (nrow(scaled_wine2)-1)*sum(apply(scaled_wine2,2,var))
-for (i in 2:15) wss[i] &amp;lt;- sum(kmeans(scaled_wine2,
-                                     centers=i)$withinss)
-plot(1:15, wss, type=&amp;quot;b&amp;quot;, xlab=&amp;quot;Number of Clusters&amp;quot;,
-     ylab=&amp;quot;Within groups sum of squares&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;In this example, we see an ‘elbow’ at 3 clusters. By adding more clusters than that we get relatively smaller gains. So… 3 clusters!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;silhouette-analysis&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;2. SILHOUETTE ANALYSIS&lt;/h4&gt;
-&lt;p&gt;The silhouette plots display a measure of how close each point in one cluster is to points in the neighboring clusters. This measure ranges from -1 to 1, where 1 means that points are very close to their own cluster and far from other clusters, whereas -1 indicates that points are close to the neighbouring clusters. You’ll find more details about silhouette analysis &lt;a href=&#34;https://en.wikipedia.org/wiki/Silhouette_(clustering)&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://kapilddatascience.wordpress.com/2015/11/10/using-silhouette-analysis-for-selecting-the-number-of-cluster-for-k-means-clustering/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;When we run the silhouette analysis on our wine dataset, we get the following graphs with indication on the optimal number of clusters:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(fpc)
-
-set.seed(13)
-
-pamk.best2 &amp;lt;- pamk(scaled_wine2)
-cat(&amp;quot;number of clusters estimated by optimum average silhouette width:&amp;quot;, pamk.best2$nc, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## number of clusters estimated by optimum average silhouette width: 3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(pam(scaled_wine2, pamk.best2$nc))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Thus, it’s 3 clusters again.&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;gap-statistics&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;3. GAP STATISTICS&lt;/h4&gt;
-&lt;p&gt;Gap statistic is a goodness of clustering measure, where for each hypothetical number of clusters k, it compares two functions: log of within-cluster sum of squares (wss) with its expectation under the null reference distribution of the data. In essence, it standardizes wss. It chooses the value where the log(wss) is the farthest below the reference curve, ergo the gap statistic is maximum. Pretty neat!&lt;/p&gt;
-&lt;p&gt;If you want to know more, check out &lt;a href=&#34;https://www.google.co.uk/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=8&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;ved=0ahUKEwjen9q-7rjTAhUeM8AKHcijBOEQFghpMAc&amp;amp;url=https%3A%2F%2Flabs.genetics.ucla.edu%2Fhorvath%2FBiostat278%2FGapStatistics.ppt&amp;amp;usg=AFQjCNFaWjeeR1F2UpJIskxYaBFt0eKZKg&amp;amp;sig2=sQflpWNvc8BPu7ovHLyKuQ&#34;&gt;this presentation&lt;/a&gt; for a very good explanation and visualization of what gap statistic is.&lt;/p&gt;
-&lt;p&gt;Also, for even more details, see &lt;a href=&#34;chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/https://web.stanford.edu/~hastie/Papers/gap.pdf&#34;&gt;the original paper&lt;/a&gt; where the gap statistic was first described, it’s like a good novel!&lt;/p&gt;
-&lt;p&gt;In the case of our wine dataset, gap analysis picks (again!) 3 cluster as an optimum:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cluster)
-
-set.seed(13)
-
-clusGap(scaled_wine2, kmeans, 10, B = 100, verbose = interactive())&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Clustering Gap statistic [&amp;quot;clusGap&amp;quot;] from call:
-## clusGap(x = scaled_wine2, FUNcluster = kmeans, K.max = 10, B = 100,     verbose = interactive())
-## B=100 simulated reference sets, k = 1..10; spaceH0=&amp;quot;scaledPCA&amp;quot;
-##  --&amp;gt; Number of clusters (method &amp;#39;firstSEmax&amp;#39;, SE.factor=1): 3
-##           logW   E.logW       gap     SE.sim
-##  [1,] 5.377557 5.864072 0.4865153 0.01261541
-##  [2,] 5.203502 5.757547 0.5540456 0.01356018
-##  [3,] 5.066921 5.697040 0.6301193 0.01404664
-##  [4,] 5.033404 5.651970 0.6185658 0.01410140
-##  [5,] 4.992739 5.616114 0.6233751 0.01342023
-##  [6,] 4.955442 5.584673 0.6292313 0.01304916
-##  [7,] 4.933420 5.556602 0.6231820 0.01250233
-##  [8,] 4.908585 5.531523 0.6229379 0.01299415
-##  [9,] 4.884336 5.508464 0.6241281 0.01209969
-## [10,] 4.858595 5.488182 0.6295870 0.01336910&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;hierarchical-clustering&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;4. HIERARCHICAL CLUSTERING&lt;/h4&gt;
-&lt;p&gt;Hierarchical clustering is usually used to better understand the structure and relationships in your data and based on them you decide what number of clusters seems appropriate for your purpose. The way the algorithm works is very well described &lt;a href=&#34;http://www.analytictech.com/networks/hiclus.htm&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.saedsayad.com/clustering_hierarchical.htm&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;How to choose the optimal number of clusters based on the output of this analysis, the dendogram? As a rule of thumb, look for the clusters with the longest ‘branches’, the shorter they are, the more similar they are to following ‘twigs’ and ‘leaves’. But keep in mind that, as always, the optimal number will also depend on the context, expert knowledge, application, etc.&lt;/p&gt;
-&lt;p&gt;In our case, the solution is rather blurred:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
-
-wine_dist2 &amp;lt;- dist(as.matrix(scaled_wine2))   # find distance matrix
-plot(hclust(wine_dist2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Personally, I would go for something between 2 and 4 clusters. What do you think? :-)&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;calinsky-criterion&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;5. CALINSKY CRITERION&lt;/h4&gt;
-&lt;p&gt;yet another method evaluating optimal number of clusters based on within- and between-cluster distances. For more details, see &lt;a href=&#34;http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In the example below we set the number of clusters to test between 1 and 10 and we iterated the test 1000 times.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)
-
-set.seed(13)
-
-cal_fit2 &amp;lt;- cascadeKM(scaled_wine2, 1, 10, iter = 1000)
-plot(cal_fit2, sortg = TRUE, grpmts.plot = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;calinski.best2 &amp;lt;- as.numeric(which.max(cal_fit2$results[2,]))
-cat(&amp;quot;Calinski criterion optimal number of clusters:&amp;quot;, calinski.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Calinski criterion optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br&gt; Again, 3 clusters!&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;bayesian-information-criterion-for-expectation---maximization&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;6. BAYESIAN INFORMATION CRITERION FOR EXPECTATION - MAXIMIZATION&lt;/h4&gt;
-&lt;p&gt;This time in order to determine the optimal number of cluters we simultaneously run and compare several probabilistic models and pick the best one based on their BIC (Bayesian Information Criterion) score. For more details, make sure to read &lt;a href=&#34;http://rstudio-pubs-static.s3.amazonaws.com/154174_78c021bc71ab42f8add0b2966938a3b8.html&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.7.8739&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In the example below, we set the search of optimal number of clusters to be between 1 and 20.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mclust)
-
-set.seed(13)
-
-d_clust2 &amp;lt;- Mclust(as.matrix(scaled_wine2), G=1:20)
-m.best2 &amp;lt;- dim(d_clust2$z)[2]
-
-cat(&amp;quot;model-based optimal number of clusters:&amp;quot;, m.best2, &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## model-based optimal number of clusters: 3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d_clust2)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-1.png&#34; /&gt;
-
-&lt;/div&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-2.png&#34; /&gt;
-
-&lt;/div&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-3.png&#34; /&gt;
-
-&lt;/div&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-4.png&#34; /&gt;
-
-&lt;/div&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;And this time, the optimal number of clusters seems to be 4.&lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;affinity-propagation-clustering&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;7. AFFINITY PROPAGATION CLUSTERING&lt;/h4&gt;
-&lt;p&gt;I’ll be quite honest with you: I’ve struggled to get my head around what affinity propagation is about! I understood that it clusters data by identifying a subset of representative examples, so called &lt;strong&gt;exemplars&lt;/strong&gt;. And it does so by considering all data points as potential exemplars, but the rest is magic to me..&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[and\]&lt;/span&gt; exchanging real-valued messages between data points until a high-quality set of exemplars and corresponding clusters gradually emerges.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;em&gt;(according to &lt;a href=&#34;www.cs.columbia.edu/~delbert/docs/DDueck-thesis_small.pdf&#34;&gt;Delbert Dueck&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;So if you have a better explanation or better materials.. send them over!&lt;/p&gt;
-&lt;p&gt;In our particular case, this algorithm identified&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(apcluster)
-
-set.seed(13)
-
-d.apclus2 &amp;lt;- apcluster(negDistMat(r=2), scaled_wine2)
-cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length(d.apclus2@clusters), &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## affinity propogation optimal number of clusters: 15&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;heatmap(d.apclus2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(d.apclus2, scaled_wine2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;summary&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;SUMMARY&lt;/h3&gt;
-&lt;p&gt;At least 4 (5, if including hierarchical clustering results) out of 7 tested algorithms suggested 3 as an optimal number of clusters for our data, which is a reasonable way forward, given that the analysed data contained information for 3 classes of wines ;-) In the next post I’ll evaluate those clusters in terms of their stability: how dissolved they are or how often they get recovered.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
