@@ -70,6 +70,15 @@
     </item>
     
     <item>
+      <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
+      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
+      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
+      <description>I get bored from doing two things: i) spot-checking + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they take a panda bear for a vulture!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function h2o.automl() that may help me automate the former and b) Thomas Lin Pedersen&amp;rsquo;s library(lime) that may help clarify the latter.</description>
+    </item>
+    
+    <item>
       <title>Cluster Validation In Unsupervised Machine Learning</title>
       <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
@@ -97,16 +106,6 @@ QUICK INTRO Clustering algorithms aim to establish a structure of your data and 
       
       <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
       <description>It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from here using rvest and xml2 packages:</description>
-    </item>
-    
-    <item>
-      <title>Amazon reviews wordcloud</title>
-      <link>/post/amazon-reviews-word-cloud/</link>
-      <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/amazon-reviews-word-cloud/</guid>
-      <description>In the last month I discovered two things that changed my life: audiobooks and Yuval Harari. The former completely transformed my daily commute, the latter changed the way I think about the surrounding world (with more appreciation for history and politics, to say the least). The cocktail of the two made my brain cells sing.
-Harari published two books in the last three years: Sapiens: A Brief History of Humankind and more recently: Homo Deus: A Brief History of Tomorrow.</description>
     </item>
     
   </channel>

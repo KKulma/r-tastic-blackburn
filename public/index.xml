@@ -1167,6 +1167,351 @@ final_tokens %&amp;gt;%
     </item>
     
     <item>
+      <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
+      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
+      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
+      <description>
+
+&lt;p&gt;I get bored from doing two things: i) &lt;a href=&#34;https://machinelearningmastery.com/why-you-should-be-spot-checking-algorithms-on-your-machine-learning-problems/&#34;&gt;spot-checking&lt;/a&gt; + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they &lt;a href=&#34;https://codewords.recurse.com/issues/five/why-do-neural-networks-think-a-panda-is-a-vulture&#34;&gt;take a panda bear for a vulture&lt;/a&gt;!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function &lt;code&gt;h2o.automl()&lt;/code&gt; that may help me automate the former and b) &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Pedersen&lt;/a&gt;&amp;rsquo;s &lt;code&gt;library(lime)&lt;/code&gt; that may help clarify the latter.&lt;/p&gt;
+
+&lt;h3 id=&#34;accurate-automated-predictive-models-using-h2o-automl&#34;&gt;ACCURATE &amp;amp; AUTOMATED PREDICTIVE MODELS USING &lt;code&gt;h2o.automl()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;This post would never happen if not for the inspiration I got from two excellent blog posts: &lt;a href=&#34;https://twitter.com/ShirinGlander&#34;&gt;Shirin Glander&lt;/a&gt;&amp;rsquo;s &lt;a href=&#34;https://shiring.github.io/machine_learning/2017/04/23/lime&#34;&gt;Lime presentation&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/mdancho84&#34;&gt;Matt Dancho&lt;/a&gt; &amp;rsquo;s &lt;a href=&#34;http://www.business-science.io/business/2017/09/18/hr_employee_attrition.html&#34;&gt;HR data analysis&lt;/a&gt;. There&amp;rsquo;s no hiding that this post is basically copy-catting their work - at least I&amp;rsquo;m standing on the shoulders of giants, hey!&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ll use the powerful &lt;code&gt;h2o.automl()&lt;/code&gt; function to optimise and choose the most accurate model classifying benign and malignant cancer cells from the Wisconsin dataset.&lt;/p&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s load the data:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;### loading cancer data ####
+library(mlbench)
+
+data(BreastCancer)
+str(BreastCancer)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    699 obs. of  11 variables:
+##  $ Id             : chr  &amp;quot;1000025&amp;quot; &amp;quot;1002945&amp;quot; &amp;quot;1015425&amp;quot; &amp;quot;1016277&amp;quot; ...
+##  $ Cl.thickness   : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 5 5 3 6 4 8 1 2 2 4 ...
+##  $ Cell.size      : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 4 1 8 1 10 1 1 1 2 ...
+##  $ Cell.shape     : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 4 1 8 1 10 1 2 1 1 ...
+##  $ Marg.adhesion  : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 5 1 1 3 8 1 1 1 1 ...
+##  $ Epith.c.size   : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 2 7 2 3 2 7 2 2 2 2 ...
+##  $ Bare.nuclei    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 10 2 4 1 10 10 1 1 1 ...
+##  $ Bl.cromatin    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 3 3 3 3 3 9 3 3 1 2 ...
+##  $ Normal.nucleoli: Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 2 1 7 1 7 1 1 1 1 ...
+##  $ Mitoses        : Factor w/ 9 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
+##  $ Class          : Factor w/ 2 levels &amp;quot;benign&amp;quot;,&amp;quot;malignant&amp;quot;: 1 1 1 1 1 2 1 1 1 1 ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;.. and do some data cleaning: change column names, get rid of the order in factor levels and remove rows with empty cells:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;### data pre-processing ####
+
+library(dplyr)
+library(janitor)
+library(h2o)
+
+bc_edited =
+  BreastCancer %&amp;gt;% 
+  janitor::clean_names() %&amp;gt;% # changes dots in colnames to underscores
+  mutate_if(is.factor, factor, ordered = FALSE) %&amp;gt;% # changes all columns to unordered factors
+  select(class, everything(), -id) %&amp;gt;% 
+  na.omit() 
+
+str(bc_edited)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    683 obs. of  10 variables:
+##  $ class          : Factor w/ 2 levels &amp;quot;benign&amp;quot;,&amp;quot;malignant&amp;quot;: 1 1 1 1 1 2 1 1 1 1 ...
+##  $ cl_thickness   : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 5 5 3 6 4 8 1 2 2 4 ...
+##  $ cell_size      : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 4 1 8 1 10 1 1 1 2 ...
+##  $ cell_shape     : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 4 1 8 1 10 1 2 1 1 ...
+##  $ marg_adhesion  : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 5 1 1 3 8 1 1 1 1 ...
+##  $ epith_c_size   : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 2 7 2 3 2 7 2 2 2 2 ...
+##  $ bare_nuclei    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 10 2 4 1 10 10 1 1 1 ...
+##  $ bl_cromatin    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 3 3 3 3 3 9 3 3 1 2 ...
+##  $ normal_nucleoli: Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 2 1 7 1 7 1 1 1 1 ...
+##  $ mitoses        : Factor w/ 9 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
+##  - attr(*, &amp;quot;na.action&amp;quot;)=Class &#39;omit&#39;  Named int [1:16] 24 41 140 146 159 165 236 250 276 293 ...
+##   .. ..- attr(*, &amp;quot;names&amp;quot;)= chr [1:16] &amp;quot;24&amp;quot; &amp;quot;41&amp;quot; &amp;quot;140&amp;quot; &amp;quot;146&amp;quot; ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s better! Now, let&amp;rsquo;s set up the local H2O instance&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;h2o.init() # initializes Java Virtual Machine (JVM)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##  Connection successful!
+## 
+## R is connected to the H2O cluster: 
+##     H2O cluster uptime:         7 hours 8 minutes 
+##     H2O cluster version:        3.14.0.3 
+##     H2O cluster version age:    1 month and 16 days  
+##     H2O cluster name:           H2O_started_from_R_katarzynakulma_ihv753 
+##     H2O cluster total nodes:    1 
+##     H2O cluster total memory:   0.11 GB 
+##     H2O cluster total cores:    4 
+##     H2O cluster allowed cores:  4 
+##     H2O cluster healthy:        TRUE 
+##     H2O Connection ip:          localhost 
+##     H2O Connection port:        54321 
+##     H2O Connection proxy:       NA 
+##     H2O Internal Security:      FALSE 
+##     H2O API Extensions:         XGBoost, Algos, AutoML, Core V3, Core V4 
+##     R Version:                  R version 3.3.3 (2017-03-06)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;h2o.no_progress() # Turn off output of progress bars
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and split the data into training, validation and testing datasets.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bc_h2o &amp;lt;- as.h2o(bc_edited)
+
+split_h2o &amp;lt;- h2o.splitFrame(bc_h2o, c(0.7, 0.15), seed = 13 ) #splits data into random 70%/15%15% chunks
+
+train_h2o &amp;lt;- h2o.assign(split_h2o[[1]], &amp;quot;train&amp;quot; ) # 70%
+valid_h2o &amp;lt;- h2o.assign(split_h2o[[2]], &amp;quot;valid&amp;quot; ) # 15%
+test_h2o  &amp;lt;- h2o.assign(split_h2o[[3]], &amp;quot;test&amp;quot; )  # 15%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, we can now use the famous &lt;code&gt;h2o.automl()&lt;/code&gt; function and set the model up: set the target, feature names, training and validation sets, as well as how long we want the algorithm to run for (for this you can use either &lt;code&gt;max_runtime_secs&lt;/code&gt; argument, like I did here, or &lt;code&gt;max_models&lt;/code&gt;, see &lt;a href=&#34;https://h2o-release.s3.amazonaws.com/h2o/rel-vapnik/1/docs-website/h2o-docs/automl.html&#34;&gt;&lt;code&gt;h2o.automl()&lt;/code&gt; documentation&lt;/a&gt; for details.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Sets target and feature names for h2o
+y &amp;lt;- &amp;quot;class&amp;quot;
+x &amp;lt;- setdiff(names(train_h2o), y)        
+
+# Run the automated machine learning 
+models_h2o &amp;lt;- h2o.automl(
+  x = x, # predictors
+  y = y, # labels
+  training_frame    = train_h2o, # training set
+  leaderboard_frame = valid_h2o, # validation set
+  max_runtime_secs  = 60 # run-time can be increased/decreased according to your needs
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The algorithm will run random forest (RF), gradient boosting machines (GBM), generalised linear models (GLM) and deep learning (DL) models. It will then produce a leaderboard based on the best stopping metric (which you can choose by defining &lt;code&gt;stopping_metric&lt;/code&gt; parameter). For more details see &lt;a href=&#34;https://www.safaribooksonline.com/library/view/practical-machine-learning/9781491964590/ch04.html&#34;&gt;this chapter&lt;/a&gt; from &lt;a href=&#34;http://shop.oreilly.com/product/0636920053170.do&#34;&gt;Practical Machine Learning with H2O by Darren Cook&lt;/a&gt;. You can see the best model by picking up a &lt;code&gt;@leader&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;### leaderboard
+
+lb &amp;lt;- models_h2o@leaderboard
+lb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##                                    model_id      auc  logloss
+## 1     DeepLearning_0_AutoML_20171107_162913 0.996622 0.081152
+## 2     DeepLearning_0_AutoML_20171107_230040 0.994932 0.090049
+## 3 GBM_grid_1_AutoML_20171107_162650_model_1 0.994088 0.637539
+## 4 GBM_grid_1_AutoML_20171107_170043_model_6 0.993243 0.101251
+## 5 GBM_grid_1_AutoML_20171107_230502_model_0 0.993243 0.104345
+## 6 GBM_grid_0_AutoML_20171107_170043_model_4 0.992821 0.107482
+## 
+## [402 rows x 3 columns]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Neural network wins, followed by gradient boost models - no surprise here!&lt;/p&gt;
+
+&lt;p&gt;Finally, you can use the Leader to predict labels of the testing set:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;automl_leader &amp;lt;- models_h2o@leader
+
+h20_pred &amp;lt;- h2o.predict(automl_leader, test_h2o)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It &lt;strong&gt;IS&lt;/strong&gt; that easy, no joke. Let&amp;rsquo;s have a quick look at the confusion matrix&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;library(tibble)
+
+test_performance &amp;lt;- test_h2o %&amp;gt;%
+  tibble::as_tibble() %&amp;gt;%
+  select(class) %&amp;gt;%
+  tibble::add_column(prediction = as.vector(h20_pred$predict)) %&amp;gt;%
+  mutate(correct = ifelse(class == prediction, &amp;quot;correct&amp;quot;, &amp;quot;wrong&amp;quot;)) %&amp;gt;% 
+  mutate_if(is.character, as.factor)
+
+head(test_performance)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##       class prediction correct
+##      &amp;lt;fctr&amp;gt;     &amp;lt;fctr&amp;gt;  &amp;lt;fctr&amp;gt;
+## 1    benign     benign correct
+## 2    benign     benign correct
+## 3 malignant     benign   wrong
+## 4    benign     benign correct
+## 5 malignant  malignant correct
+## 6 malignant  malignant correct
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;confusion_matrix &amp;lt;- test_performance %&amp;gt;% select(-correct) %&amp;gt;% table() 
+confusion_matrix
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##            prediction
+## class       benign malignant
+##   benign        61         1
+##   malignant      5        33
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and more detailed performance of the model.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#### Performance analysis ####
+tn &amp;lt;- confusion_matrix[1]
+tp &amp;lt;- confusion_matrix[4]
+fp &amp;lt;- confusion_matrix[3]
+fn &amp;lt;- confusion_matrix[2]
+
+accuracy &amp;lt;- (tp + tn) / (tp + tn + fp + fn)
+misclassification_rate &amp;lt;- 1 - accuracy
+recall &amp;lt;- tp / (tp + fn)
+precision &amp;lt;- tp / (tp + fp)
+null_error_rate &amp;lt;- tn / (tp + tn + fp + fn)
+
+library(purrr)
+
+tibble(
+  accuracy,
+  misclassification_rate,
+  recall,
+  precision,
+  null_error_rate
+) %&amp;gt;% 
+  purrr::transpose() 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [[1]]
+## [[1]]$accuracy
+## [1] 0.94
+## 
+## [[1]]$misclassification_rate
+## [1] 0.06
+## 
+## [[1]]$recall
+## [1] 0.8684211
+## 
+## [[1]]$precision
+## [1] 0.9705882
+## 
+## [[1]]$null_error_rate
+## [1] 0.61
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given that it is cancer data I&amp;rsquo;d be happier if &lt;a href=&#34;https://www.quora.com/What-does-recall-mean-in-machine-learning&#34;&gt;recall&lt;/a&gt; was higher, but longer running times would improve this. Now, can we understand the neural network - the king of &amp;lsquo;black-box&amp;rsquo; learners - that produced those predictions?&lt;/p&gt;
+
+&lt;h3 id=&#34;making-obscure-less-obscure-using-library-lime&#34;&gt;MAKING OBSCURE LESS OBSCURE USING &lt;code&gt;library(lime)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;The answer is (to certain extend) &lt;strong&gt;YES&lt;/strong&gt; and package &lt;code&gt;lime&lt;/code&gt; will help us with it. Following Shirin&amp;rsquo;s example, I&amp;rsquo;ll split the data into correct and wrong predictions to better understand what confused the model about misclassified observations.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;test_h2o_df = as.data.frame(test_h2o)
+
+test_h2o_2 = test_h2o_df %&amp;gt;%
+  as.data.frame() %&amp;gt;% 
+  mutate(sample_id = rownames(test_h2o_df ))
+
+test_correct &amp;lt;- test_performance %&amp;gt;% 
+  mutate(sample_id = rownames(test_performance)) %&amp;gt;% 
+  filter(correct == &#39;correct&#39;) %&amp;gt;%
+  inner_join(test_h2o_2) %&amp;gt;% 
+  select(-c(prediction, correct, sample_id))
+
+test_wrong &amp;lt;- test_performance %&amp;gt;% 
+  mutate(sample_id = rownames(test_performance)) %&amp;gt;% 
+  filter(correct == &#39;wrong&#39;) %&amp;gt;%
+  inner_join(test_h2o_2) %&amp;gt;% 
+  select(-c(prediction, correct, sample_id))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s prepare &lt;code&gt;lime&lt;/code&gt; so that it works with H2O model correctly. No one will explain this step better than Matt (the author) himself:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;code&gt;lime&lt;/code&gt; package implements LIME in R. One thing to note is that it’s not setup out-of-the-box to work with h2o. The good news is with a few functions we can get everything working properly. We’ll need to make two custom functions:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;model_type&lt;/code&gt;: Used to tell lime what type of model we are dealing with. It could be classification, regression, survival, etc.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;predict_model&lt;/code&gt;: Used to allow lime to perform predictions that its algorithm can interpret.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;library(lime)
+
+# Setup lime::model_type() function for h2o
+model_type.H2OBinomialModel &amp;lt;- function(x, ...) {
+  return(&amp;quot;classification&amp;quot;)
+}
+
+# Setup lime::predict_model() function for h2o
+predict_model.H2OBinomialModel &amp;lt;- function(x, newdata, type, ...) {
+  pred &amp;lt;- h2o.predict(x, as.h2o(newdata))
+  # return probs
+  return(as.data.frame(pred[,-1]))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;re nearly there! Let&amp;rsquo;s just define our explainer&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;predict_model(x = automl_leader, newdata = as.data.frame(test_h2o[,-1]), type = &#39;raw&#39;) %&amp;gt;%
+  tibble::as_tibble()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 2
+##        benign    malignant
+##         &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;
+##  1 0.99912117 0.0008788323
+##  2 0.99911889 0.0008811068
+##  3 0.86410812 0.1358918824
+##  4 0.99884181 0.0011581938
+##  5 0.02542826 0.9745717393
+##  6 0.01327680 0.9867232037
+##  7 0.02752797 0.9724720317
+##  8 0.80216260 0.1978373974
+##  9 0.99859496 0.0014050448
+## 10 0.99271180 0.0072882030
+## # ... with 90 more rows
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;explainer &amp;lt;- lime::lime(
+  as.data.frame(train_h2o[,-1]), 
+  model          = automl_leader, 
+  bin_continuous = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and let&amp;rsquo;s start explaining! All our work so far lead to this feature importance plots (not the same for each case!). The green bars mean that the feature supports predicted label, and the red bars contradict it. Let&amp;rsquo;s have a look at the correctly predicted labels:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;explanation_corr &amp;lt;- explain(
+  test_correct[1:9, -1],
+  explainer = explainer,
+  n_labels = 1,
+  n_features = 5,
+  kernel_width = 0.5)
+
+plot_features(explanation_corr, ncol = 3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can see that smaller and more regular cells with low values of bare nuclei (&lt;code&gt;bare_nuclei&lt;/code&gt;) correctly indicate benign cells, whereas big, irregular cells with higher values of clump thickness (&lt;code&gt;cl_thickness&lt;/code&gt;) support malignant label. It all makes sense.&lt;/p&gt;
+
+&lt;p&gt;What about the misclasified labels?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;explanation_wrong &amp;lt;- explain(
+  test_wrong[1:6, -1],
+  explainer = explainer,
+  n_labels = 1,
+  n_features = 5,
+  kernel_width = 0.5)
+
+plot_features(explanation_wrong)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And here&amp;rsquo;s where the true power of &lt;code&gt;lime&lt;/code&gt; package is: understanding what made model missclasify labels. All the wrong cases were predcited to be benign while they were malignant, why? It looks like they were mainly small and quite regular cells, altough some malignant characterstics were still present (e.g. higher values of bare nuclei and clump thickness). What a great improvement of our understanding of how the &amp;lsquo;black box&amp;rsquo; model works and why it makes mistakes. Even though it doesn&amp;rsquo;t produce &amp;lsquo;fixed&amp;rsquo; feature importance plots (i.e. a general, not case-to-case view of which variables are most informative when making a prediction), it allows you to make a good educated guess of which features matter. We live in beautiful times!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Cluster Validation In Unsupervised Machine Learning</title>
       <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
@@ -1788,247 +2133,6 @@ cat(&amp;quot;affinity propogation optimal number of clusters:&amp;quot;, length
 &lt;h3&gt;SUMMARY&lt;/h3&gt;
 &lt;p&gt;At least 4 (5, if including hierarchical clustering results) out of 7 tested algorithms suggested 3 as an optimal number of clusters for our data, which is a reasonable way forward, given that the analysed data contained information for 3 classes of wines ;-) In the next post I’ll evaluate those clusters in terms of their stability: how dissolved they are or how often they get recovered.&lt;/p&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Scraping online table with info on R datasets</title>
-      <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
-      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
-      <description>&lt;p&gt;It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from &lt;a href=&#34;https://vincentarelbundock.github.io/Rdatasets/datasets.html&#34;&gt;here&lt;/a&gt; using &lt;code&gt;rvest&lt;/code&gt; and &lt;code&gt;xml2&lt;/code&gt; packages:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# loading packages
-library(rvest)
-library(xml2)
-library(dplyr)
-library(knitr)
-
-# URL to scrape
-url &amp;lt;- &amp;quot;https://vincentarelbundock.github.io/Rdatasets/datasets.html&amp;quot;
-
-# scrape the table with relevant info
-r_datasets &amp;lt;- read_html(url) %&amp;gt;% # read url
-    html_nodes(&amp;quot;table&amp;quot;) %&amp;gt;% # extract all the tables
-   .[[2]] %&amp;gt;% # it&amp;#39;s the second table we want
-    html_table() # convert it to a usable format (data.frame)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;As a result, we get a tidy data frame…&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;str(r_datasets)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## &amp;#39;data.frame&amp;#39;:    1162 obs. of  11 variables:
-##  $ Package      : chr  &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; &amp;quot;boot&amp;quot; ...
-##  $ Item         : chr  &amp;quot;acme&amp;quot; &amp;quot;aids&amp;quot; &amp;quot;aircondit&amp;quot; &amp;quot;aircondit7&amp;quot; ...
-##  $ Title        : chr  &amp;quot;Monthly Excess Returns&amp;quot; &amp;quot;Delay in AIDS Reporting in England and Wales&amp;quot; &amp;quot;Failures of Air-conditioning Equipment&amp;quot; &amp;quot;Failures of Air-conditioning Equipment&amp;quot; ...
-##  $ Rows         : int  60 570 12 24 8437 23 100 49 823 10 ...
-##  $ Cols         : int  3 6 1 1 4 3 4 2 3 5 ...
-##  $ has_logical  : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ has_binary   : logi  FALSE TRUE FALSE FALSE TRUE TRUE ...
-##  $ has_numeric  : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
-##  $ has_character: logi  TRUE FALSE FALSE FALSE FALSE FALSE ...
-##  $ CSV          : chr  &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; &amp;quot;CSV&amp;quot; ...
-##  $ Doc          : chr  &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; &amp;quot;DOC&amp;quot; ...&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% 
-  select(-c(CSV, Doc)) %&amp;gt;% 
-  head() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##   Package       Item                                           Title Rows
-## 1    boot       acme                          Monthly Excess Returns   60
-## 2    boot       aids    Delay in AIDS Reporting in England and Wales  570
-## 3    boot  aircondit          Failures of Air-conditioning Equipment   12
-## 4    boot aircondit7          Failures of Air-conditioning Equipment   24
-## 5    boot       amis                  Car Speeding and Warning Signs 8437
-## 6    boot        aml Remission Times for Acute Myelogenous Leukaemia   23
-##   Cols has_logical has_binary has_numeric has_character
-## 1    3       FALSE      FALSE        TRUE          TRUE
-## 2    6       FALSE       TRUE        TRUE         FALSE
-## 3    1       FALSE      FALSE        TRUE         FALSE
-## 4    1       FALSE      FALSE        TRUE         FALSE
-## 5    4       FALSE       TRUE        TRUE         FALSE
-## 6    3       FALSE       TRUE        TRUE         FALSE&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;.. that we can filter freely, according to our needs:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% filter(Rows &amp;gt;= 1000 &amp;amp; Cols &amp;gt;= 50) %&amp;gt;% 
-  kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Item&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Title&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Rows&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Cols&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_logical&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_binary&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_numeric&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_character&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;CSV&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Doc&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Ecdat&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Car&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Stated Preferences for Car Choice&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4654&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;70&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;ISLR&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Caravan&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;The Insurance Company (TIC) Benchmark&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;5822&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;86&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;mosaicData&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;HELPfull&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Health Evaluation and Linkage to Primary Care&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1472&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;788&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;epi&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Eysenck Personality Inventory (EPI) data for 3570 participants&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3570&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;57&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;msq&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;75 mood items from the Motivational State Questionnaire for 3896 participants&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3896&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;92&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;msqR&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;75 mood items from the Motivational State Questionnaire for 3032 unique participants&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;6411&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;79&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;spi&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;A sample from the SAPA Personality Inventory including an item dictionary and scoring keys.&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;4000&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;145&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_datasets %&amp;gt;% filter(grepl(&amp;quot;cat&amp;quot;, Item)) %&amp;gt;% kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Item&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Title&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Rows&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;Cols&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_logical&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_binary&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_numeric&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;has_character&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;CSV&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;Doc&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;boot&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;catsM&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Weight Data for Domestic Cats&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;97&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;MASS&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;cats&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Anatomical Data from Domestic Cats&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;144&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;psych&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;cattell&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;12 cognitive variables from Cattell (1963)&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;robustbase&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;education&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Education Expenditure Data&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;50&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;CSV&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;DOC&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;This totally maked my life easier, so hope it will help you, too!&lt;/p&gt;
 </description>
     </item>
     
