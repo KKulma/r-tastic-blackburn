@@ -1,5 +1,5 @@
 ---
-title: Amazon reviews wordcloud
+title: Amazon Reviews Wordcloud
 author: Kasia Kulma
 date: '2017-03-07'
 slug: amazon-reviews-word-cloud
