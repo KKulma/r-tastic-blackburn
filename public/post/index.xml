@@ -89,6 +89,15 @@ BEFORE I START: OFF - TOPIC ON PERFECTIONISM After weeks and months (!</descript
     </item>
     
     <item>
+      <title>Animated Plots As Part Of Exploratory Data Analysis</title>
+      <link>/post/animated-plots-as-part-of-exploratory-data-analysis/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/animated-plots-as-part-of-exploratory-data-analysis/</guid>
+      <description>The internet seems to be booming with blog posts on animated graphs, whether it&amp;rsquo;s for more serious purposes or not so much. I didn&amp;rsquo;t think anything more of it than just a gimmick or a cool way of spicing up your conference talk. However, I&amp;rsquo;m a total convert now and in this post I want to show a real value that such graph can add to your (absolutely serious!) exploratory analysis.</description>
+    </item>
+    
+    <item>
       <title>Cluster Validation In Unsupervised Machine Learning</title>
       <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
@@ -97,16 +106,6 @@ BEFORE I START: OFF - TOPIC ON PERFECTIONISM After weeks and months (!</descript
       <description>In the previous post I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.
 In this post I’ll show a couple of tests for cluster validation that can be easily run in R.
 Let’s start!</description>
-    </item>
-    
-    <item>
-      <title>Determining the optimal number of clusters in your dataset</title>
-      <link>/post/optimal-number-of-clusters/</link>
-      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/optimal-number-of-clusters/</guid>
-      <description>Recently, I worked a bit with cluster analysis: the common method in unsupervised learning that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.
-QUICK INTRO Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
     </item>
     
   </channel>

@@ -58,6 +58,15 @@
     </item>
     
     <item>
+      <title>Data Vis</title>
+      <link>/tags/data-vis/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/data-vis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Ggplot2</title>
       <link>/tags/ggplot2/</link>
       <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
@@ -90,15 +99,6 @@
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/lime/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Machine Learning</title>
-      <link>/tags/machine-learning/</link>
-      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/machine-learning/</guid>
       <description></description>
     </item>
     
