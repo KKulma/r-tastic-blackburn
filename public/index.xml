@@ -717,6 +717,215 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
     </item>
     
     <item>
+      <title>Trump VS Clinton Interpretable Text Classifier</title>
+      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been writing/talking a lot about &lt;a href=&#34;https://www.oreilly.com/learning/introduction-to-local-interpretable-model-agnostic-explanations-lime&#34;&gt;LIME&lt;/a&gt; recently: in &lt;a href=&#34;https://kkulma.github.io/2017-11-07-automated_machine_learning_in_cancer_detection/&#34;&gt;this blog&lt;/a&gt;/ at &lt;a href=&#34;https://www.youtube.com/watch?v=CY3t11vuuOM&#34;&gt;H20 meetup&lt;/a&gt;, or at coming &lt;a href=&#34;https://theaicongress.com/&#34;&gt;AI Congress&lt;/a&gt; and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the &lt;a href=&#34;https://arxiv.org/abs/1602.04938&#34;&gt;original publication&lt;/a&gt;. &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Pedersen&lt;/a&gt; did an amazing job building &lt;code&gt;lime&lt;/code&gt; package for R with excellent documentation and &lt;a href=&#34;https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html&#34;&gt;vignette&lt;/a&gt;. In fact, the &lt;code&gt;lime&lt;/code&gt; vignette inspired a big part of this post. As you&amp;rsquo;ll soon see, &lt;code&gt;lime&lt;/code&gt; keeps on giving when it comes to text classification. What do you say for classifying Clinton and Trump tweets?&lt;/p&gt;
+
+&lt;p&gt;As always, let&amp;rsquo;s start with loading necessary packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;library(readr)
+library(lime)
+library(xgboost) # the classifier
+library(caret)
+library(dplyr)
+library(tibble)
+library(text2vec) 
+library(qdapRegex) # removes urls from text
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, let&amp;rsquo;s load the data that was kindly provided on &lt;a href=&#34;https://www.kaggle.com/benhamner/clinton-trump-tweets&#34;&gt;Kaggle&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tweets &amp;lt;- read_csv(&#39;data/tweets.csv&#39;)
+dim(tweets)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] 6444   28
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;head(tweets)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 28
+##             id          handle
+##          &amp;lt;dbl&amp;gt;           &amp;lt;chr&amp;gt;
+## 1 7.809256e+17  HillaryClinton
+## 2 7.809162e+17  HillaryClinton
+## 3 7.809116e+17  HillaryClinton
+## 4 7.809070e+17  HillaryClinton
+## 5 7.808974e+17  HillaryClinton
+## 6 7.808931e+17 realDonaldTrump
+## # ... with 26 more variables: text &amp;lt;chr&amp;gt;, is_retweet &amp;lt;chr&amp;gt;,
+## #   original_author &amp;lt;chr&amp;gt;, time &amp;lt;dttm&amp;gt;, in_reply_to_screen_name &amp;lt;chr&amp;gt;,
+## #   in_reply_to_status_id &amp;lt;dbl&amp;gt;, in_reply_to_user_id &amp;lt;dbl&amp;gt;,
+## #   is_quote_status &amp;lt;chr&amp;gt;, lang &amp;lt;chr&amp;gt;, retweet_count &amp;lt;int&amp;gt;,
+## #   favorite_count &amp;lt;int&amp;gt;, longitude &amp;lt;dbl&amp;gt;, latitude &amp;lt;dbl&amp;gt;, place_id &amp;lt;chr&amp;gt;,
+## #   place_full_name &amp;lt;chr&amp;gt;, place_name &amp;lt;chr&amp;gt;, place_type &amp;lt;chr&amp;gt;,
+## #   place_country_code &amp;lt;chr&amp;gt;, place_country &amp;lt;chr&amp;gt;,
+## #   place_contained_within &amp;lt;chr&amp;gt;, place_attributes &amp;lt;chr&amp;gt;,
+## #   place_bounding_box &amp;lt;chr&amp;gt;, source_url &amp;lt;chr&amp;gt;, truncated &amp;lt;chr&amp;gt;,
+## #   entities &amp;lt;chr&amp;gt;, extended_entities &amp;lt;chr&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Quick glimpse on the class balance, which looks very good, BTW.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;table(tweets$handle)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## 
+##  HillaryClinton realDonaldTrump 
+##            3226            3218
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, let&amp;rsquo;s clean the data a little: select only tweets text and author, change column names to something more readable and remove URLs from text.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;all_tweets &amp;lt;- tweets %&amp;gt;% 
+  rename(author = handle) %&amp;gt;% 
+  select(author, text) %&amp;gt;% 
+  mutate(text = qdapRegex::rm_url(text)) %&amp;gt;% #removes URLs from text
+  na.omit()
+
+head(as.data.frame(all_tweets))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##            author
+## 1  HillaryClinton
+## 2  HillaryClinton
+## 3  HillaryClinton
+## 4  HillaryClinton
+## 5  HillaryClinton
+## 6 realDonaldTrump
+##                                                                                                                                          text
+## 1                                           The question in this election: Who can put the plans into action that will make your life better?
+## 2                                           Last night, Donald Trump said not paying taxes was &amp;quot;smart.&amp;quot; You know what I call it? Unpatriotic.
+## 3 Couldn&#39;t be more proud of @HillaryClinton. Her vision and command during last night&#39;s debate showed that she&#39;s ready to be our next @POTUS.
+## 4                                                          If we stand together, there&#39;s nothing we can&#39;t do. Make sure you&#39;re ready to vote:
+## 5                                          Both candidates were asked about how they&#39;d confront racial injustice. Only one had a real answer.
+## 6                                             Join me for a 3pm rally - tomorrow at the Mid-America Center in Council Bluffs, Iowa! Tickets:…
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK, once we&amp;rsquo;re happy with the data, it&amp;rsquo;s time to split it into train and test sets - &lt;code&gt;caret&lt;/code&gt; package, as always, does a great job here.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;set.seed(1234)
+trainIndex &amp;lt;- createDataPartition(all_tweets$author, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+train_tweets &amp;lt;- all_tweets[ trainIndex,]
+test_tweets &amp;lt;- all_tweets[ -trainIndex,]
+
+str(train_tweets)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    5156 obs. of  2 variables:
+##  $ author: chr  &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; ...
+##  $ text  : chr  &amp;quot;The question in this election: Who can put the plans into action that will make your life better?&amp;quot; &amp;quot;Last night, Donald Trump said not paying taxes was \&amp;quot;smart.\&amp;quot; You know what I call it? Unpatriotic.&amp;quot; &amp;quot;Couldn&#39;t be more proud of @HillaryClinton. Her vision and command during last night&#39;s debate showed that she&#39;s &amp;quot;| __truncated__ &amp;quot;If we stand together, there&#39;s nothing we can&#39;t do. Make sure you&#39;re ready to vote:&amp;quot; ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In order to build the model, we need to tokenize our data and transform it to Document Term Matrices. In this example, I&amp;rsquo;ll use word-level tokens:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# tokenizes text data nad creates Document Term Matrix
+get_matrix &amp;lt;- function(text) {
+  it &amp;lt;- itoken(text, progressbar = FALSE)
+  create_dtm(it, vectorizer = hash_vectorizer())
+}
+
+dtm_train= get_matrix(train_tweets$text)
+dtm_test = get_matrix(test_tweets$text)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, time for the model. I used Extreme Gradient Boosting tree model for classification, which usually gives very good result, even with standard parameters:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;param &amp;lt;- list(max_depth = 7, 
+              eta = 0.1, 
+              objective = &amp;quot;binary:logistic&amp;quot;, 
+              eval_metric = &amp;quot;error&amp;quot;, 
+              nthread = 1)
+
+set.seed(1234)
+xgb_model &amp;lt;- xgb.train(
+  param, 
+  xgb.DMatrix(dtm_train, label = train_tweets$author == &amp;quot;realDonaldTrump&amp;quot;),
+  nrounds = 50,
+  verbose=0
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;How does the model do? Would you trust it based on accuracy alone?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# We use a (standard) threshold of 0.5
+predictions &amp;lt;- predict(xgb_model, dtm_test) &amp;gt; 0.5
+test_labels &amp;lt;- test_tweets$author == &amp;quot;realDonaldTrump&amp;quot;
+
+# Accuracy
+print(mean(predictions == test_labels))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] 0.8478261
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The model was accurate in 84% of cases, which is quite impressive, given how little we did in terms of data pre-processing and feature engineering. Now, what clues did the classifier pick on? Are they reasonable?&lt;/p&gt;
+
+&lt;p&gt;In order to understand this, I&amp;rsquo;ll run &lt;code&gt;lime&lt;/code&gt;&amp;rsquo;s &lt;code&gt;explainer()&lt;/code&gt; only on correctly predicted instances while ignoring misclassified observations. I&amp;rsquo;ll pick first 5 observations for interpretation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# select only correct predictions
+predictions_tb = predictions %&amp;gt;% as_tibble() %&amp;gt;% 
+  rename_(predict_label = names(.)[1]) %&amp;gt;%
+  tibble::rownames_to_column()
+
+correct_pred = test_tweets %&amp;gt;%
+  tibble::rownames_to_column() %&amp;gt;% 
+  mutate(test_label = author == &amp;quot;realDonaldTrump&amp;quot;) %&amp;gt;%
+  left_join(predictions_tb) %&amp;gt;%
+  filter(test_label == predict_label) %&amp;gt;% 
+  pull(text) %&amp;gt;% 
+  head(5)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, this is important. Before we run &lt;code&gt;explainer()&lt;/code&gt;, we need to detach &lt;code&gt;dplyr&lt;/code&gt; package, which is a bit of a pain when you go back and forth between different chunks of code that require or hate &lt;code&gt;dplyr&lt;/code&gt;, but there you go. There are worse things that can happen to your code, I suppose.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;detach(&amp;quot;package:dplyr&amp;quot;, unload=TRUE) # explainer will not run with dplyr in the workspace
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nearly there! Let&amp;rsquo;s just define the explainer and run it on the sample of correctly predicted tweets.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;explainer &amp;lt;- lime(correct_pred, model = xgb_model, 
+                  preprocess = get_matrix)
+
+corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1, 
+                       n_features = 6, cols = 2, verbose = 0)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ready? Here we go!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;plot_features(corr_explanation)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Remember that &lt;code&gt;Label == 1&lt;/code&gt; means Donald Trump was the author of the tweet, otherwise it was Hilary Clinton. What does &lt;code&gt;lime&lt;/code&gt; tell us? Funnily enough, it looks like presence of words like &lt;code&gt;Donald&lt;/code&gt;, &lt;code&gt;Trump&lt;/code&gt;, &lt;code&gt;candidate&lt;/code&gt; and &lt;code&gt;president&lt;/code&gt; indicates that Hilary was the author, whereas words like &lt;code&gt;Hilary&lt;/code&gt; and &lt;code&gt;me&lt;/code&gt; or &lt;code&gt;my&lt;/code&gt; are indicative of Donald Trump. Sounds reasonable to me ;)&lt;/p&gt;
+
+&lt;p&gt;If you feel somehow ill at ease with this kind of presentation of model interpretations, try running &lt;code&gt;plot_text_explanations()&lt;/code&gt; instead:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;plot_text_explanations(corr_explanation)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It will give you a clearer view of support or contradiction of certain words for a given label, if you&amp;rsquo;re interested only in direction but not strength of this relationship.&lt;/p&gt;
+
+&lt;p&gt;Last, but definitely not least, it&amp;rsquo;s possible to run a &lt;code&gt;shiny&lt;/code&gt; app to interactively explore text models. It&amp;rsquo;s not possible to run it in this blog, but all you need to do is run the following (single!) line of code to reveal its magic:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;interactive_text_explanations(explainer)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hope I managed to spread a bit of my love for &lt;code&gt;lime&lt;/code&gt;! Again, big thanks to Thomas for a great job he did with this package! I can&amp;rsquo;t wait to see support for image data in R - but no pressure, the whole Twitter knows how busy you are :) Cheers!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>End of Year thoughts</title>
       <link>/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
@@ -1820,165 +2029,6 @@ r_datasets &amp;lt;- read_html(url) %&amp;gt;% # read url
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;This totally maked my life easier, so hope it will help you, too!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Amazon reviews wordcloud</title>
-      <link>/post/amazon-reviews-word-cloud/</link>
-      <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/amazon-reviews-word-cloud/</guid>
-      <description>
-
-&lt;p&gt;In the last month I discovered two things that changed my life: audiobooks and &lt;a href=&#34;https://en.wikipedia.org/wiki/Yuval_Noah_Harari&#34;&gt;Yuval Harari&lt;/a&gt;. The former completely transformed my daily commute, the latter changed the way I think about the surrounding world (with more appreciation for history and politics, to say the least). The cocktail of the two made my brain cells sing.&lt;/p&gt;
-
-&lt;p&gt;Harari published two books in the last three years: &lt;a href=&#34;https://www.amazon.co.uk/Sapiens-Humankind-Yuval-Noah-Harari/dp/1846558239&#34;&gt;Sapiens: A Brief History of Humankind&lt;/a&gt; and more recently: &lt;a href=&#34;https://www.amazon.co.uk/Homo-Deus-Brief-History-Tomorrow/dp/1910701874/&#34;&gt;Homo Deus: A Brief History of Tomorrow&lt;/a&gt;. Both perspective - changing, right?&lt;/p&gt;
-
-&lt;p&gt;My opinions aside, what do other readers think about his books? Let&amp;rsquo;s dig into it by scraping Amazon reviews of &amp;ldquo;Sapiens&amp;rdquo; and then visualising their most common words in a wordcloud.&lt;/p&gt;
-
-&lt;h3 id=&#34;loading-packages&#34;&gt;loading packages&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;install.packages(&amp;quot;pacman&amp;quot;, repos = &amp;quot;http://cran.us.r-project.org&amp;quot;)
-pacman::p_load(XML, dplyr, stringr, rvest, xml2) # web-scraping
-pacman::p_load(tm, rvest, SnowballC, wordcloud) # wordcloud-building
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;importing-amazon-reviews-for-yuval-harari-s-sapiens&#34;&gt;importing Amazon reviews for Yuval Harari&amp;rsquo;s &amp;ldquo;Sapiens&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;The web-scraping procedures that follow were shamelessly &amp;ldquo;borrowed&amp;rdquo; from &lt;a href=&#34;https://justrthings.wordpress.com/2016/08/17/web-scraping-and-sentiment-analysis-of-amazon-reviews/&#34;&gt;Riki Saito&amp;rsquo;s blog&lt;/a&gt;. Thanks, mate!&lt;/p&gt;
-
-&lt;p&gt;The following code requires &lt;em&gt;Amazon&amp;rsquo;s product code&lt;/em&gt;, which can be found in the product&amp;rsquo;s URL. Next, it scrapes the product&amp;rsquo;s name, just to confirm we got everything right!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# define a function removing all white space
-trim &amp;lt;- function (x) gsub(&amp;quot;^\\s+|\\s+$&amp;quot;, &amp;quot;&amp;quot;, x)
-
-# define product code and the url
-prod_code = &amp;quot;1846558239&amp;quot;
-url &amp;lt;- paste0(&amp;quot;https://www.amazon.co.uk/dp/&amp;quot;, prod_code)
-doc &amp;lt;- xml2::read_html(url)
-
-#obtain the text in the node, remove &amp;quot;\n&amp;quot; from the text, and remove white space
-prod &amp;lt;- html_nodes(doc, &amp;quot;#productTitle&amp;quot;) %&amp;gt;% html_text() %&amp;gt;% gsub(&amp;quot;\n&amp;quot;, &amp;quot;&amp;quot;, .) %&amp;gt;% trim()
-prod
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;Sapiens: A Brief History of Humankind&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So far, so good. Now, after sourcing &lt;code&gt;amazon_scraper&lt;/code&gt; function from Riki&amp;rsquo;s Github page, I import first 50 pages of reviews of &lt;em&gt;Sapiens&lt;/em&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# THE KEY: Source function to parse Amazon html pages for data
-source(&amp;quot;https://raw.githubusercontent.com/rjsaito/Just-R-Things/master/Text%20Mining/amazonscraper.R&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;pages &amp;lt;- 50
-
-reviews_all &amp;lt;- NULL
-
-for(page_num in 1:pages){
-  url2 &amp;lt;- paste0(&amp;quot;http://www.amazon.co.uk/product-reviews/&amp;quot;,prod_code,&amp;quot;/?pageNumber=&amp;quot;, page_num)
-  doc2 &amp;lt;- read_html(url2)
-
-  reviews &amp;lt;- amazon_scraper(doc2, reviewer = F, delay = 2)
-  reviews_all &amp;lt;- rbind(reviews_all, reviews)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It looks like everything worked! The returned data frame contains not only date, title, author and content of every review, but also number of stars given, format of the book that the review is for and even the number of people that thought this particular review was helpful, priceless!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;str(reviews_all)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    500 obs. of  8 variables:
-##  $ title       : chr  &amp;quot;A subjective history of Humankind&amp;quot; &amp;quot;Insights on every page&amp;quot; &amp;quot;Thrilling iconoclastic book of human history&amp;quot; &amp;quot;Good view of the past, questionnable view of the future&amp;quot; ...
-##  $ author      : chr  &amp;quot;Strv 74&amp;quot; &amp;quot;M. D. Holley&amp;quot; &amp;quot;Wasim Zarniwoop&amp;quot; &amp;quot;Hugo&amp;quot; ...
-##  $ date        : chr  &amp;quot;17 November 2014&amp;quot; &amp;quot;27 September 2014&amp;quot; &amp;quot;10 September 2014&amp;quot; &amp;quot;19 January 2015&amp;quot; ...
-##  $ ver.purchase: num  1 0 1 1 0 1 0 1 1 0 ...
-##  $ format      : chr  &amp;quot;Format: Hardcover&amp;quot; &amp;quot;Format: Hardcover&amp;quot; &amp;quot;Format: Kindle Edition&amp;quot; &amp;quot;Format: Paperback&amp;quot; ...
-##  $ stars       : num  4 5 5 3 5 4 5 5 2 1 ...
-##  $ comments    : chr  &amp;quot;This book looked interesting and I bought it without having read up on everything about it. I thought is was about how we came &amp;quot;| __truncated__ &amp;quot;Beautifully written, this book contains one incredible idea: that the success of homo sapiens derives from our inclination to b&amp;quot;| __truncated__ &amp;quot;The problem with human prehistory is the lack of evidence and information. What we have is little and many books use this littl&amp;quot;| __truncated__ &amp;quot;I had given this book five stars in my original review. Then, I down-rated it to 4 stars. As I read more about the subjects in &amp;quot;| __truncated__ ...
-##  $ helpful     : num  109 174 89 120 54 39 67 2 26 73 ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this post I&amp;rsquo;ll focus on the review content only. Here&amp;rsquo;s what the exemplary comment looks like:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;reviews_all[1, 7]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;This book looked interesting and I bought it without having read up on everything about it. I thought is was about how we came to be the one surviving race of Humans on the planet. It was not. That was taken care of during the first 20 pages. The Rest is about how the single surviving human race developed into what we are today.But I am glad that I bought and read it because it was well worth reading. It is a tour through a number of different parts of human history that the author thinks has had a great influence on our species. It is a very easy read and the book is filled with facts that makes you stop and think before reading on. A lot of the theories that he puts forward are very interesting and at times thought provoking. Most of the times I found myself agreeing with his views or at least gave him credit for a very interesting view point.But there are also a number of points that he brings up that are not that convincing and in some cases probably wrong. Let me give you a few examples:- He states that the Middle East has never been as peaceful as today during the last 3000 years. This probably comes as a surprise to a lot of people fleeing from the ongoing wars. I am fairly certain that there were long periods of peace between wars during 1000 BC and 1 AD that had no wars at all.- He states that humans have not evolved during the last 70 000 years. If you put a 70 000 year old human up for an autopsy no one would know that he was 70 000 years old. This is a strange statement since humans mutate all the time and the rate of mutations has never been faster than during the last 500 years (see \&amp;quot;The 10 000 Year Explosion. How Civilization Accelerated Human Evolution\&amp;quot;)- He states that there is no proof that human intelligence has changed during the last 70 000 years. But only this year there has been published studies claiming that we are more intelligent than just 100 years ago. Of course we are more intelligent than thousands of years ago. That does not mean that people were not intelligent thousands of years ago as well.There are a lot of discussion on why men are still the rulers of the world and why women are now catching up. Here his views are not very convincing. His views on war has taken a sharp hit from the ongoing Russian war against Ukraine showing that even a book published in 2014  did not see that coming.His views on religion, sex and economy are far stronger and more convincing. But his logic behind proving that homosexuality is not \&amp;quot;unnatural\&amp;quot; (and of course it is not) also proves that all kinds of sexual variants are \&amp;quot;natural\&amp;quot;. Even those that are considered criminal today. Maybe a few more lines on this subject would have been helpful.Strange enough there are aspects of history that he for some reason does not discuss at all. One example is Democracy and the impact of that on the world. An other aspect is the environment.But the book is very engaging. You are all the time caught up in his argument and more often than not find yourself supporting them. A book well worth reading and discussing with your friends and colleagues.&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you can tell, it&amp;rsquo;s not in the best shape for the analysis: it contains punctuation signs, numbers, lower and upper letters, etc. Let&amp;rsquo;s sort it out by doing some text pre-processing:&lt;/p&gt;
-
-&lt;h3 id=&#34;text-pre-processing&#34;&gt;text pre-processing&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;#### creating corpus
-m &amp;lt;- list(content = &amp;quot;comments&amp;quot;)
-myReader &amp;lt;- readTabular(mapping = m)
-
-final_reviews &amp;lt;- data.frame(comments = reviews_all$comments)
-ds &amp;lt;- DataframeSource(final_reviews)
-
-## create corpus with all the reviews
-sapiens_corpus &amp;lt;- VCorpus(ds)
-
-## remove punctuation
-sapiens_corpus = tm_map(sapiens_corpus, removePunctuation)
-
-## remove numbers
-sapiens_corpus = tm_map(sapiens_corpus, removeNumbers)
-
-## LowerCase
-sapiens_corpus = tm_map(sapiens_corpus, tolower)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I also removed some uninformative words, together with English stopwords, to make the results clearer:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;## remove stopwords and other words
-myWords=c(&amp;quot;format&amp;quot;, &amp;quot;paperback&amp;quot;, &amp;quot;kindle&amp;quot;, &amp;quot;edit&amp;quot;, &amp;quot;hardcov&amp;quot;, &amp;quot;book&amp;quot;, &amp;quot;read&amp;quot;, &amp;quot;will&amp;quot;, &amp;quot;just&amp;quot;, &amp;quot;can&amp;quot;, &amp;quot;much&amp;quot;)
-
-sapiens_corpus &amp;lt;- tm_map(sapiens_corpus, removeWords, c(stopwords(&amp;quot;english&amp;quot;), myWords))
-
-## treat pre-processed documents as text documents
-sapiens_corpus &amp;lt;- tm_map(sapiens_corpus, PlainTextDocument)
-
-## turn into doc matrix
-sapiens_dtm &amp;lt;- DocumentTermMatrix(sapiens_corpus)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s have a quick peek into the top 20 most frequent words:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# displaying most frequent words
-freq &amp;lt;- sort(colSums(as.matrix(sapiens_dtm)), decreasing=TRUE)   
-head(freq, 20)  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##     history       human     sapiens         one      author        well
-##         257         181         151         144         112         112
-##      harari     reading        many interesting     thought     species
-##         110         104         100          99          97          96
-##      really        homo         way       think       world      humans
-##          92          91          85          84          82          78
-##        like        time
-##          78          78
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And finally, crème de la crème, the wordcloud showing 250 most frequent words found in Amazon reviews of &lt;em&gt;Sapiens&lt;/em&gt;:&lt;/p&gt;
-
-&lt;h3 id=&#34;creating-a-wordcloud-with-the-top-250-most-frequent-words&#34;&gt;creating a wordcloud with the top 250 most frequent words&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;pal=brewer.pal(9, &amp;quot;Set1&amp;quot;)
-
-set.seed(100)
-wordcloud(words = names(freq), freq = freq, max.words=250,
-          random.order=FALSE,
-          colors=pal)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-03-07-amazon-reviews-word-cloud_files/unnamed-chunk-10-1.png&#34; alt=&#34;wordcloud&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;As pretty as it looks, it&amp;rsquo;s not too informative regarding how positive / negative the reviews were. For this, in my next post I&amp;rsquo;ll run a &lt;a href=&#34;https://en.wikipedia.org/wiki/Sentiment_analysis&#34;&gt;sentiment analysis&lt;/a&gt; on reviews of both books, so watch this space!&lt;/p&gt;
 </description>
     </item>
     

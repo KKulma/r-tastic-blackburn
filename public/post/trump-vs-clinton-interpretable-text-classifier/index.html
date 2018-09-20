@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.47.1" />
+
+  <title>Trump VS Clinton Interpretable Text Classifier &middot; r-tastic</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2018. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Trump VS Clinton Interpretable Text Classifier</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>26 Jan 2018</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/lime">lime</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  <p>I&rsquo;ve been writing/talking a lot about <a href="https://www.oreilly.com/learning/introduction-to-local-interpretable-model-agnostic-explanations-lime">LIME</a> recently: in <a href="https://kkulma.github.io/2017-11-07-automated_machine_learning_in_cancer_detection/">this blog</a>/ at <a href="https://www.youtube.com/watch?v=CY3t11vuuOM">H20 meetup</a>, or at coming <a href="https://theaicongress.com/">AI Congress</a> and I&rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the <a href="https://arxiv.org/abs/1602.04938">original publication</a>. <a href="https://twitter.com/thomasp85">Thomas Lin Pedersen</a> did an amazing job building <code>lime</code> package for R with excellent documentation and <a href="https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html">vignette</a>. In fact, the <code>lime</code> vignette inspired a big part of this post. As you&rsquo;ll soon see, <code>lime</code> keeps on giving when it comes to text classification. What do you say for classifying Clinton and Trump tweets?</p>
+
+<p>As always, let&rsquo;s start with loading necessary packages.</p>
+
+<pre><code>library(readr)
+library(lime)
+library(xgboost) # the classifier
+library(caret)
+library(dplyr)
+library(tibble)
+library(text2vec) 
+library(qdapRegex) # removes urls from text
+</code></pre>
+
+<p>Next, let&rsquo;s load the data that was kindly provided on <a href="https://www.kaggle.com/benhamner/clinton-trump-tweets">Kaggle</a>.</p>
+
+<pre><code>tweets &lt;- read_csv('data/tweets.csv')
+dim(tweets)
+</code></pre>
+
+<pre><code>## [1] 6444   28
+</code></pre>
+
+<pre><code>head(tweets)
+</code></pre>
+
+<pre><code>## # A tibble: 6 x 28
+##             id          handle
+##          &lt;dbl&gt;           &lt;chr&gt;
+## 1 7.809256e+17  HillaryClinton
+## 2 7.809162e+17  HillaryClinton
+## 3 7.809116e+17  HillaryClinton
+## 4 7.809070e+17  HillaryClinton
+## 5 7.808974e+17  HillaryClinton
+## 6 7.808931e+17 realDonaldTrump
+## # ... with 26 more variables: text &lt;chr&gt;, is_retweet &lt;chr&gt;,
+## #   original_author &lt;chr&gt;, time &lt;dttm&gt;, in_reply_to_screen_name &lt;chr&gt;,
+## #   in_reply_to_status_id &lt;dbl&gt;, in_reply_to_user_id &lt;dbl&gt;,
+## #   is_quote_status &lt;chr&gt;, lang &lt;chr&gt;, retweet_count &lt;int&gt;,
+## #   favorite_count &lt;int&gt;, longitude &lt;dbl&gt;, latitude &lt;dbl&gt;, place_id &lt;chr&gt;,
+## #   place_full_name &lt;chr&gt;, place_name &lt;chr&gt;, place_type &lt;chr&gt;,
+## #   place_country_code &lt;chr&gt;, place_country &lt;chr&gt;,
+## #   place_contained_within &lt;chr&gt;, place_attributes &lt;chr&gt;,
+## #   place_bounding_box &lt;chr&gt;, source_url &lt;chr&gt;, truncated &lt;chr&gt;,
+## #   entities &lt;chr&gt;, extended_entities &lt;chr&gt;
+</code></pre>
+
+<p>Quick glimpse on the class balance, which looks very good, BTW.</p>
+
+<pre><code>table(tweets$handle)
+</code></pre>
+
+<pre><code>## 
+##  HillaryClinton realDonaldTrump 
+##            3226            3218
+</code></pre>
+
+<p>Finally, let&rsquo;s clean the data a little: select only tweets text and author, change column names to something more readable and remove URLs from text.</p>
+
+<pre><code>all_tweets &lt;- tweets %&gt;% 
+  rename(author = handle) %&gt;% 
+  select(author, text) %&gt;% 
+  mutate(text = qdapRegex::rm_url(text)) %&gt;% #removes URLs from text
+  na.omit()
+
+head(as.data.frame(all_tweets))
+</code></pre>
+
+<pre><code>##            author
+## 1  HillaryClinton
+## 2  HillaryClinton
+## 3  HillaryClinton
+## 4  HillaryClinton
+## 5  HillaryClinton
+## 6 realDonaldTrump
+##                                                                                                                                          text
+## 1                                           The question in this election: Who can put the plans into action that will make your life better?
+## 2                                           Last night, Donald Trump said not paying taxes was &quot;smart.&quot; You know what I call it? Unpatriotic.
+## 3 Couldn't be more proud of @HillaryClinton. Her vision and command during last night's debate showed that she's ready to be our next @POTUS.
+## 4                                                          If we stand together, there's nothing we can't do. Make sure you're ready to vote:
+## 5                                          Both candidates were asked about how they'd confront racial injustice. Only one had a real answer.
+## 6                                             Join me for a 3pm rally - tomorrow at the Mid-America Center in Council Bluffs, Iowa! Tickets:…
+</code></pre>
+
+<p>OK, once we&rsquo;re happy with the data, it&rsquo;s time to split it into train and test sets - <code>caret</code> package, as always, does a great job here.</p>
+
+<pre><code>set.seed(1234)
+trainIndex &lt;- createDataPartition(all_tweets$author, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+train_tweets &lt;- all_tweets[ trainIndex,]
+test_tweets &lt;- all_tweets[ -trainIndex,]
+
+str(train_tweets)
+</code></pre>
+
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    5156 obs. of  2 variables:
+##  $ author: chr  &quot;HillaryClinton&quot; &quot;HillaryClinton&quot; &quot;HillaryClinton&quot; &quot;HillaryClinton&quot; ...
+##  $ text  : chr  &quot;The question in this election: Who can put the plans into action that will make your life better?&quot; &quot;Last night, Donald Trump said not paying taxes was \&quot;smart.\&quot; You know what I call it? Unpatriotic.&quot; &quot;Couldn't be more proud of @HillaryClinton. Her vision and command during last night's debate showed that she's &quot;| __truncated__ &quot;If we stand together, there's nothing we can't do. Make sure you're ready to vote:&quot; ...
+</code></pre>
+
+<p>In order to build the model, we need to tokenize our data and transform it to Document Term Matrices. In this example, I&rsquo;ll use word-level tokens:</p>
+
+<pre><code># tokenizes text data nad creates Document Term Matrix
+get_matrix &lt;- function(text) {
+  it &lt;- itoken(text, progressbar = FALSE)
+  create_dtm(it, vectorizer = hash_vectorizer())
+}
+
+dtm_train= get_matrix(train_tweets$text)
+dtm_test = get_matrix(test_tweets$text)
+</code></pre>
+
+<p>Now, time for the model. I used Extreme Gradient Boosting tree model for classification, which usually gives very good result, even with standard parameters:</p>
+
+<pre><code>param &lt;- list(max_depth = 7, 
+              eta = 0.1, 
+              objective = &quot;binary:logistic&quot;, 
+              eval_metric = &quot;error&quot;, 
+              nthread = 1)
+
+set.seed(1234)
+xgb_model &lt;- xgb.train(
+  param, 
+  xgb.DMatrix(dtm_train, label = train_tweets$author == &quot;realDonaldTrump&quot;),
+  nrounds = 50,
+  verbose=0
+)
+</code></pre>
+
+<p>How does the model do? Would you trust it based on accuracy alone?</p>
+
+<pre><code># We use a (standard) threshold of 0.5
+predictions &lt;- predict(xgb_model, dtm_test) &gt; 0.5
+test_labels &lt;- test_tweets$author == &quot;realDonaldTrump&quot;
+
+# Accuracy
+print(mean(predictions == test_labels))
+</code></pre>
+
+<pre><code>## [1] 0.8478261
+</code></pre>
+
+<p>The model was accurate in 84% of cases, which is quite impressive, given how little we did in terms of data pre-processing and feature engineering. Now, what clues did the classifier pick on? Are they reasonable?</p>
+
+<p>In order to understand this, I&rsquo;ll run <code>lime</code>&rsquo;s <code>explainer()</code> only on correctly predicted instances while ignoring misclassified observations. I&rsquo;ll pick first 5 observations for interpretation.</p>
+
+<pre><code># select only correct predictions
+predictions_tb = predictions %&gt;% as_tibble() %&gt;% 
+  rename_(predict_label = names(.)[1]) %&gt;%
+  tibble::rownames_to_column()
+
+correct_pred = test_tweets %&gt;%
+  tibble::rownames_to_column() %&gt;% 
+  mutate(test_label = author == &quot;realDonaldTrump&quot;) %&gt;%
+  left_join(predictions_tb) %&gt;%
+  filter(test_label == predict_label) %&gt;% 
+  pull(text) %&gt;% 
+  head(5)
+</code></pre>
+
+<p>Now, this is important. Before we run <code>explainer()</code>, we need to detach <code>dplyr</code> package, which is a bit of a pain when you go back and forth between different chunks of code that require or hate <code>dplyr</code>, but there you go. There are worse things that can happen to your code, I suppose.</p>
+
+<pre><code>detach(&quot;package:dplyr&quot;, unload=TRUE) # explainer will not run with dplyr in the workspace
+</code></pre>
+
+<p>Nearly there! Let&rsquo;s just define the explainer and run it on the sample of correctly predicted tweets.</p>
+
+<pre><code>explainer &lt;- lime(correct_pred, model = xgb_model, 
+                  preprocess = get_matrix)
+
+corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1, 
+                       n_features = 6, cols = 2, verbose = 0)
+</code></pre>
+
+<p>Ready? Here we go!</p>
+
+<pre><code>plot_features(corr_explanation)
+</code></pre>
+
+<p><img src="/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png" alt="" /></p>
+
+<p>Remember that <code>Label == 1</code> means Donald Trump was the author of the tweet, otherwise it was Hilary Clinton. What does <code>lime</code> tell us? Funnily enough, it looks like presence of words like <code>Donald</code>, <code>Trump</code>, <code>candidate</code> and <code>president</code> indicates that Hilary was the author, whereas words like <code>Hilary</code> and <code>me</code> or <code>my</code> are indicative of Donald Trump. Sounds reasonable to me ;)</p>
+
+<p>If you feel somehow ill at ease with this kind of presentation of model interpretations, try running <code>plot_text_explanations()</code> instead:</p>
+
+<pre><code>plot_text_explanations(corr_explanation)
+</code></pre>
+
+<p><img src="/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png" alt="" /></p>
+
+<p>It will give you a clearer view of support or contradiction of certain words for a given label, if you&rsquo;re interested only in direction but not strength of this relationship.</p>
+
+<p>Last, but definitely not least, it&rsquo;s possible to run a <code>shiny</code> app to interactively explore text models. It&rsquo;s not possible to run it in this blog, but all you need to do is run the following (single!) line of code to reveal its magic:</p>
+
+<pre><code>interactive_text_explanations(explainer)
+</code></pre>
+
+<p>Hope I managed to spread a bit of my love for <code>lime</code>! Again, big thanks to Thomas for a great job he did with this package! I can&rsquo;t wait to see support for image data in R - but no pressure, the whole Twitter knows how busy you are :) Cheers!</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/end-of-year-thoughts/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/end-of-year-thoughts/">End of Year thoughts</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="next">
+      <a href="/post/prime-hints/">Prime hints for running a data project in R</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="/post/prime-hints/"><i class="fa fa-chevron-right"></i></a>
+    
+  </div>
+</div>
+
+
+
+  
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'https-r-tastic-co-uk';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-92539076-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+
+
+</body>
+</html>
+

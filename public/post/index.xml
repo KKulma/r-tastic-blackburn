@@ -43,6 +43,15 @@
     </item>
     
     <item>
+      <title>Trump VS Clinton Interpretable Text Classifier</title>
+      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <description>I&amp;rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
+    </item>
+    
+    <item>
       <title>End of Year thoughts</title>
       <link>/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
@@ -98,18 +107,6 @@ QUICK INTRO Clustering algorithms aim to establish a structure of your data and 
       <guid>/post/amazon-reviews-word-cloud/</guid>
       <description>In the last month I discovered two things that changed my life: audiobooks and Yuval Harari. The former completely transformed my daily commute, the latter changed the way I think about the surrounding world (with more appreciation for history and politics, to say the least). The cocktail of the two made my brain cells sing.
 Harari published two books in the last three years: Sapiens: A Brief History of Humankind and more recently: Homo Deus: A Brief History of Tomorrow.</description>
-    </item>
-    
-    <item>
-      <title>Did Disney Princesses distort girl names in USA?</title>
-      <link>/post/did-disney-princesses-distort-girl-names-in-usa/</link>
-      <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/did-disney-princesses-distort-girl-names-in-usa/</guid>
-      <description>My goal is to analyse how frequency of names found among Disney female characters changed over time in the US. Specifically, I want to see if the movie release had any impact on their popularity. For this purpose, I will use babynames dataset that is available on CRAN.
-The idea for the exercise was inspired by Sean Kross’ blog post
-Short description of the dataset from CRAN package description
-The SSA baby names data comes from social security number (SSN) applications.</description>
     </item>
     
   </channel>
