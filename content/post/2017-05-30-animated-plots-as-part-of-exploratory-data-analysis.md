@@ -129,7 +129,7 @@ evaluate("london_map = get_map(location = 'London', maptype='toner',  zoom = 10)
 ggmap(london_map)
 ```
 
-![](/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png)
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png" alt="" width="105%" height="105%"/>
 
 Not bad for two lines of code, ey!
 
@@ -147,7 +147,7 @@ weapon_london_heat_map<- ggmap(london_map, extent = "device") +
 weapon_london_heat_map
 ```
 
-<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="120%" height="120%"/>
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="105%" height="105%"/>
 
 Not bad at all! We can now identify the crime hotspots, but there's no way we can infer anything about the crime seasonality. And here's where the first serious use of animated graphs comes in!
 
@@ -173,7 +173,7 @@ map_anime<- ggmap(london_map, extent = "device") +
 gganimate(map_anime)
 ```
 
-<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="110%" height="110%"/>
+<img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="105%" height="105%"/>
 
 From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to 'focus' on more central areas, supposedly while keeping up with their criminal activity...?
 

@@ -1980,7 +1980,7 @@ evaluate(&amp;quot;london_map = get_map(location = &#39;London&#39;, maptype=&#3
 &lt;pre&gt;&lt;code&gt;ggmap(london_map)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
 
 &lt;p&gt;Not bad for two lines of code, ey!&lt;/p&gt;
 
@@ -1997,7 +1997,7 @@ evaluate(&amp;quot;london_map = get_map(location = &#39;London&#39;, maptype=&#3
 weapon_london_heat_map
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png&#34; alt=&#34;&#34; width=&#34;120%&#34; height=&#34;120%&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
 
 &lt;p&gt;Not bad at all! We can now identify the crime hotspots, but there&amp;rsquo;s no way we can infer anything about the crime seasonality. And here&amp;rsquo;s where the first serious use of animated graphs comes in!&lt;/p&gt;
 
@@ -2021,7 +2021,7 @@ map_anime&amp;lt;- ggmap(london_map, extent = &amp;quot;device&amp;quot;) +
 &lt;pre&gt;&lt;code&gt;gganimate(map_anime)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif&#34; alt=&#34;&#34; width=&#34;110%&#34; height=&#34;110%&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
 
 &lt;p&gt;From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to &amp;lsquo;focus&amp;rsquo; on more central areas, supposedly while keeping up with their criminal activity&amp;hellip;?&lt;/p&gt;
 
