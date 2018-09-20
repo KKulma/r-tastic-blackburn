@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.47.1" />
+
+  <title>Harari: Sentiment Analysis &middot; r-tastic</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2018. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Harari: Sentiment Analysis</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>28 Mar 2017</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/sentiment-analysis">sentiment analysis</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  
+
+<p>So! Following my <a href="https://kkulma.github.io/2017-03-07-amazon-reviews-wordcloud/">previous blog post</a> where I scraped Amazon reviews of Yuval Harari&rsquo;s <a href="https://kkulma.github.io/2017-03-07-amazon-reviews-wordcloud/"><em>Sapiens</em></a> to create a wordcloud based on them, here I will compare results of <a href="https://en.wikipedia.org/wiki/Sentiment_analysis">sentiment analysis</a> performed on Harari&rsquo;s two books: <a href="https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind"><em>Sapiens</em></a> and <a href="https://en.wikipedia.org/wiki/Homo_Deus:_A_Brief_History_of_Tomorrow"><em>Homo Deus</em></a>.</p>
+
+<h3 id="a-quick-intro"><strong>A QUICK INTRO</strong></h3>
+
+<p>For the context, <em>Sapiens</em> has been published originally in Hebrew in 2011. It, as <em>Wikipedia</em> puts it,</p>
+
+<blockquote>
+<p>[Sapiens] surveys the history of humankind from the evolution of archaic human species in the Stone Age up to the twenty-first century.</p>
+</blockquote>
+
+<p>It quickly became a bestseller, but it still took 4 years before Harari published his most recent book, and an overnight hit, <em>Homo Deus</em>:</p>
+
+<blockquote>
+<p>Homo Deus, as opposed to the previous book, deals more with the abilities acquired by mankind (Homo sapiens) throughout the years of its existence while basing itself as the dominant being in the world, and tries to paint an image of the future of mankind, if any <em>[Wikipedia]</em></p>
+</blockquote>
+
+<p>So, in both books the historical, philosophical, economical and biological synthesis of the human species played a big role, and in this sense they are similar. Still, <em>Sapiens</em> was the first of its kind and it probably set high expectations for the follower book. Additionally, <em>Homo Deus</em> makes some bold predictions about the future of human kind in the world ruled by algorithms and AI, and any such speculation will have a very polarizing effect.</p>
+
+<p><strong>For this reason, my prediction is that <em>Sapiens</em> will receive more positive reviews than <em>Homo Deus</em>.</strong> And there&rsquo;s only one way to find out if I&rsquo;m right, so let&rsquo;s get cracking!</p>
+
+<h3 id="sentiment-analysis"><strong>SENTIMENT ANALYSIS</strong></h3>
+
+<p>After loading necessary packages, I wrap up a scraping process described in my <a href="https://kkulma.github.io/2017-03-07-amazon-reviews-wordcloud/">previous blog post</a> into a <code>function_page()</code> function. I extract the first 12 pages of reviews for both books to have a comparable amount of data for analysis ( <em>&ldquo;Homo Deus&rdquo;</em> has been published in English only in September 2016). After some data cleaning, my data look like this:</p>
+
+<pre><code># load packages
+library(tidyverse)
+library(XML)
+library(xml2)
+library(tidytext)
+library(knitr)
+</code></pre>
+
+<pre><code>### scaping the reviews
+
+# product codes
+sapiens_code = &quot;1846558239&quot;
+homo_deus_code = &quot;1910701874&quot;
+
+#Source funtion to Parse Amazon html pages for data
+source(&quot;https://raw.githubusercontent.com/rjsaito/Just-R-Things/master/Text%20Mining/amazonscraper.R&quot;)
+
+# extract first 12 pages of reviews for each book
+pages &lt;- 12
+
+function_page &lt;- function(page_num, prod_code){
+  url2 &lt;- paste0(&quot;http://www.amazon.co.uk/product-reviews/&quot;,prod_code,&quot;/?pageNumber=&quot;, page_num)
+  doc2 &lt;- read_html(url2)
+
+  reviews &lt;- amazon_scraper(doc2, reviewer = F, delay = 2)
+  reviews
+}
+
+sapiens_reviews &lt;- map2(1:pages, sapiens_code, function_page) %&gt;% bind_rows()
+sapiens_reviews$comments &lt;- gsub(&quot;\\.&quot;, &quot;\\. &quot;, sapiens_reviews$comments) #add space after each full stop
+
+homo_deus_reviews &lt;- map2(1:pages, homo_deus_code, function_page) %&gt;% bind_rows()
+homo_deus_reviews$comments &lt;- gsub(&quot;\\.&quot;, &quot;\\. &quot;, homo_deus_reviews$comments) #add space after each full stop
+
+head(homo_deus_reviews, 2) %&gt;% kable()
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left">title</th>
+<th align="left">author</th>
+<th align="left">date</th>
+<th align="right">ver.purchase</th>
+<th align="left">format</th>
+<th align="right">stars</th>
+<th align="left">comments</th>
+<th align="right">helpful</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Sapiens demanded a follow-up</td>
+<td align="left">Sussman</td>
+<td align="left">6 February 2017</td>
+<td align="right">1</td>
+<td align="left">Format: Hardcover</td>
+<td align="right">4</td>
+<td align="left">In his bold and provocative book Sapiens, Yuval Noah Harari gives us a lexicon on who we are, how we got here, and where we are going. Like all great blockbusters, Sapiens demanded a follow-up. Homo Deus, in which that likely apocalyptic future is imagined in every tangible fact, is that book. Harari is clearly a man who thinks for himself so there are a plethora of innovative ideas contained within the book. This provoking tome is a highly appealing developmental planner for the various ways in which we might to do more than is possible for ourselves. “Modernity is a deal,” Harari writes. “The entire contract can be abridged in a single phrase: hominids agree to give up meaning in exchange for power. ” That authority, Harari advocates may perhaps, in the near term, may give us superhuman traits: the capacity to extend lifespans and even achieve immortality, the intervention to create new life forms, to become gifted designers of our own Eden, the means to end war, starvation, and disease. There will be a price to pay for this power, however. Homo Deus is easily one of the most interesting, human narratives, in a way that makes you think of new ideas. It has triggered me to doubt our whole human endeavour. There is a wealth of detail, in this tome, and it is probably a narrative, which we need to be reread.</td>
+<td align="right">1</td>
+</tr>
+
+<tr>
+<td align="left">A must read</td>
+<td align="left">darren</td>
+<td align="left">20 March 2017</td>
+<td align="right">1</td>
+<td align="left">Format: Kindle Edition</td>
+<td align="right">5</td>
+<td align="left">Following on from Sapiens this easy to read sequel will expand your mind. You may have developed a different outlook on life once you have read this.</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+
+<p>Looks like a good start to me! Next, I&rsquo;ll analyse and compare word sentiments between the two books. To achieve this, I write a function that breaks down review sentences into separate words and removes common English stop words, such as <em>you</em>, <em>at</em>, <em>above</em>, etc.</p>
+
+<pre><code>### sentiment analysis ####
+
+# Split a column with the reviews into separate words
+
+words_function &lt;- function(df){
+  df_words &lt;- df %&gt;%
+  select(date, comments, stars) %&gt;%
+  unnest_tokens(word, comments)
+
+  data(&quot;stop_words&quot;)
+
+  df_words &lt;- df_words %&gt;%
+    anti_join(stop_words)
+
+  df_words
+}
+
+sapiens_words &lt;- words_function(sapiens_reviews)
+homo_deus_words &lt;- words_function(homo_deus_reviews)
+</code></pre>
+
+<p>Now, there are several approaches to quantifying the amount of different sentiments in text (and thus using different relevant R lexicons) : you can associate a word with a given emotion, like joy, sadness, fear etc. (<strong>NRC lexicon</strong>), express whether a word is positive or negative (<strong>bing lexicon</strong>) or give it a numeric score between -5 and 5, where values under 0 indicate a negative sentiment and above 0 - the positive. Words scoring close to or equal zero are neutral (<strong>afinn lexicon</strong>).</p>
+
+<pre><code>get_sentiments(&quot;bing&quot;) %&gt;% head
+</code></pre>
+
+<pre><code>## # A tibble: 6 × 2
+##         word sentiment
+##        &lt;chr&gt;     &lt;chr&gt;
+## 1    2-faced  negative
+## 2    2-faces  negative
+## 3         a+  positive
+## 4   abnormal  negative
+## 5    abolish  negative
+## 6 abominable  negative
+</code></pre>
+
+<pre><code>get_sentiments(&quot;nrc&quot;) %&gt;% head
+</code></pre>
+
+<pre><code>## # A tibble: 6 × 2
+##        word sentiment
+##       &lt;chr&gt;     &lt;chr&gt;
+## 1    abacus     trust
+## 2   abandon      fear
+## 3   abandon  negative
+## 4   abandon   sadness
+## 5 abandoned     anger
+## 6 abandoned      fear
+</code></pre>
+
+<pre><code>get_sentiments(&quot;afinn&quot;) %&gt;% head
+</code></pre>
+
+<pre><code>## # A tibble: 6 × 2
+##         word score
+##        &lt;chr&gt; &lt;int&gt;
+## 1    abandon    -2
+## 2  abandoned    -2
+## 3   abandons    -2
+## 4   abducted    -2
+## 5  abduction    -2
+## 6 abductions    -2
+</code></pre>
+
+<p>I decided to use <strong>bing</strong> and <strong>afinn</strong> lexicons for my analysis, so all I need to do now is to use <code>left_join()</code> to add both of them to my data:</p>
+
+<pre><code>sapiens_words &lt;- sapiens_words %&gt;%
+  left_join(get_sentiments(&quot;bing&quot;), by = &quot;word&quot;) %&gt;%
+  left_join(get_sentiments(&quot;afinn&quot;), by = &quot;word&quot;) %&gt;%
+  mutate(book = &quot;Sapiens&quot;) %&gt;% unique()
+
+homo_deus_words &lt;- homo_deus_words %&gt;%
+  left_join(get_sentiments(&quot;bing&quot;), by = &quot;word&quot;) %&gt;%
+  left_join(get_sentiments(&quot;afinn&quot;), by = &quot;word&quot;) %&gt;%
+  mutate(book = &quot;Homo Deus&quot;) %&gt;% unique()
+
+all_words &lt;- bind_rows(sapiens_words, homo_deus_words)
+all_words %&gt;% arrange(sentiment) %&gt;% head() %&gt;% kable()
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left">date</th>
+<th align="right">stars</th>
+<th align="left">word</th>
+<th align="left">sentiment</th>
+<th align="right">score</th>
+<th align="left">book</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">12 January 2017</td>
+<td align="right">5</td>
+<td align="left">unbelievably</td>
+<td align="left">negative</td>
+<td align="right">NA</td>
+<td align="left">Sapiens</td>
+</tr>
+
+<tr>
+<td align="left">23 December 2016</td>
+<td align="right">4</td>
+<td align="left">unusual</td>
+<td align="left">negative</td>
+<td align="right">NA</td>
+<td align="left">Sapiens</td>
+</tr>
+
+<tr>
+<td align="left">11 March 2017</td>
+<td align="right">5</td>
+<td align="left">mess</td>
+<td align="left">negative</td>
+<td align="right">-2</td>
+<td align="left">Sapiens</td>
+</tr>
+
+<tr>
+<td align="left">6 March 2017</td>
+<td align="right">5</td>
+<td align="left">unnerving</td>
+<td align="left">negative</td>
+<td align="right">NA</td>
+<td align="left">Sapiens</td>
+</tr>
+
+<tr>
+<td align="left">7 October 2014</td>
+<td align="right">4</td>
+<td align="left">qualms</td>
+<td align="left">negative</td>
+<td align="right">NA</td>
+<td align="left">Sapiens</td>
+</tr>
+
+<tr>
+<td align="left">7 October 2014</td>
+<td align="right">4</td>
+<td align="left">slur</td>
+<td align="left">negative</td>
+<td align="right">NA</td>
+<td align="left">Sapiens</td>
+</tr>
+</tbody>
+</table>
+
+<p>Now we&rsquo;re ready to explore! For the start, comparing star ratings should give me a flavour of how positive the reviews were. Based on the distribution of stars, it looks like <em>Homo Deus</em> has more positive reviews than <em>Sapiens</em> (conversely to my predictions!):</p>
+
+<pre><code>all_words %&gt;%
+  group_by(book, stars) %&gt;%
+  summarize(n_stars = n()) %&gt;%
+  group_by(book) %&gt;%
+  mutate(n_reviews = sum(n_stars),
+         percent = paste0(round(n_stars*100/n_reviews, 0), &quot;%&quot;)) %&gt;%
+  select(-c(n_stars, n_reviews)) %&gt;%
+  spread(stars, percent)
+</code></pre>
+
+<pre><code>## Source: local data frame [2 x 6]
+## Groups: book [2]
+##
+##        book   `1`   `2`   `3`   `4`   `5`
+## *     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 Homo Deus    1%   11%    6%   30%   52%
+## 2   Sapiens    7%   14%   20%   22%   37%
+</code></pre>
+
+<p>Is the same trend shown in the <strong>afinn</strong> sentiment score?</p>
+
+<pre><code>all_words %&gt;%
+  ggplot(aes(x= book, y = score, color = book, fill = book)) +
+  geom_boxplot(outlier.shape=NA, alpha = 0.3) + #avoid plotting outliers twice
+  scale_color_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;)) +
+  scale_fill_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;))
+</code></pre>
+
+<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/score_box-1.png" alt="" /></p>
+
+<p>Not at all! Distribution of <strong>afinn</strong> sentiment score for both books looks very similar. Does it mean that the star number reflects different level of positivity in different book? Let&rsquo;s have a look:</p>
+
+<pre><code>### average sentiment score per star
+
+all_words %&gt;%
+  ggplot(aes(as.factor(stars), score)) +
+  geom_boxplot(aes(fill = book), alpha = 0.3) +
+  xlab(&quot;Number of stars&quot;)+
+    scale_color_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;)) +
+  scale_fill_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;))
+</code></pre>
+
+<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/avg_word_sent-1.png" alt="" /></p>
+
+<p>Not quite. Although the within-star_number difference in sentiment are not drastically different between the two books, indeed <em>Sapiens</em> tends to have its medians shifted upwards compared to <em>Homo Deus</em>.</p>
+
+<p>Will <strong>bing</strong> lexicon show similar patterns?</p>
+
+<pre><code>## ratio of positive / negative words per review
+
+all_words %&gt;%
+  filter(!is.na(sentiment)) %&gt;%
+  group_by(book, sentiment) %&gt;%
+  summarise(n = n() ) %&gt;%
+  group_by(book) %&gt;%
+  mutate(sum = sum(n),
+         percent = paste0(round(n*100/sum, 0), &quot;%&quot;)) %&gt;%
+  select(-c(n, sum)) %&gt;%
+  spread(sentiment, percent)
+</code></pre>
+
+<pre><code>## Source: local data frame [2 x 3]
+## Groups: book [2]
+##
+##        book negative positive
+## *     &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;
+## 1 Homo Deus      47%      53%
+## 2   Sapiens      42%      58%
+</code></pre>
+
+<p>And again, the sentiments seem to be very similar for both books, this time reflected in the proportion of positive words. How is this possible, given that <em>Sapiens</em> received relatively fewer 4- and 5-star reviews than <em>Homo Deus</em>?</p>
+
+<pre><code>### ratio of positive / negative words per star per review
+
+all_words %&gt;%
+  filter(!is.na(sentiment)) %&gt;%
+  group_by(book, stars, sentiment) %&gt;%
+  summarise(n = n()) %&gt;%
+  group_by(book, stars) %&gt;%
+  mutate(sum = sum(n),
+         percent = paste0(round(n*100/sum, 0), &quot;%&quot;),
+         percent2 = round(n/sum, 3)) %&gt;%
+  select(-c(n, sum, percent)) %&gt;%
+  spread(sentiment, percent2) %&gt;%
+  ggplot(aes(x = stars, y = positive, fill = book)) +
+  geom_bar(stat = &quot;identity&quot;, position = position_dodge(), colour=&quot;black&quot;, alpha = 0.6) +
+  scale_y_continuous(labels = scales::percent) +
+   scale_color_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;)) +
+  scale_fill_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;)) +
+  coord_flip()
+</code></pre>
+
+<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/unnamed-chunk-2-1.png" alt="" /></p>
+
+<p>Because <em>Sapiens</em> reviews contain overall higher proportion of positive words across pretty much all the reviews except 3-star ones, that&rsquo;s why!</p>
+
+<p>It&rsquo;s all good so far, but comparing sentiments based on separate words can sometimes give misleading results, as such analysis does not take into account negations (e.g. *I am <em>not</em> passionate about singing*.) or amplifiers (*I <em>really</em> like this song*), etc. So, I used <a href="https://github.com/trinker/sentimentr"><code>sentimentR</code> package</a> to compare sentiments of whole sentences.</p>
+
+<pre><code>#### scoring sentences with sentimentr ####
+  #  install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;trinker/lexicon&quot;)
+devtools::install_github(&quot;trinker/sentimentr&quot;)
+
+
+## combining data.frames    
+sapiens_reviews &lt;- sapiens_reviews %&gt;%
+      mutate(book = &quot;Sapiens&quot;)
+
+homo_deus_reviews &lt;- homo_deus_reviews %&gt;%
+      mutate(book = &quot;Homo Deus&quot;)
+
+all_reviews &lt;-bind_rows(sapiens_reviews, homo_deus_reviews)
+out2 &lt;- with(all_reviews, sentiment_by(comments, book))    
+</code></pre>
+
+<p><code>sentimentR</code> is a great little gem for text mining: it&rsquo;s very fast, performs tokenization within the library (no need to call <code>tidytext::unnest_tokens()</code> separately), gives an option to group results by other variables and produces pretty graphs :)</p>
+
+<pre><code># sentiment scores by sentence
+head(out2)    
+</code></pre>
+
+<pre><code>##         book word_count        sd ave_sentiment
+## 1: Homo Deus      12617 0.3851959     0.1736843
+## 2:   Sapiens      14024 0.4570880     0.2002676
+</code></pre>
+
+<pre><code># plotting sentiment scores by sentence
+plot(out2)  
+</code></pre>
+
+<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/sentimentr_results-1.png" alt="" /></p>
+
+<p>Again, like with previous approaches, sentence - level sentiment looks very similar for both books, perhaps with <em>Sapiens</em> being marginally more positive. However, the really interesting stuff starts when we look at those sentiments grouped by the book <strong>AND</strong> the number of stars:</p>
+
+<pre><code>out3 &lt;- with(all_reviews, sentiment_by(comments, list(book, stars)))
+out3
+</code></pre>
+
+<pre><code>##          book stars word_count        sd ave_sentiment
+##  1: Homo Deus     1         83 0.2326113   -0.10015893
+##  2: Homo Deus     2       2063 0.3924527   -0.10080533
+##  3: Homo Deus     3        617 0.2916933    0.08885353
+##  4: Homo Deus     4       3529 0.3037805    0.22660451
+##  5: Homo Deus     5       6325 0.3993962    0.22717875
+##  6:   Sapiens     1       1355 0.2874542    0.02951020
+##  7:   Sapiens     2       1626 0.3535837    0.10415064
+##  8:   Sapiens     3       3164 0.3823897    0.06622241
+##  9:   Sapiens     4       2648 0.3373602    0.22689740
+## 10:   Sapiens     5       5231 0.5565202    0.31460320
+</code></pre>
+
+<pre><code>plot(out3)
+</code></pre>
+
+<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/sentence_star-1.png" alt="" /></p>
+
+<p>As you can see, number of stars given by the reviewer doesn&rsquo;t always exactly reflect its sentiment! Here, I mean examples where fewer - stars reviews show higher sentiment than those reviews with more stars. But it&rsquo;s fair to say that this seem to be off the general trend where number of stars positively correlates with the sentence-levels sentiment score. And again, <em>Sapiens</em> reviews with 5 stars are much more positive than respective <em>Homo Deus</em> reviews. At the same time, the more critical reviews with 1 and 2 stars are more negative for <em>Homo Deus</em> than they are for <em>Sapiens</em>. Together, this explains why at the book level the sentiment score is very similar between the two books, despite <em>Homo Deus&rsquo;</em> receiving much more 5-star reviews overall.</p>
+
+<p>Now, it becomes clear how naive my predictions were about comparing sentiment scores betweeen the two books! Obviously, when comparing clearly bad and good books you will find striking differences in reviews&rsquo; sentiments, but when comparing two highly regarded books written by the same author it&rsquo;s clear that there will be nuances and complexities to it.</p>
+
+<h5 id="take-home-points"><strong>TAKE HOME POINTS</strong></h5>
+
+<ol>
+<li><p><em>Homo Deus</em> received more positive (4 &amp; 5-star) reviews than <em>Sapiens</em>, however</p></li>
+
+<li><p>both books had very similar sentiments level based on both, word- and sentence-level scores.</p></li>
+
+<li><p>It was mainly due to <em>Sapiens</em> receiving higher sentiment scores for both, most positive and most negative reviews.</p></li>
+
+<li><p>overall, different approaches to sentiment analysis showed consistent results, which is reassuring :-)</p></li>
+</ol>
+
+<hr />
+
+<p><strong>funny fact from writing this blog post:</strong> throughout the process I&rsquo;ve been writing <em>Deus Ex</em> or <code>deus_ex</code> instead of <em>Homo Deus</em> and <code>homo_deus</code> respectively, and I only realised it after my partner read the final version of this post&hellip; oops!</p>
+
+<hr />
+
+<h4 id="technical-rant">TECHNICAL RANT</h4>
+
+<p>This post took WAAAY longer that it should, mainly because first I tried using <code>RSentiment</code> package for the sentence-level analysis. Unfortunately, this package proved to be very buggy: returns named vectors when evaluating single sentences with <code>score_sentence()</code>, does not correctly evaluate sentences with special characters and, let me say it, it is <strong>excruciatingly slow</strong>. I guess it is the lesson to choose your tools wisely.</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/amazon-reviews-word-cloud/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/amazon-reviews-word-cloud/">Amazon reviews wordcloud</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="next">
+      <a href="/post/scraping-online-table-with-info-on-r-datasets/">Scraping online table with info on R datasets</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="/post/scraping-online-table-with-info-on-r-datasets/"><i class="fa fa-chevron-right"></i></a>
+    
+  </div>
+</div>
+
+
+
+  
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'https-r-tastic-co-uk';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-92539076-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+
+
+</body>
+</html>
+

@@ -30,5 +30,16 @@
       <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
+    <item>
+      <title>Harari: Sentiment Analysis</title>
+      <link>/post/harari-sentiment-analysis/</link>
+      <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/harari-sentiment-analysis/</guid>
+      <description>So! Following my previous blog post where I scraped Amazon reviews of Yuval Harari&amp;rsquo;s Sapiens to create a wordcloud based on them, here I will compare results of sentiment analysis performed on Harari&amp;rsquo;s two books: Sapiens and Homo Deus.
+A QUICK INTRO For the context, Sapiens has been published originally in Hebrew in 2011. It, as Wikipedia puts it,
+ [Sapiens] surveys the history of humankind from the evolution of archaic human species in the Stone Age up to the twenty-first century.</description>
+    </item>
+    
   </channel>
 </rss>
