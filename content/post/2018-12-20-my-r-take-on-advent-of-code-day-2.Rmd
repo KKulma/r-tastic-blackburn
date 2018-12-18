@@ -11,25 +11,41 @@ description: ''
 topics: []
 ---
 
+This is my second blog post from the series of `My R take on Advent of Code`. If you'd like to know more about Advent of Code, check out the [first post from the series](https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/) or simply go to [their website](https://adventofcode.com/2018).  Below you'll find the challnge from Day 2 and the solution that worked for me. As always, feel free to leave comments if you have different ideas on how this could have been solved!
+
+
+### Day 2 Puzzle
+
 
 >> (...) you scan the likely candidate boxes again, counting the number that have an ID containing exactly two of any letter and then separately counting those with exactly three of any letter. You can multiply those two counts together to get a rudimentary checksum and compare it to what your device predicts.
 >> For example, if you see the following box IDs:
 
->> abcdef contains no letters that appear exactly two or three times.    
->> bababc contains two a and three b, so it counts for both.    
->> abbcde contains two b, but no letter appears exactly three times.    
->> abcccd contains three c, but no letter appears exactly two times.    
->> aabcdd contains two a and two d, but it only counts once.    
->> abcdee contains two e.    
->> ababab contains three a and three b, but it only counts once.   
+>> `abcdef` contains no letters that appear exactly two or three times.    
+>> `bababc` contains two `a` and three `b`, so it counts for both.    
+>> `abbcde` contains two `b`, but no letter appears exactly three times.    
+>> `abcccd` contains three `c`, but no letter appears exactly two times.    
+>> `aabcdd` contains two `a` and two `d`, but it only counts once.    
+>> `abcdee` contains two `e`.    
+>> `ababab` contains three `a` and three `b`, but it only counts once.   
 
 >> Of these box IDs, four of them contain a letter which appears exactly twice, and three of them contain a letter which appears exactly three times. Multiplying these together produces a checksum of 4 * 3 = 12.
 >> What is the checksum for your list of box IDs?
 
+So what is it all about? As complicated as it may sound, essentially we need to:
+
+- understand which string contains letters that appear exactly 2 times
+- understand which string contains letters that appear exactly 3 times
+- count the number of each type of string
+- multiply them together 
+
+Doesn't sound so bad anymore, ey? This is how we can go about it:
+
+First load your key packages...
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
 library(stringr)
+library(tibble)
 library(purrr)
 ```
 
@@ -286,22 +302,43 @@ xregqmyonskvvxpalfiwhactdb
 xregqmyonskvzupsliiwhwctdb'
 ```
 
+... and have a look at what the raw input looks like.
+
 ```{r}
 # check raw input
 glimpse(input)
 ```
 
+Right, Advent of Code will never give you nice and clean data to work with, that's for sure. But it doesn't looks like things are too bad this time - let's just split it by the new line and keep it as a vector for now. Does it look reaosnably well?
+
 ```{r}
 # clean it
 clean_input =  strsplit(input, '\n') %>% unlist()   # splt by NewLine
+glimpse(clean_input)
 ```
 
+Much better! Now, let's put it all in a data frame for now, we'll need it very soon.  
 
 ```{r}
 # put it in the data.frame
-df2 <- data.frame(input = str_trim(clean_input))
-glimpse(df2)
-head(clean_input)
+df2 <- tibble(input = str_trim(clean_input))
+head(df2)
+```
+
+
+
+
+
+```{r, warning=FALSE, message=FALSE}
+# test: counting double letter occurances 
+strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example 
+  strsplit('') %>% # split letters
+  unlist() %>% 
+  as_tibble() %>% # trasform vector to tibble
+  rename_(letters = names(.)[1]) %>% 
+  count(letters) %>% # count letter occurances
+  filter(n == 2) %>% 
+  nrow()
 ```
 
 

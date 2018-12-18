@@ -313,6 +313,9 @@ $(document).ready(function () {
 </div>
 
 
+<p>This is my second blog post from the series of <code>My R take on Advent of Code</code>. If you’d like to know more about Advent of Code, check out the <a href="https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/">first post from the series</a> or simply go to <a href="https://adventofcode.com/2018">their website</a>. Below you’ll find the challnge from Day 2 and the solution that worked for me. As always, feel free to leave comments if you have different ideas on how this could have been solved!</p>
+<div id="day-2-puzzle" class="section level3">
+<h3>Day 2 Puzzle</h3>
 <blockquote>
 <blockquote>
 <p>(…) you scan the likely candidate boxes again, counting the number that have an ID containing exactly two of any letter and then separately counting those with exactly three of any letter. You can multiply those two counts together to get a rudimentary checksum and compare it to what your device predicts. For example, if you see the following box IDs:</p>
@@ -320,13 +323,13 @@ $(document).ready(function () {
 </blockquote>
 <blockquote>
 <blockquote>
-<p>abcdef contains no letters that appear exactly two or three times.<br />
-bababc contains two a and three b, so it counts for both.<br />
-abbcde contains two b, but no letter appears exactly three times.<br />
-abcccd contains three c, but no letter appears exactly two times.<br />
-aabcdd contains two a and two d, but it only counts once.<br />
-abcdee contains two e.<br />
-ababab contains three a and three b, but it only counts once.</p>
+<p><code>abcdef</code> contains no letters that appear exactly two or three times.<br />
+<code>bababc</code> contains two <code>a</code> and three <code>b</code>, so it counts for both.<br />
+<code>abbcde</code> contains two <code>b</code>, but no letter appears exactly three times.<br />
+<code>abcccd</code> contains three <code>c</code>, but no letter appears exactly two times.<br />
+<code>aabcdd</code> contains two <code>a</code> and two <code>d</code>, but it only counts once.<br />
+<code>abcdee</code> contains two <code>e</code>.<br />
+<code>ababab</code> contains three <code>a</code> and three <code>b</code>, but it only counts once.</p>
 </blockquote>
 </blockquote>
 <blockquote>
@@ -334,24 +337,51 @@ ababab contains three a and three b, but it only counts once.</p>
 <p>Of these box IDs, four of them contain a letter which appears exactly twice, and three of them contain a letter which appears exactly three times. Multiplying these together produces a checksum of 4 * 3 = 12. What is the checksum for your list of box IDs?</p>
 </blockquote>
 </blockquote>
+<p>So what is it all about? As complicated as it may sound, essentially we need to:</p>
+<ul>
+<li>understand which string contains letters that appear exactly 2 times</li>
+<li>understand which string contains letters that appear exactly 3 times</li>
+<li>count the number of each type of string</li>
+<li>multiply them together</li>
+</ul>
+<p>Doesn’t sound so bad anymore, ey? This is how we can go about it:</p>
+<p>First load your key packages…</p>
 <pre class="r"><code>library(dplyr)
 library(stringr)
+library(tibble)
 library(purrr)</code></pre>
+<p>… and have a look at what the raw input looks like.</p>
 <pre class="r"><code># check raw input
 glimpse(input)</code></pre>
 <pre><code>##  chr &quot;xrecqmdonskvzupalfkwhjctdb\nxrlgqmavnskvzupalfiwhjctdb\nxregqmyonskvzupalfiwhjpmdj\nareyqmyonskvzupalfiwhjcidb\&quot;| __truncated__</code></pre>
+<p>Right, Advent of Code will never give you nice and clean data to work with, that’s for sure. But it doesn’t looks like things are too bad this time - let’s just split it by the new line and keep it as a vector for now. Does it look reaosnably well?</p>
 <pre class="r"><code># clean it
-clean_input =  strsplit(input, &#39;\n&#39;) %&gt;% unlist()   # splt by NewLine</code></pre>
+clean_input =  strsplit(input, &#39;\n&#39;) %&gt;% unlist()   # splt by NewLine
+glimpse(clean_input)</code></pre>
+<pre><code>##  chr [1:250] &quot;xrecqmdonskvzupalfkwhjctdb&quot; &quot;xrlgqmavnskvzupalfiwhjctdb&quot; ...</code></pre>
+<p>Much better! Now, let’s put it all in a data frame for now, we’ll need it very soon.</p>
 <pre class="r"><code># put it in the data.frame
-df2 &lt;- data.frame(input = str_trim(clean_input))
-glimpse(df2)</code></pre>
-<pre><code>## Observations: 250
-## Variables: 1
-## $ input &lt;fct&gt; xrecqmdonskvzupalfkwhjctdb, xrlgqmavnskvzupalfiwhjctdb, ...</code></pre>
-<pre class="r"><code>head(clean_input)</code></pre>
-<pre><code>## [1] &quot;xrecqmdonskvzupalfkwhjctdb&quot; &quot;xrlgqmavnskvzupalfiwhjctdb&quot;
-## [3] &quot;xregqmyonskvzupalfiwhjpmdj&quot; &quot;areyqmyonskvzupalfiwhjcidb&quot;
-## [5] &quot;xregqpyonskvzuaalfiwhjctdy&quot; &quot;xwegumyonskvzuphlfiwhjctdb&quot;</code></pre>
+df2 &lt;- tibble(input = str_trim(clean_input))
+head(df2)</code></pre>
+<pre><code>## # A tibble: 6 x 1
+##   input                     
+##   &lt;chr&gt;                     
+## 1 xrecqmdonskvzupalfkwhjctdb
+## 2 xrlgqmavnskvzupalfiwhjctdb
+## 3 xregqmyonskvzupalfiwhjpmdj
+## 4 areyqmyonskvzupalfiwhjcidb
+## 5 xregqpyonskvzuaalfiwhjctdy
+## 6 xwegumyonskvzuphlfiwhjctdb</code></pre>
+<pre class="r"><code># test: counting double letter occurances 
+strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] %&gt;% # get the first example 
+  strsplit(&#39;&#39;) %&gt;% # split letters
+  unlist() %&gt;% 
+  as_tibble() %&gt;% # trasform vector to tibble
+  rename_(letters = names(.)[1]) %&gt;% 
+  count(letters) %&gt;% # count letter occurances
+  filter(n == 2) %&gt;% 
+  nrow()</code></pre>
+<pre><code>## [1] 3</code></pre>
 <pre class="r"><code># test: counting double letter occurances 
 strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] %&gt;% # get the first example 
   strsplit(&#39;&#39;) %&gt;% # split letters
@@ -414,6 +444,7 @@ head(sol2)</code></pre>
 ## 6 xwegumyonskvzuphlfiwhjctdb       3       0</code></pre>
 <pre class="r"><code>nrow(sol2[sol2$occurs2 != 0, ]) * nrow(sol2[sol2$occurs3 != 0, ])</code></pre>
 <pre><code>## [1] 5976</code></pre>
+</div>
 
 
 
