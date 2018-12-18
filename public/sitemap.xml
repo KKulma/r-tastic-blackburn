@@ -128,12 +128,6 @@
   </url>
   
   <url>
-    <loc>/tags/code/</loc>
-    <lastmod>2018-12-17T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/data-vis/</loc>
     <lastmod>2017-05-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -214,6 +208,12 @@
   <url>
     <loc>/tags/text-analysis/</loc>
     <lastmod>2018-01-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/tidyverse/</loc>
+    <lastmod>2018-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
