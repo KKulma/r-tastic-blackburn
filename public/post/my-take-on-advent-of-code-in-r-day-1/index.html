@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="generator" content="Hugo 0.52" />
 
-  <title>Text Analysis &middot; r-tastic</title>
+  <title>My R take on Advent of Code - day 1 &middot; r-tastic</title>
 
   
   
@@ -39,8 +39,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
  
-  
-  <link rel="alternate" type="application/rss+xml" title="r-tastic" href="/tags/text-analysis/index.xml" />
   
 
   
@@ -105,10 +103,6 @@
   <div class="pure-menu social">
   <ul class="pure-menu-list">
 
-    
-    <li class="pure-menu-item">
-      <a class="pure-menu-link" href="/tags/text-analysis/index.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
-    </li>
     
 
     
@@ -204,27 +198,20 @@
 
 
 <div class="header">
-  <h1>Text Analysis</h1>
+  <h1>My R take on Advent of Code - day 1</h1>
+  <h2></h2>
 </div>
-
 <div class="content">
-  
-    <article>
-  <header>
-    <h2><a href="/post/trump-vs-clinton-interpretable-text-classifier/">Trump VS Clinton Interpretable Text Classifier</a></h2>
 
-    <div class="post-meta">
+  <div class="post-meta">
 
   <div>
     <i class="fa fa-calendar fa-fw"></i>
-    <time>26 Jan 2018</time>
+    <time>17 Dec 2018</time>
   </div>
 
   
 
-  
-  
-  
   
 
   
@@ -233,9 +220,7 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
-    
-      <a class="post-taxonomy-tag" href="/tags/lime">lime</a>
+      <a class="post-taxonomy-tag" href="/tags/code">code</a>
     
   </div>
   
@@ -243,118 +228,97 @@
 
 </div>
 
-  </header>
+  
 
-  <p>
-  I&rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.
-  </p>
+
+<p>Ho, ho, ho! It’s almost Christmas time and we’re awaiting</p>
+<blockquote>
+<blockquote>
+<p>After feeling like you’ve been falling for a few minutes, you look at the device’s tiny screen. “Error: Device must be calibrated before first use. Frequency drift detected. Cannot maintain destination lock.” Below the message, the device shows a sequence of changes in frequency (your puzzle input). A value like +6 means the current frequency increases by 6; a value like -3 means the current frequency decreases by 3.
+For example, if the device displays frequency changes of +1, -2, +3, +1, then starting from a frequency of zero, the following changes would occur:</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>Current frequency 0, change of +1; resulting frequency 1.<br />
+Current frequency 1, change of -2; resulting frequency -1.<br />
+Current frequency -1, change of +3; resulting frequency 2.<br />
+Current frequency 2, change of +1; resulting frequency 3.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>In this example, the resulting frequency is 3. Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?</p>
+</blockquote>
+</blockquote>
+<pre class="r"><code>library(stringr)
+library(dplyr)</code></pre>
+<pre class="r"><code>glimpse(changes)</code></pre>
+<pre><code>##  chr &quot;\n  +11\n  +14\n  +10\n  -8\n  -13\n  -2\n  +8\n  +14\n  -11\n  -4\n  +2\n  -17\n  -15\n  -12\n  -15\n  -16\n  &quot;| __truncated__</code></pre>
+<pre class="r"><code># separate a character string into a vector of character numbers with + or -  
+base &lt;- strsplit(changes, &#39;\t&#39;) %&gt;% # splt by Tab
+  str_replace_all(&#39;\n&#39;, &#39;&#39;) %&gt;% # remove all new lines
+  stringr::str_trim() %&gt;% # trim edges
+  strsplit(&#39; &#39;) %&gt;% # split by spaces
+  unlist() # get to vector format
+
+# check if it is a vector  
+str(base)</code></pre>
+<pre><code>##  chr [1:2071] &quot;+11&quot; &quot;&quot; &quot;+14&quot; &quot;&quot; &quot;+10&quot; &quot;&quot; &quot;-8&quot; &quot;&quot; &quot;-13&quot; &quot;&quot; &quot;-2&quot; &quot;&quot; &quot;+8&quot; ...</code></pre>
+<pre class="r"><code># generate a solution
+base[nchar(base)&gt;0] %&gt;% # remove empty character strings 
+  as.numeric() %&gt;% # turn into numeric
+  sum() # add it up</code></pre>
+<pre><code>## [1] 402</code></pre>
+
 
   
-  <footer>
-    <a href="/post/trump-vs-clinton-interpretable-text-classifier/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
-  </footer>
-  
-</article>
-
-  
-    <article>
-  <header>
-    <h2><a href="/post/star-wars-vs-star-trek-word-battle/">Star Wars Vs Star Trek Word Battle</a></h2>
-
-    <div class="post-meta">
-
-  <div>
-    <i class="fa fa-calendar fa-fw"></i>
-    <time>16 Dec 2017</time>
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/exploring-london-crime-with-r-heat-maps/"><i class="fa fa-chevron-left"></i></a>
+    
   </div>
-
-  
-
-  
-  
-  
-  
-
-  
-  
-  
-  <div>
-    <i class="fa fa-tags fa-fw"></i>
+  <div class="pure-u-10-24">
     
-      <a class="post-taxonomy-tag" href="/tags/web-scraping">web scraping</a>&nbsp;&#47;
-    
-      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>
+    <nav class="prev">
+      <a href="/post/exploring-london-crime-with-r-heat-maps/">Exploring London Crime with R heat maps</a>
+    </nav>
     
   </div>
-  
-  
-
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
 </div>
 
-  </header>
 
-  <p>
-  It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).
-  </p>
 
   
-  <footer>
-    <a href="/post/star-wars-vs-star-trek-word-battle/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
-  </footer>
-  
-</article>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
 
-  
-    <article>
-  <header>
-    <h2><a href="/post/harari-sentiment-analysis/">Harari: Sentiment Analysis</a></h2>
-
-    <div class="post-meta">
-
-  <div>
-    <i class="fa fa-calendar fa-fw"></i>
-    <time>28 Mar 2017</time>
-  </div>
-
-  
-
-  
-  
-  
-  
-
-  
-  
-  
-  <div>
-    <i class="fa fa-tags fa-fw"></i>
+(function() {
     
-      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/sentiment-analysis">sentiment analysis</a>
-    
-  </div>
-  
-  
+    if (window.location.hostname == "localhost")
+        return;
 
-</div>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'https-r-tastic-co-uk';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-  </header>
 
-  <p>
-  So! Following my previous blog post where I scraped Amazon reviews of Yuval Harari&rsquo;s Sapiens to create a wordcloud based on them, here I will compare results of sentiment analysis performed on Harari&rsquo;s two books: Sapiens and Homo Deus.
-A QUICK INTRO For the context, Sapiens has been published originally in Hebrew in 2011. It, as Wikipedia puts it,
- [Sapiens] surveys the history of humankind from the evolution of archaic human species in the Stone Age up to the twenty-first century.
-  </p>
-
-  
-  <footer>
-    <a href="/post/harari-sentiment-analysis/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
-  </footer>
-  
-</article>
-
-  
 </div>
 
 </div>
@@ -379,3 +343,4 @@ A QUICK INTRO For the context, Sapiens has been published originally in Hebrew i
 
 </body>
 </html>
+

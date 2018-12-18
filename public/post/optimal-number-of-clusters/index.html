@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
-  <meta name="generator" content="Hugo 0.47.1" />
+  <meta name="generator" content="Hugo 0.52" />
 
   <title>Determining the optimal number of clusters in your dataset &middot; r-tastic</title>
 
@@ -233,7 +233,10 @@
 
 </div>
 
-  <p>Recently, I worked a bit with <strong>cluster analysis</strong>: the common method in <a href="https://en.wikipedia.org/wiki/Unsupervised_learning">unsupervised learning</a> that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.</p>
+  
+
+
+<p>Recently, I worked a bit with <strong>cluster analysis</strong>: the common method in <a href="https://en.wikipedia.org/wiki/Unsupervised_learning">unsupervised learning</a> that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.</p>
 <div id="quick-intro" class="section level3">
 <h3>QUICK INTRO</h3>
 <p>Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data. Most popular clustering learners (e.g. k-means) expect you to specify the number of segments to be found. However, clusters as such don’t exist in firm reality, so more often than not you don’t know what is the optimal number of clusters for a given dataset.</p>

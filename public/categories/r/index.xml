@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Sun, 26 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 17 Dec 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>My R take on Advent of Code - day 1</title>
+      <link>/post/advent-of-code-in-r-day-1/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-in-r-day-1/</guid>
+      <description>Ho, ho, ho! It’s almost Christmas time and I don’t know about you, but I can’t wait for it! And what can be a better way of killing the waiting time (advent!) than participating in excellent Advent od Code. Big thanks to Colin Fay for telling me about it! It’s a series of coding riddles, one published every day between 1st and 25th of December. The riddles increase in difficulty level over time and they can be solved in any programming language, including R.</description>
+    </item>
     
     <item>
       <title>Exploring London Crime with R heat maps</title>
@@ -95,17 +104,6 @@ BEFORE I START: OFF - TOPIC ON PERFECTIONISM After weeks and months (!</descript
       
       <guid>/post/animated-plots-as-part-of-exploratory-data-analysis/</guid>
       <description>The internet seems to be booming with blog posts on animated graphs, whether it&amp;rsquo;s for more serious purposes or not so much. I didn&amp;rsquo;t think anything more of it than just a gimmick or a cool way of spicing up your conference talk. However, I&amp;rsquo;m a total convert now and in this post I want to show a real value that such graph can add to your (absolutely serious!) exploratory analysis.</description>
-    </item>
-    
-    <item>
-      <title>Cluster Validation In Unsupervised Machine Learning</title>
-      <link>/post/cluster-validation-in-unsupervised-machine-learning/</link>
-      <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/cluster-validation-in-unsupervised-machine-learning/</guid>
-      <description>In the previous post I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.
-In this post I’ll show a couple of tests for cluster validation that can be easily run in R.
-Let’s start!</description>
     </item>
     
   </channel>

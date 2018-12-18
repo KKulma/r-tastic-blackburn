@@ -58,6 +58,15 @@
     </item>
     
     <item>
+      <title>Code</title>
+      <link>/tags/code/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/code/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Data Vis</title>
       <link>/tags/data-vis/</link>
       <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
@@ -90,15 +99,6 @@
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/leaflet/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Lime</title>
-      <link>/tags/lime/</link>
-      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/lime/</guid>
       <description></description>
     </item>
     

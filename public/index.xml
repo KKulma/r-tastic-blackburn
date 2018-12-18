@@ -40,12 +40,77 @@ Having said that, I do work with Python, too, so don&amp;rsquo;t be surprised to
     </item>
     
     <item>
+      <title>My R take on Advent of Code - day 1</title>
+      <link>/post/advent-of-code-in-r-day-1/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-in-r-day-1/</guid>
+      <description>
+
+
+&lt;p&gt;Ho, ho, ho! It’s almost Christmas time and I don’t know about you, but I can’t wait for it! And what can be a better way of killing the waiting time (advent!) than participating in excellent &lt;a href=&#34;https://adventofcode.com/2018&#34;&gt;Advent od Code&lt;/a&gt;. Big thanks to &lt;a href=&#34;https://twitter.com/_ColinFay&#34;&gt;Colin Fay&lt;/a&gt; for telling me about it! It’s a series of coding riddles, one published every day between 1st and 25th of December. The riddles increase in difficulty level over time and they can be solved in any programming language, including R. After you’ve solved the first riddle of the day, the second one - a more difficult one - will be unlocked.&lt;/p&gt;
+&lt;p&gt;This post starts a (rather short) series of posts with my R take on Advent of Code. I present only the first riddle of a day and only those riddles that I managed to solve. I present the final solution and not a journey of how I got there. If I was to give you one piece of advice on how to solve the puzzles it would be: &lt;strong&gt;ALWAYS start developing your solution using examples provided in the puzzle descriptions before you move on to applying it to the final puzzle sample.&lt;/strong&gt; These examples give you a very good - even if simplified - idea of what the challenge is really about and the chances are that if your solution works on the example data, so it will on the final dataset.&lt;/p&gt;
+&lt;p&gt;Finally, feel free to leave comments on other (faster? more elegant?) ways of solving it. Thanks!&lt;/p&gt;
+&lt;div id=&#34;day-1-challenge&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 1 challenge&lt;/h2&gt;
+&lt;p&gt;Here’s the original text of the riddle:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;After feeling like you’ve been falling for a few minutes, you look at the device’s tiny screen. “Error: Device must be calibrated before first use. Frequency drift detected. Cannot maintain destination lock.” Below the message, the device shows a sequence of changes in frequency (your puzzle input). A value like +6 means the current frequency increases by 6; a value like -3 means the current frequency decreases by 3.
+For example, if the device displays frequency changes of +1, -2, +3, +1, then starting from a frequency of zero, the following changes would occur:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Current frequency 0, change of +1; resulting frequency 1.&lt;br /&gt;
+Current frequency 1, change of -2; resulting frequency -1.&lt;br /&gt;
+Current frequency -1, change of +3; resulting frequency 2.&lt;br /&gt;
+Current frequency 2, change of +1; resulting frequency 3.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In this example, the resulting frequency is 3. Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So what is it really saying? That basically we need to add all of the numbers from the sample together to get the solution. Sounds easy! But is it…?&lt;/p&gt;
+&lt;p&gt;Let’s load the packages we’ll need:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(stringr)
+library(dplyr)
+library(tibble)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And let’s have a look at the puzzle input, what does it look like?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glimpse(changes)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  chr &amp;quot;\n  +11\n  +14\n  +10\n  -8\n  -13\n  -2\n  +8\n  +14\n  -11\n  -4\n  +2\n  -17\n  -15\n  -12\n  -15\n  -16\n  &amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OK, not too clean. It’s a character vector of positive and negative integers separated tabs and new lines. Something I learnt during The Advent of Code is: there’s nothing that &lt;code&gt;strsplit()&lt;/code&gt; wouldn’t solve… :) Just keep in mind that this function always returns a list, so we have to deal with it accordingly (i.e. use good old &lt;code&gt;unlist()&lt;/code&gt;). In the following step I split the values by tabs and remove new lines, trim trolling spaces and bring the result to the vector format again.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# separate a character string into a vector of character numbers with + or -  
+base &amp;lt;- strsplit(changes, &amp;#39;\t&amp;#39;) %&amp;gt;% # splt by Tab
+  str_replace_all(&amp;#39;\n&amp;#39;, &amp;#39;&amp;#39;) %&amp;gt;% # remove all new lines
+  stringr::str_trim() %&amp;gt;% # trim edges
+  strsplit(&amp;#39; &amp;#39;) %&amp;gt;% # split by spaces
+  unlist() # get to vector format
+
+# check if it is a vector  
+glimpse(base)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  chr [1:2071] &amp;quot;+11&amp;quot; &amp;quot;&amp;quot; &amp;quot;+14&amp;quot; &amp;quot;&amp;quot; &amp;quot;+10&amp;quot; &amp;quot;&amp;quot; &amp;quot;-8&amp;quot; &amp;quot;&amp;quot; &amp;quot;-13&amp;quot; &amp;quot;&amp;quot; &amp;quot;-2&amp;quot; &amp;quot;&amp;quot; &amp;quot;+8&amp;quot; ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We still see that there are some empty strings left, but once we get rid of them, we can turn the input to numeric and simply add it all up:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# generate a solution
+base[nchar(base)&amp;gt;0] %&amp;gt;% # remove empty character strings 
+  as.numeric() %&amp;gt;% # turn into numeric
+  sum() # add it up&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 402&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And that’s it! First challenge done and you already can see how addictive it can become.. :)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Exploring London Crime with R heat maps</title>
       <link>/post/exploring-london-crime-with-r-heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
 &lt;link href=&#34;/rmarkdown-libs/leaflet/leaflet.css&#34; rel=&#34;stylesheet&#34; /&gt;
 &lt;script src=&#34;/rmarkdown-libs/leaflet/leaflet.js&#34;&gt;&lt;/script&gt;
@@ -480,7 +545,10 @@ july_data %&amp;gt;%
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/first-post-in-new-r-tastic/</guid>
-      <description>&lt;p&gt;OK, it had to happen and here it is: I moved my &lt;a href=&#34;https://kkulma.github.io/&#34;&gt;old r-tastic blog&lt;/a&gt; to &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; and I’m not going to look back :) There are numerous resources that will:&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;OK, it had to happen and here it is: I moved my &lt;a href=&#34;https://kkulma.github.io/&#34;&gt;old r-tastic blog&lt;/a&gt; to &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; and I’m not going to look back :) There are numerous resources that will:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;highlight the advantages of using &lt;code&gt;blogdown&lt;/code&gt; with &lt;code&gt;Hugo&lt;/code&gt; over other static site generators, such as &lt;a href=&#34;https://shiring.github.io/blogging/2016/12/04/diy_your_own_blog&#34;&gt;Jekyll&lt;/a&gt; (my previous choice)&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;explain how to set everything up (there are some excellent resources &lt;a href=&#34;https://amber.rbind.io/blog/2016/12/19/creatingsite/&#34;&gt;here&lt;/a&gt;, &lt;a href=&#34;https://tclavelle.github.io/blog/blogdown_github/&#34;&gt;here&lt;/a&gt; or &lt;a href=&#34;https://aurora-mareviv.github.io/talesofr/2018/02/r-blogdown-setup-in-github-2/&#34;&gt;here&lt;/a&gt;) or&lt;/p&gt;&lt;/li&gt;
@@ -504,7 +572,10 @@ july_data %&amp;gt;%
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/prime-hints/</guid>
-      <description>&lt;p&gt;I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.&lt;/p&gt;
 &lt;div id=&#34;use-r-projects.-always.&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;strong&gt;01. Use R projects. Always.&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;Human Civilization was built on conventions. R scripts have them, too. For example&lt;/p&gt;
@@ -993,7 +1064,10 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
-      <description>&lt;p&gt;It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with &lt;a href=&#34;https://twitter.com/pmigdal&#34;&gt;Piotr Migdal’s&lt;/a&gt; challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979). I chose these two because of 1) the obvious “competition” going on between the two camps and 2) similar time they were first broadcast. Let’s get cracking!&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with &lt;a href=&#34;https://twitter.com/pmigdal&#34;&gt;Piotr Migdal’s&lt;/a&gt; challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979). I chose these two because of 1) the obvious “competition” going on between the two camps and 2) similar time they were first broadcast. Let’s get cracking!&lt;/p&gt;
 &lt;p&gt;Let’s load necessary packages:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
 library(dplyr)
@@ -1854,202 +1928,6 @@ V(f1)$Popularity &amp;lt;- degree(f1, mode = &#39;in&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;It looks so, although to the lesser extend than suggested by the network graphs: Female top users follower other female top users 46% of time, whereas male top users follow female top user 54% of time. So what do you have to say about that?&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Animated Plots As Part Of Exploratory Data Analysis</title>
-      <link>/post/animated-plots-as-part-of-exploratory-data-analysis/</link>
-      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/animated-plots-as-part-of-exploratory-data-analysis/</guid>
-      <description>
-
-&lt;p&gt;The internet seems to be booming with blog posts on animated graphs, whether it&amp;rsquo;s for more serious purposes or not so much. I didn&amp;rsquo;t think anything more of it than just a gimmick or a cool way of spicing up your conference talk. However, I&amp;rsquo;m a total convert now and &lt;strong&gt;in this post I want to show a real value that such graph can add to your (absolutely serious!) exploratory analysis.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;import-of-metropolitan-police-data&#34;&gt;IMPORT OF METROPOLITAN POLICE DATA&lt;/h3&gt;
-
-&lt;p&gt;As an example, I&amp;rsquo;ll use geospatial data about crime and policing in the UK, freely available &lt;a href=&#34;https://data.police.uk/data/&#34;&gt;here&lt;/a&gt;. As I live in London, quite naturally I chose data for &lt;strong&gt;Metropolitan Police&lt;/strong&gt; region, starting from &lt;strong&gt;January 2016 to March 2017, with only &lt;em&gt;Include crime data&lt;/em&gt; option ticked.&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;The data are downloaded in the form of list of folders, each containing data for any specified month. In order to smoothly find and append those files, I used &lt;code&gt;dir()&lt;/code&gt; function (after moving the folders to the working directory first, bien sûr):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;london_files &amp;lt;- dir(recursive = T, pattern = &amp;quot;*metropolitan-street.csv&amp;quot;, full.names=TRUE)
-london_files
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;./london_police_data/2016-01/2016-01-metropolitan-street.csv&amp;quot;
-##  [2] &amp;quot;./london_police_data/2016-02/2016-02-metropolitan-street.csv&amp;quot;
-##  [3] &amp;quot;./london_police_data/2016-03/2016-03-metropolitan-street.csv&amp;quot;
-##  [4] &amp;quot;./london_police_data/2016-04/2016-04-metropolitan-street.csv&amp;quot;
-##  [5] &amp;quot;./london_police_data/2016-05/2016-05-metropolitan-street.csv&amp;quot;
-##  [6] &amp;quot;./london_police_data/2016-06/2016-06-metropolitan-street.csv&amp;quot;
-##  [7] &amp;quot;./london_police_data/2016-07/2016-07-metropolitan-street.csv&amp;quot;
-##  [8] &amp;quot;./london_police_data/2016-08/2016-08-metropolitan-street.csv&amp;quot;
-##  [9] &amp;quot;./london_police_data/2016-09/2016-09-metropolitan-street.csv&amp;quot;
-## [10] &amp;quot;./london_police_data/2016-10/2016-10-metropolitan-street.csv&amp;quot;
-## [11] &amp;quot;./london_police_data/2016-11/2016-11-metropolitan-street.csv&amp;quot;
-## [12] &amp;quot;./london_police_data/2016-12/2016-12-metropolitan-street.csv&amp;quot;
-## [13] &amp;quot;./london_police_data/2017-01/2017-01-metropolitan-street.csv&amp;quot;
-## [14] &amp;quot;./london_police_data/2017-02/2017-02-metropolitan-street.csv&amp;quot;
-## [15] &amp;quot;./london_police_data/2017-03/2017-03-metropolitan-street.csv&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This function recognizes all the specified files (here: csv files ending with &lt;em&gt;metropolitan-street&lt;/em&gt; string) in the main folder, as well as sub-folders, genius! As you can see, thanks to &lt;code&gt;full.names = TRUE&lt;/code&gt;, the object will return not only files&amp;rsquo; names, but also their paths.&lt;/p&gt;
-
-&lt;p&gt;Next, I only need to append identified files&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;london_police_data &amp;lt;- do.call(rbind,lapply(london_files, read.csv))
-str(london_police_data)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    1237778 obs. of  12 variables:
-##  $ Crime.ID             : Factor w/ 905661 levels &amp;quot;&amp;quot;,&amp;quot;0002285d1ab33fde301c313d3654e5bf45ce80eb10a90153f655a625dba32c30&amp;quot;,..: 36371 1 1 1 1 1 1 1347 41162 24388 ...
-##  $ Month                : Factor w/ 15 levels &amp;quot;2016-01&amp;quot;,&amp;quot;2016-02&amp;quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Reported.by          : Factor w/ 1 level &amp;quot;Metropolitan Police Service&amp;quot;: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Falls.within         : Factor w/ 1 level &amp;quot;Metropolitan Police Service&amp;quot;: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Longitude            : num  -0.77 0.141 0.137 0.14 0.136 ...
-##  $ Latitude             : num  51.8 51.6 51.6 51.6 51.6 ...
-##  $ Location             : Factor w/ 35240 levels &amp;quot;No Location&amp;quot;,..: 17629 14588 14103 8507 10600 8507 7381 7183 8507 14588 ...
-##  $ LSOA.code            : Factor w/ 6226 levels &amp;quot;&amp;quot;,&amp;quot;E01000001&amp;quot;,..: 4634 25 25 25 25 25 25 25 25 25 ...
-##  $ LSOA.name            : Factor w/ 6226 levels &amp;quot;&amp;quot;,&amp;quot;Aylesbury Vale 021B&amp;quot;,..: 2 3 3 3 3 3 3 3 3 3 ...
-##  $ Crime.type           : Factor w/ 14 levels &amp;quot;Anti-social behaviour&amp;quot;,..: 14 1 1 1 1 1 1 3 5 5 ...
-##  $ Last.outcome.category: Factor w/ 24 levels &amp;quot;&amp;quot;,&amp;quot;Awaiting court outcome&amp;quot;,..: 8 1 1 1 1 1 1 8 13 18 ...
-##  $ Context              : logi  NA NA NA NA NA NA ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; and we can now start!&lt;/p&gt;
-
-&lt;h4 id=&#34;creating-a-static-view-heatmap&#34;&gt;CREATING A STATIC VIEW HEATMAP&lt;/h4&gt;
-
-&lt;p&gt;Let&amp;rsquo;s have a look at crime types and their frequencies:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sort(table(london_police_data$Crime.type))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##
-##        Possession of weapons                  Other crime
-##                         5913                        13174
-##                Bicycle theft                      Robbery
-##                        22238                        29211
-##                        Drugs        Theft from the person
-##                        42629                        47064
-##                 Public order                  Shoplifting
-##                        56748                        59022
-##    Criminal damage and arson                     Burglary
-##                        77491                        87388
-##                Vehicle crime                  Other theft
-##                       114303                       133894
-## Violence and sexual offences        Anti-social behaviour
-##                       258061                       290642
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It looks like &lt;em&gt;Possession of weapons&lt;/em&gt; is, thankfully, the least common reported crime, so let&amp;rsquo;s explore where those crimes usually happen and if there&amp;rsquo;s any obvious seasonality. I&amp;rsquo;ll start with creating a separate dataframe:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;library(dplyr)
-
-weapon_map_data &amp;lt;- london_police_data %&amp;gt;%
-  filter(Crime.type == &amp;quot;Possession of weapons&amp;quot;) %&amp;gt;%
-  select(Month, Longitude, Latitude, Crime.type)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And a quick peek into sample sizes&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;table(weapon_map_data$Month)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##
-## 2016-01 2016-02 2016-03 2016-04 2016-05 2016-06 2016-07 2016-08 2016-09
-##     323     285     310     336     399     488     457     457     401
-## 2016-10 2016-11 2016-12 2017-01 2017-02 2017-03
-##     408     351     332     399     415     552
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, I&amp;rsquo;ll create a plain map of London using &lt;code&gt;ggmap&lt;/code&gt; package:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#install.packages(&amp;quot;ggmap&amp;quot;, type = &amp;quot;source&amp;quot;)
-#devtools::install_github(&amp;quot;hadley/ggplot2&amp;quot;)
-library(ggmap)
-library(ggplot2)
-library(evaluate)
-
-evaluate(&amp;quot;london_map = get_map(location = &#39;London&#39;, maptype=&#39;toner&#39;,  zoom = 10)&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;ggmap(london_map)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
-
-&lt;p&gt;Not bad for two lines of code, ey!&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;(Note commented part with package installation: I had to install &lt;code&gt;ggmap&lt;/code&gt; and &lt;code&gt;ggplot2&lt;/code&gt; packages this way, otherwise the maps presented here wouldn&amp;rsquo;t get generated)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Finally, here&amp;rsquo;s a &lt;strong&gt;static&lt;/strong&gt; heat map of weapon possession crimes in London, between January 2016 and March 2017:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;weapon_london_heat_map&amp;lt;- ggmap(london_map, extent = &amp;quot;device&amp;quot;) +
-  stat_density_2d(aes(x = Longitude, y = Latitude, fill = ..level.., alpha=1),
-                  data=weapon_map_data, geom = &amp;quot;polygon&amp;quot;) +
-  scale_fill_gradient(low = &amp;quot;blue&amp;quot;, high = &amp;quot;red&amp;quot;) +
-  scale_alpha(range = c(0.00, 0.5), guide = FALSE)
-
-weapon_london_heat_map
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
-
-&lt;p&gt;Not bad at all! We can now identify the crime hotspots, but there&amp;rsquo;s no way we can infer anything about the crime seasonality. And here&amp;rsquo;s where the first serious use of animated graphs comes in!&lt;/p&gt;
-
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;creating-animated-single-view-heat-map&#34;&gt;CREATING ANIMATED SINGLE-VIEW HEAT MAP&lt;/h3&gt;
-
-&lt;p&gt;For this purpose I use, now famous, &lt;code&gt;gganimate&lt;/code&gt; package. If you ever thought that creating gif&amp;rsquo;s with changing plots is hard, you&amp;rsquo;d better start eyeballing the below code, because the only difference between the static and animated graph is &lt;code&gt;frame = Month&lt;/code&gt; part added to graph&amp;rsquo;s &lt;code&gt;aes()&lt;/code&gt;. Simples.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#devtools::install_github(&amp;quot;dgrtwo/gganimate&amp;quot;)
-library(gganimate)
-
-map_anime&amp;lt;- ggmap(london_map, extent = &amp;quot;device&amp;quot;) +
-  stat_density_2d(aes(x = Longitude, y = Latitude, frame = Month,
-                      fill = ..level.., alpha=1),
-                  data=weapon_map_data, geom = &amp;quot;polygon&amp;quot;) +
-  scale_fill_gradient(low = &amp;quot;blue&amp;quot;, high = &amp;quot;red&amp;quot;) +
-  scale_alpha(range = c(0.00, 0.5), guide = FALSE)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;gganimate(map_anime)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
-
-&lt;p&gt;From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to &amp;lsquo;focus&amp;rsquo; on more central areas, supposedly while keeping up with their criminal activity&amp;hellip;?&lt;/p&gt;
-
-&lt;h4 id=&#34;creating-animated-multiple-view-heat-map&#34;&gt;CREATING ANIMATED MULTIPLE-VIEW HEAT MAP&lt;/h4&gt;
-
-&lt;p&gt;Following the same logic, we can create a faceted-animated view of all crimes in London over 15 months. It goes like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# creating a new data.frame
-all_map_data &amp;lt;- london_police_data %&amp;gt;%
-  select(Month, Longitude, Latitude, Crime.type)
-
-# animated all london crimes over time
-all_london_heat_map&amp;lt;- ggmap(london_map, extent = &amp;quot;device&amp;quot;) +
-  stat_density_2d(aes(x = Longitude, y = Latitude, frame = Month,
-                      fill = ..level.., alpha=1),
-                  data=all_map_data, geom = &amp;quot;polygon&amp;quot;) +
-  scale_fill_gradient(low = &amp;quot;blue&amp;quot;, high = &amp;quot;red&amp;quot;) +
-  scale_alpha(range = c(0.00, 0.5), guide = FALSE) +
-  facet_wrap(~ Crime.type, nrow = 3)
-
-gganimate(all_london_heat_map)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif&#34; alt=&#34;&#34; width=&#34;105%&#34; height=&#34;105%&#34;/&gt;&lt;/p&gt;
-
-&lt;p&gt;So, there you go! At the first glance it may look a bit chaotic, but such visualization will quickly make you realise that some crimes always have a narrow geographical range ( &lt;em&gt;Theft from the person&lt;/em&gt; or &lt;em&gt;Other theft&lt;/em&gt;, for example), especially compared to some with universally wide range (e.g. &lt;em&gt;Burglary&lt;/em&gt; or &lt;em&gt;Criminal damage and arson&lt;/em&gt;). And this is the first step for generating new questions and hypotheses, the integral (and very desirable) part of any exploratory analysis!&lt;/p&gt;
-
-&lt;p&gt;So, what do you think? Are you converted yet? :)&lt;/p&gt;
 </description>
     </item>
     

@@ -28,8 +28,7 @@
       
       <guid>/post/cluster-validation-in-unsupervised-machine-learning/</guid>
       <description>In the previous post I showed several methods that can be used to determine the optimal number of clusters in your data - this often needs to be defined for the actual clustering algorithm to run. Once it’s run, however, there’s no guarantee that those clusters are stable and reliable.
-In this post I’ll show a couple of tests for cluster validation that can be easily run in R.
-Let’s start!</description>
+In this post I’ll show a couple of tests for cluster validation that can be easily run in R.</description>
     </item>
     
     <item>

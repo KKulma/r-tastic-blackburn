@@ -1,0 +1,65 @@
+---
+title: My R take on Advent of Code - day 1
+author: Kasia Kulma
+date: '2018-12-17'
+categories:
+  - r
+tags:
+  - code
+slug: advent-of-code-in-r-DAY-1
+---
+
+
+
+<p>Ho, ho, ho! It’s almost Christmas time and I don’t know about you, but I can’t wait for it! And what can be a better way of killing the waiting time (advent!) than participating in excellent <a href="https://adventofcode.com/2018">Advent od Code</a>. Big thanks to <a href="https://twitter.com/_ColinFay">Colin Fay</a> for telling me about it! It’s a series of coding riddles, one published every day between 1st and 25th of December. The riddles increase in difficulty level over time and they can be solved in any programming language, including R. After you’ve solved the first riddle of the day, the second one - a more difficult one - will be unlocked.</p>
+<p>This post starts a (rather short) series of posts with my R take on Advent of Code. I present only the first riddle of a day and only those riddles that I managed to solve. I present the final solution and not a journey of how I got there. If I was to give you one piece of advice on how to solve the puzzles it would be: <strong>ALWAYS start developing your solution using examples provided in the puzzle descriptions before you move on to applying it to the final puzzle sample.</strong> These examples give you a very good - even if simplified - idea of what the challenge is really about and the chances are that if your solution works on the example data, so it will on the final dataset.</p>
+<p>Finally, feel free to leave comments on other (faster? more elegant?) ways of solving it. Thanks!</p>
+<div id="day-1-challenge" class="section level2">
+<h2>Day 1 challenge</h2>
+<p>Here’s the original text of the riddle:</p>
+<blockquote>
+<blockquote>
+<p>After feeling like you’ve been falling for a few minutes, you look at the device’s tiny screen. “Error: Device must be calibrated before first use. Frequency drift detected. Cannot maintain destination lock.” Below the message, the device shows a sequence of changes in frequency (your puzzle input). A value like +6 means the current frequency increases by 6; a value like -3 means the current frequency decreases by 3.
+For example, if the device displays frequency changes of +1, -2, +3, +1, then starting from a frequency of zero, the following changes would occur:</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>Current frequency 0, change of +1; resulting frequency 1.<br />
+Current frequency 1, change of -2; resulting frequency -1.<br />
+Current frequency -1, change of +3; resulting frequency 2.<br />
+Current frequency 2, change of +1; resulting frequency 3.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>In this example, the resulting frequency is 3. Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?</p>
+</blockquote>
+</blockquote>
+<p>So what is it really saying? That basically we need to add all of the numbers from the sample together to get the solution. Sounds easy! But is it…?</p>
+<p>Let’s load the packages we’ll need:</p>
+<pre class="r"><code>library(stringr)
+library(dplyr)
+library(tibble)</code></pre>
+<p>And let’s have a look at the puzzle input, what does it look like?</p>
+<pre class="r"><code>glimpse(changes)</code></pre>
+<pre><code>##  chr &quot;\n  +11\n  +14\n  +10\n  -8\n  -13\n  -2\n  +8\n  +14\n  -11\n  -4\n  +2\n  -17\n  -15\n  -12\n  -15\n  -16\n  &quot;| __truncated__</code></pre>
+<p>OK, not too clean. It’s a character vector of positive and negative integers separated tabs and new lines. Something I learnt during The Advent of Code is: there’s nothing that <code>strsplit()</code> wouldn’t solve… :) Just keep in mind that this function always returns a list, so we have to deal with it accordingly (i.e. use good old <code>unlist()</code>). In the following step I split the values by tabs and remove new lines, trim trolling spaces and bring the result to the vector format again.</p>
+<pre class="r"><code># separate a character string into a vector of character numbers with + or -  
+base &lt;- strsplit(changes, &#39;\t&#39;) %&gt;% # splt by Tab
+  str_replace_all(&#39;\n&#39;, &#39;&#39;) %&gt;% # remove all new lines
+  stringr::str_trim() %&gt;% # trim edges
+  strsplit(&#39; &#39;) %&gt;% # split by spaces
+  unlist() # get to vector format
+
+# check if it is a vector  
+glimpse(base)</code></pre>
+<pre><code>##  chr [1:2071] &quot;+11&quot; &quot;&quot; &quot;+14&quot; &quot;&quot; &quot;+10&quot; &quot;&quot; &quot;-8&quot; &quot;&quot; &quot;-13&quot; &quot;&quot; &quot;-2&quot; &quot;&quot; &quot;+8&quot; ...</code></pre>
+<p>We still see that there are some empty strings left, but once we get rid of them, we can turn the input to numeric and simply add it all up:</p>
+<pre class="r"><code># generate a solution
+base[nchar(base)&gt;0] %&gt;% # remove empty character strings 
+  as.numeric() %&gt;% # turn into numeric
+  sum() # add it up</code></pre>
+<pre><code>## [1] 402</code></pre>
+<p>And that’s it! First challenge done and you already can see how addictive it can become.. :)</p>
+</div>
