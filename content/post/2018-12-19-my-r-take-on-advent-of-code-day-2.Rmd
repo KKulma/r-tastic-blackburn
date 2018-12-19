@@ -307,7 +307,7 @@ xregqmyonskvzupsliiwhwctdb'
 glimpse(input)
 ```
 
-Right, Advent of Code will never give you nice and clean data to work with, that's for sure. But it doesn't looks like things are too bad this time - let's just split it by the new line and keep it as a vector for now. Does it look reaosnably well?
+Right, Advent of Code will never give you nice and clean data to work with, that's for sure. But it doesn't look like things are too bad this time - let's just split it by the new line and keep it as a vector for now. Does it look reaosnably good?
 
 ```{r}
 # clean it
@@ -323,7 +323,7 @@ df2 <- tibble(input = str_trim(clean_input))
 head(df2)
 ```
 
-Now, the way I approached this was to split each word into letters and then count how many times they occured. Then, for identifying words with 2 occurences, I'd filter I filtered only those that occur twice and if the final table has any rows, then this counts as yes. Take the first example:
+Now, the way I approached this was to split each word into letters and then count how many times they occured. Then, for identifying words with 2 occurences, I filtered only those that occur twice and if the final table has any rows, then this counts as yes. Take the first example:
 
 ```{r}
 strsplit(input, '\n') %>% unlist() %>% .[[1]] # get the first example
@@ -354,7 +354,7 @@ strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example
   nrow() # how many are there?
 ```
 
-Definitely yes. Let's repeat the process for tribble occurances:
+Definitely yes. Let's repeat the process for tripple occurances:
 
 
 ```{r, warning=FALSE, message=FALSE}
@@ -369,7 +369,7 @@ strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example
   nrow()
 ```
 
-Not much luck with those. To make our life easier, let's wrap both calculatioons in functions...
+Not much luck with those in this case. To make our life easier, let's wrap both calculations in functions...
 
 ```{r}
 ### wrap-up in functions
@@ -410,7 +410,7 @@ occurs3 <- map_int(df2$input, count3)
 str(occurs2)
 ```
 
-Now all we need to do it check how many positive elements we have in each vector and multiple their lengths by each other:
+Now, all we need to do is check how many positive elements we have in each vector and multiple their lengths by each other:
 
 
 ```{r}

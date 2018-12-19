@@ -54,7 +54,7 @@ library(purrr)</code></pre>
 <pre class="r"><code># check raw input
 glimpse(input)</code></pre>
 <pre><code>##  chr &quot;xrecqmdonskvzupalfkwhjctdb\nxrlgqmavnskvzupalfiwhjctdb\nxregqmyonskvzupalfiwhjpmdj\nareyqmyonskvzupalfiwhjcidb\&quot;| __truncated__</code></pre>
-<p>Right, Advent of Code will never give you nice and clean data to work with, that’s for sure. But it doesn’t looks like things are too bad this time - let’s just split it by the new line and keep it as a vector for now. Does it look reaosnably well?</p>
+<p>Right, Advent of Code will never give you nice and clean data to work with, that’s for sure. But it doesn’t look like things are too bad this time - let’s just split it by the new line and keep it as a vector for now. Does it look reaosnably good?</p>
 <pre class="r"><code># clean it
 clean_input =  strsplit(input, &#39;\n&#39;) %&gt;% unlist()   # splt by NewLine
 glimpse(clean_input)</code></pre>
@@ -72,7 +72,7 @@ head(df2)</code></pre>
 ## 4 areyqmyonskvzupalfiwhjcidb
 ## 5 xregqpyonskvzuaalfiwhjctdy
 ## 6 xwegumyonskvzuphlfiwhjctdb</code></pre>
-<p>Now, the way I approached this was to split each word into letters and then count how many times they occured. Then, for identifying words with 2 occurences, I’d filter I filtered only those that occur twice and if the final table has any rows, then this counts as yes. Take the first example:</p>
+<p>Now, the way I approached this was to split each word into letters and then count how many times they occured. Then, for identifying words with 2 occurences, I filtered only those that occur twice and if the final table has any rows, then this counts as yes. Take the first example:</p>
 <pre class="r"><code>strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] # get the first example</code></pre>
 <pre><code>## [1] &quot;xrecqmdonskvzupalfkwhjctdb&quot;</code></pre>
 <p>Let’s split it by the letter, put it in a tibble and count each letter occurances:</p>
@@ -107,7 +107,7 @@ strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] %&gt;% # get the fir
   filter(n == 2) %&gt;% # get only those with double occurances
   nrow() # how many are there?</code></pre>
 <pre><code>## [1] 3</code></pre>
-<p>Definitely yes. Let’s repeat the process for tribble occurances:</p>
+<p>Definitely yes. Let’s repeat the process for tripple occurances:</p>
 <pre class="r"><code># test: counting triple letter occurances 
 strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] %&gt;% # get the first example
   strsplit(&#39;&#39;) %&gt;% # split letters
@@ -118,7 +118,7 @@ strsplit(input, &#39;\n&#39;) %&gt;% unlist() %&gt;% .[[1]] %&gt;% # get the fir
   filter(n == 3) %&gt;% 
   nrow()</code></pre>
 <pre><code>## [1] 0</code></pre>
-<p>Not much luck with those. To make our life easier, let’s wrap both calculatioons in functions…</p>
+<p>Not much luck with those in this case. To make our life easier, let’s wrap both calculations in functions…</p>
 <pre class="r"><code>### wrap-up in functions
 # count double occurances 
 count2 &lt;- function(x) {
@@ -152,7 +152,7 @@ occurs2 &lt;- map_int(df2$input, count2)
 occurs3 &lt;- map_int(df2$input, count3)
 str(occurs2)</code></pre>
 <pre><code>##  int [1:250] 3 3 3 3 2 3 3 2 2 2 ...</code></pre>
-<p>Now all we need to do it check how many positive elements we have in each vector and multiple their lengths by each other:</p>
+<p>Now, all we need to do is check how many positive elements we have in each vector and multiple their lengths by each other:</p>
 <pre class="r"><code>#solution
 length(occurs2[occurs2 != 0]) * length(occurs3[occurs3 != 0])</code></pre>
 <pre><code>## [1] 5976</code></pre>
