@@ -325,34 +325,39 @@ df2 <- tibble(input = str_trim(clean_input))
 head(df2)
 ```
 
+Now, the way I approached this was to split each word into letters and then count how many times they occured. Then, for identifying words with 2 occurences, I'd filter I filtered only those that occur twice and if the final table has any rows, then this counts as yes. Take the first example:
 
+```{r}
+strsplit(input, '\n') %>% unlist() %>% .[[1]] # get the first example
+```
 
+Let's split it by the letter, put it in a tibble and count each letter occurances:
 
+```{r}
+strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example 
+  strsplit('') %>% # split letters
+  unlist() %>% # get a vector
+  as_tibble() %>% # trasform vector to tibble
+  rename_(letters = names(.)[1]) %>% # name the column: letters 
+  count(letters)
+```
+
+Now, do we have any double occurances there? 
 
 ```{r, warning=FALSE, message=FALSE}
 # test: counting double letter occurances 
 strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example 
   strsplit('') %>% # split letters
-  unlist() %>% 
+  unlist() %>% # get a vector
   as_tibble() %>% # trasform vector to tibble
-  rename_(letters = names(.)[1]) %>% 
+  rename_(letters = names(.)[1]) %>% # name the column: letters 
   count(letters) %>% # count letter occurances
-  filter(n == 2) %>% 
-  nrow()
+  filter(n == 2) %>% # get only those with double occurances
+  nrow() # how many are there?
 ```
 
+Definitely yes. Let's repeat the process for tribble occurances:
 
-```{r, warning=FALSE, message=FALSE}
-# test: counting double letter occurances 
-strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example 
-  strsplit('') %>% # split letters
-  unlist() %>% 
-  as_tibble() %>% # trasform vector to tibble
-  rename_(letters = names(.)[1]) %>% 
-  count(letters) %>% # count letter occurances
-  filter(n == 2) %>% 
-  nrow()
-```
 
 ```{r, warning=FALSE, message=FALSE}
 # test: counting triple letter occurances 
@@ -365,6 +370,8 @@ strsplit(input, '\n') %>% unlist() %>% .[[1]] %>% # get the first example
   filter(n == 3) %>% 
   nrow()
 ```
+
+Not much luck with those. To make our life easier, let's wrap both calculatioons in functions...
 
 ```{r}
 ### wrap-up in functions
@@ -396,18 +403,21 @@ count3 <- function(x) {
 }
 ```
 
+...and apply them to the whole dataset:
+
 ```{r}
 ### apply functions to input
 occurs2 <- map_int(df2$input, count2)
 occurs3 <- map_int(df2$input, count3)
+str(occurs2)
 ```
 
-```{r}
-# solution ####
-sol2 <-cbind(df2, occurs2, occurs3)
-head(sol2)
-```
+Now all we need to do it check how many positive elements we have in each vector and multiple their lengths by each other:
+
 
 ```{r}
-nrow(sol2[sol2$occurs2 != 0, ]) * nrow(sol2[sol2$occurs3 != 0, ])
+#solution
+length(occurs2[occurs2 != 0]) * length(occurs3[occurs3 != 0])
 ```
+
+Voila!
