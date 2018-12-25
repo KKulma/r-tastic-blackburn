@@ -1,0 +1,53 @@
+---
+title: End of 2018 R Thouhgts
+author: Kasia Kulma
+date: '2018-12-31'
+slug: end-of-2018-thouhgts
+categories: []
+tags:
+  - opinion
+description: ''
+topics: []
+---
+
+And here 
+
+
+# 2018 for me...
+
+R world:
+- Public speaking
+- Workshop at eRum
+- New job
+
+Real world:
+- selling the flat
+- buying the house
+- renovating the house
+- changing jobs 
+
+
+# Thoughts for 2019 and beyond
+
+### 01. You can contribute to R community in many meaningful ways... 
+
+... not just by writing new packages, blog posts or working on new data projects. My main 2018 contributions revolved around 
+
+ - sharing valuable content created by others 
+ - organising and co-organising events that promoted interesting speakers and allowed others to learn
+ - encouraging beginner bloggers/speakers/R contributors to continue contributing to the community, no matter how small or insignificant those contributions seemed to them at the time. 
+ 
+### 02. New lessons can come from unexpected places 
+
+Hactoberfest
+Advent of Code
+Tidy Tuesday
+exposing my code
+
+
+### 03. Public speaking can be hard and demanding but also lazy and unrewarding
+
+### 04. Connecting to people and community means so much more than number of followers
+
+### 05. It's OK to slow down and take a break
+There was a time in 2018 when the busy time in R community coincided with very busy times in my private life and I had a sense of obligation to the R community to keep contributing as I have so far. But really, at the end of the day you don't have to excuse yourself or wait for permission to slow down. Firstly, no one really cares. If you produce stuff, great. If not, someone else will and that's great, too. Secondly, even if people care, they also understand - things happen and it's all about living a satisfying and fulfilling life, not an overwhelming and miserable one. 
