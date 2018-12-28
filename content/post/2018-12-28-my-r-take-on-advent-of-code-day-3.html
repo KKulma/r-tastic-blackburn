@@ -94,9 +94,9 @@ head(clean_input, 10)</code></pre>
 ## 8  #8 @ 529,898: 12x19  8            529            898    12     19
 ## 9  #9 @ 660,201: 19x28  9            660            201    19     28
 ## 10 #10 @ 524,14: 21x27 10            524             14    21     27</code></pre>
-<p>Now we have the dimensions, how do we go about determining the overlap?
+<p>Now that we have the dimensions, how do we go about determining the overlap?
 My idea was to, for each claim, create a series of ‘coordinates’ where the digit before a dot indicates the position from the left edge and the second number the position from the top edge. Overlapping squares from different samples would have the same ‘coordinates’.</p>
-<p>Right, but how to do it in R? this is where <code>outer</code> funciton comes in handy. Let’s take the first example:</p>
+<p>Right, but how to do it in R? this is where <code>outer</code> function comes in handy. Let’s take the first example:</p>
 <pre class="r"><code># first example
 #1 @ 1,3: 4x4 
 

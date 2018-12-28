@@ -2,31 +2,43 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Opinion on r-tastic</title>
-    <link>https://r-tastic.co.uk/tags/opinion/</link>
+    <link>/tags/opinion/</link>
     <description>Recent content in Opinion on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Sun, 18 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://r-tastic.co.uk/tags/opinion/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/opinion/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>End of 2018 R Thouhgts</title>
+      <link>/post/end-of-2018-thouhgts/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/end-of-2018-thouhgts/</guid>
+      <description>And here
+2018 for me…R world:- Public speaking- Workshop at eRum- New job- R ladies
+Real world:- selling the flat- buying the house- renovating the house- changing jobs
+Thoughts for 2019 and beyond01. You can contribute to R community in many meaningful ways…… not just by writing new packages, blog posts or working on new data projects. My main 2018 contributions revolved around</description>
+    </item>
+    
+    <item>
       <title>Prime hints for running a data project in R</title>
-      <link>https://r-tastic.co.uk/post/prime-hints/</link>
+      <link>/post/prime-hints/</link>
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/prime-hints/</guid>
+      <guid>/post/prime-hints/</guid>
       <description>I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.</description>
     </item>
     
     <item>
       <title>End of Year thoughts</title>
-      <link>https://r-tastic.co.uk/post/end-of-year-thoughts/</link>
+      <link>/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/end-of-year-thoughts/</guid>
+      <guid>/post/end-of-year-thoughts/</guid>
       <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
     </item>
     

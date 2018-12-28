@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -48,7 +48,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -67,7 +67,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -75,25 +75,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -223,9 +223,9 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/clustering">clustering</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/clustering">clustering</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/best-practice">best practice</a>
+      <a class="post-taxonomy-tag" href="/tags/best-practice">best practice</a>
     
   </div>
   
@@ -513,7 +513,7 @@ for (i in 2:15) wss[i] &lt;- sum(kmeans(scaled_wine2,
                                      centers=i)$withinss)
 plot(1:15, wss, type=&quot;b&quot;, xlab=&quot;Number of Clusters&quot;,
      ylab=&quot;Within groups sum of squares&quot;)</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>In this example, we see an ‘elbow’ at 3 clusters. By adding more clusters than that we get relatively smaller gains. So… 3 clusters!</p>
 <p><br></p>
 </div>
@@ -529,7 +529,7 @@ pamk.best2 &lt;- pamk(scaled_wine2)
 cat(&quot;number of clusters estimated by optimum average silhouette width:&quot;, pamk.best2$nc, &quot;\n&quot;)</code></pre>
 <pre><code>## number of clusters estimated by optimum average silhouette width: 3</code></pre>
 <pre class="r"><code>plot(pam(scaled_wine2, pamk.best2$nc))</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
 <p><br></p>
 <p>Thus, it’s 3 clusters again.</p>
 <p><br></p>
@@ -571,7 +571,7 @@ clusGap(scaled_wine2, kmeans, 10, B = 100, verbose = interactive())</code></pre>
 
 wine_dist2 &lt;- dist(as.matrix(scaled_wine2))   # find distance matrix
 plot(hclust(wine_dist2))</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p><br></p>
 <p>Personally, I would go for something between 2 and 4 clusters. What do you think? :-)</p>
 <p><br></p>
@@ -586,7 +586,7 @@ set.seed(13)
 
 cal_fit2 &lt;- cascadeKM(scaled_wine2, 1, 10, iter = 1000)
 plot(cal_fit2, sortg = TRUE, grpmts.plot = TRUE)</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre class="r"><code>calinski.best2 &lt;- as.numeric(which.max(cal_fit2$results[2,]))
 cat(&quot;Calinski criterion optimal number of clusters:&quot;, calinski.best2, &quot;\n&quot;)</code></pre>
 <pre><code>## Calinski criterion optimal number of clusters: 3</code></pre>
@@ -608,19 +608,19 @@ cat(&quot;model-based optimal number of clusters:&quot;, m.best2, &quot;\n&quot;
 <pre><code>## model-based optimal number of clusters: 3</code></pre>
 <pre class="r"><code>plot(d_clust2)</code></pre>
 <div class="figure">
-<img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-1.png" />
+<img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-1.png" />
 
 </div>
 <div class="figure">
-<img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-2.png" />
+<img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-2.png" />
 
 </div>
 <div class="figure">
-<img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-3.png" />
+<img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-3.png" />
 
 </div>
 <div class="figure">
-<img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-4.png" />
+<img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/BIC-4.png" />
 
 </div>
 <p><br></p>
@@ -646,9 +646,9 @@ d.apclus2 &lt;- apcluster(negDistMat(r=2), scaled_wine2)
 cat(&quot;affinity propogation optimal number of clusters:&quot;, length(d.apclus2@clusters), &quot;\n&quot;)</code></pre>
 <pre><code>## affinity propogation optimal number of clusters: 15</code></pre>
 <pre class="r"><code>heatmap(d.apclus2)</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <pre class="r"><code>plot(d.apclus2, scaled_wine2)</code></pre>
-<p><img src="https://r-tastic.co.uk/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/post/2017-04-24-determining-the-optimal-number-of-clusters-in-your-datasets_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
 <div id="summary" class="section level3">
@@ -661,13 +661,13 @@ cat(&quot;affinity propogation optimal number of clusters:&quot;, length(d.apclu
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/scraping-online-table-with-info-on-r-datasets/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/">Scraping Online Table With Info on R datasets</a>
+      <a href="/post/scraping-online-table-with-info-on-r-datasets/">Scraping Online Table With Info on R datasets</a>
     </nav>
     
   </div>
@@ -677,13 +677,13 @@ cat(&quot;affinity propogation optimal number of clusters:&quot;, length(d.apclu
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="https://r-tastic.co.uk/post/cluster-validation-in-unsupervised-machine-learning/">Cluster Validation In Unsupervised Machine Learning</a>
+      <a href="/post/cluster-validation-in-unsupervised-machine-learning/">Cluster Validation In Unsupervised Machine Learning</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="https://r-tastic.co.uk/post/cluster-validation-in-unsupervised-machine-learning/"><i class="fa fa-chevron-right"></i></a>
+    <a href="/post/cluster-validation-in-unsupervised-machine-learning/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -714,7 +714,7 @@ cat(&quot;affinity propogation optimal number of clusters:&quot;, length(d.apclu
 
 </div>
 </div>
-<script src="https://r-tastic.co.uk/js/ui.js"></script>
+<script src="/js/ui.js"></script>
 
 
 <script>

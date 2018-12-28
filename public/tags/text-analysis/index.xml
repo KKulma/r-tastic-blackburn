@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Text Analysis on r-tastic</title>
-    <link>https://r-tastic.co.uk/tags/text-analysis/</link>
+    <link>/tags/text-analysis/</link>
     <description>Recent content in Text Analysis on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Fri, 26 Jan 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://r-tastic.co.uk/tags/text-analysis/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/text-analysis/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Trump VS Clinton Interpretable Text Classifier</title>
-      <link>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
       <description>I&amp;rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
     </item>
     
     <item>
       <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</link>
+      <link>/post/star-wars-vs-star-trek-word-battle/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</guid>
+      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
       <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
     <item>
       <title>Harari: Sentiment Analysis</title>
-      <link>https://r-tastic.co.uk/post/harari-sentiment-analysis/</link>
+      <link>/post/harari-sentiment-analysis/</link>
       <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/harari-sentiment-analysis/</guid>
+      <guid>/post/harari-sentiment-analysis/</guid>
       <description>So! Following my previous blog post where I scraped Amazon reviews of Yuval Harari&amp;rsquo;s Sapiens to create a wordcloud based on them, here I will compare results of sentiment analysis performed on Harari&amp;rsquo;s two books: Sapiens and Homo Deus.
 A QUICK INTRO For the context, Sapiens has been published originally in Hebrew in 2011. It, as Wikipedia puts it,
  [Sapiens] surveys the history of humankind from the evolution of archaic human species in the Stone Age up to the twenty-first century.</description>

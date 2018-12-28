@@ -75,10 +75,10 @@ clean_input <- raw_input %>%
 head(clean_input, 10)
 ```
 
-Now we have the dimensions, how do we go about determining the overlap?
+Now that we have the dimensions, how do we go about determining the overlap?
 My idea was to, for each claim, create  a series of 'coordinates' where the digit before a dot indicates the position from the left edge and the second number the position from the top edge. Overlapping squares from different samples would have the same 'coordinates'. 
 
-Right, but how to do it in R? this is where `outer` funciton comes in handy. Let's take the first example:
+Right, but how to do it in R? this is where `outer` function comes in handy. Let's take the first example:
 
 ```{r}
 # first example

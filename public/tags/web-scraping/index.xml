@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Web Scraping on r-tastic</title>
-    <link>https://r-tastic.co.uk/tags/web-scraping/</link>
+    <link>/tags/web-scraping/</link>
     <description>Recent content in Web Scraping on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Sat, 16 Dec 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://r-tastic.co.uk/tags/web-scraping/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/web-scraping/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</link>
+      <link>/post/star-wars-vs-star-trek-word-battle/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</guid>
+      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
       <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
     <item>
       <title>Scraping Online Table With Info on R datasets</title>
-      <link>https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/</link>
+      <link>/post/scraping-online-table-with-info-on-r-datasets/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/</guid>
+      <guid>/post/scraping-online-table-with-info-on-r-datasets/</guid>
       <description>It’s a very quick post on how to get a list of datasets available from within R with their basic description (what package they can be found in, number of observations and variables). It always takes me some time to find the right dataset to showcase whatever process or method I’m working with, so this was really to make my life easier. So! I’m going to scrape the table with a list of R datasets from here using rvest and xml2 packages:</description>
     </item>
     
