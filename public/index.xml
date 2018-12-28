@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>r-tastic</title>
-    <link>/</link>
+    <link>https://r-tastic.co.uk/</link>
     <description>Recent content on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Sat, 25 Aug 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://r-tastic.co.uk/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>About</title>
-      <link>/about/</link>
+      <link>https://r-tastic.co.uk/about/</link>
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/about/</guid>
+      <guid>https://r-tastic.co.uk/about/</guid>
       <description>
 
 &lt;h2 id=&#34;about-r-tastic&#34;&gt;About r-tastic&lt;/h2&gt;
@@ -40,11 +40,160 @@ Having said that, I do work with Python, too, so don&amp;rsquo;t be surprised to
     </item>
     
     <item>
+      <title>My R Take on Advent of Code - Day 3</title>
+      <link>https://r-tastic.co.uk/post/advent-of-code-day-3/</link>
+      <pubDate>Fri, 28 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://r-tastic.co.uk/post/advent-of-code-day-3/</guid>
+      <description>
+
+
+&lt;p&gt;Ho, ho, ho, Happy Chris.. New Year? Between eating the sea of fish (as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Christmas_in_Poland&#34;&gt;Polish tradition requires&lt;/a&gt;), assembling doll houses and designing a new kitchen, I finally managed to publish the third post on &lt;a href=&#34;https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/&#34;&gt;My R take on Advent of Code&lt;/a&gt;. To keep things short and sweet, here’s the original challenge:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Each Elf has made a claim about which area of fabric would be ideal for Santa’s suit. All claims have an ID and consist of a single rectangle with edges parallel to the edges of the fabric. Each claim’s rectangle is defined as follows:
+The number of inches between the left edge of the fabric and the left edge of the rectangle.
+The number of inches between the top edge of the fabric and the top edge of the rectangle.
+The width of the rectangle in inches.
+The height of the rectangle in inches.
+A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies a rectangle 3 inches from the left edge, 2 inches from the top edge, 5 inches wide, and 4 inches tall. Visually, it claims the square inches of fabric represented by # (and ignores the square inches of fabric represented by .) in the diagram below:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;………..&lt;br /&gt;
+………..&lt;br /&gt;
+…#####…&lt;br /&gt;
+…#####…&lt;br /&gt;
+…#####…&lt;br /&gt;
+…#####…&lt;br /&gt;
+………..&lt;br /&gt;
+………..&lt;br /&gt;
+………..&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The problem is that many of the claims overlap, causing two or more claims to cover part of the same areas. For example, consider the following claims:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;#1 @ 1,3: 4x4&lt;br /&gt;
+#2 @ 3,1: 4x4&lt;br /&gt;
+#3 @ 5,5: 2x2&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Visually, these claim the following areas:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;……..&lt;br /&gt;
+…2222.&lt;br /&gt;
+…2222.&lt;br /&gt;
+.11XX22.&lt;br /&gt;
+.11XX22.&lt;br /&gt;
+.111133.&lt;br /&gt;
+.111133.&lt;br /&gt;
+……..&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The four square inches marked with X are claimed by both 1 and 2. (Claim 3, while adjacent to the others, does not overlap either of them.). If the Elves all proceed with their own plans, none of them will have enough fabric. How many square inches of fabric are within two or more claims?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This is interesting! let’s load &lt;code&gt;tidyverse&lt;/code&gt; and have a quick look at the data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+raw_input &amp;lt;- read.delim(&amp;#39;day3-raw-input.txt&amp;#39;, header = FALSE)
+head(raw_input)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                    V1
+## 1 #1 @ 850,301: 23x12
+## 2 #2 @ 898,245: 15x10
+## 3   #3 @ 8,408: 12x27
+## 4 #4 @ 532,184: 16x13
+## 5 #5 @ 550,829: 11x10
+## 6 #6 @ 656,906: 13x12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ha! It looks like we need to first extract each dimension from the original input - easy-peasy with a little bit of regex and &lt;code&gt;parse_number&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# separate and clean dimension figures 
+clean_input &amp;lt;- raw_input %&amp;gt;%
+  rename(input = V1) %&amp;gt;% 
+  mutate(ID = str_extract(input, &amp;#39;#[:digit:]+&amp;#39;), # extract ID 
+         from_left_edge = str_extract(input, &amp;#39;@..?[:digit:]+\\,&amp;#39;), # extract right squares
+         from_top_endge = str_extract(input, &amp;#39;\\,[:digit:]+\\:&amp;#39;), # extract top square
+         width = str_extract(input, &amp;#39;[:digit:]+x&amp;#39;), # extract left dimension
+         height = str_extract(input, &amp;#39;x[:digit:]+&amp;#39;)# extract right dimension
+  ) %&amp;gt;% 
+  mutate_if(is.character, readr::parse_number) # extract numbers
+
+
+head(clean_input, 10)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                  input ID from_left_edge from_top_endge width height
+## 1  #1 @ 850,301: 23x12  1            850            301    23     12
+## 2  #2 @ 898,245: 15x10  2            898            245    15     10
+## 3    #3 @ 8,408: 12x27  3              8            408    12     27
+## 4  #4 @ 532,184: 16x13  4            532            184    16     13
+## 5  #5 @ 550,829: 11x10  5            550            829    11     10
+## 6  #6 @ 656,906: 13x12  6            656            906    13     12
+## 7  #7 @ 489,357: 24x23  7            489            357    24     23
+## 8  #8 @ 529,898: 12x19  8            529            898    12     19
+## 9  #9 @ 660,201: 19x28  9            660            201    19     28
+## 10 #10 @ 524,14: 21x27 10            524             14    21     27&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we have the dimensions, how do we go about determining the overlap?
+My idea was to, for each claim, create a series of ‘coordinates’ where the digit before a dot indicates the position from the left edge and the second number the position from the top edge. Overlapping squares from different samples would have the same ‘coordinates’.&lt;/p&gt;
+&lt;p&gt;Right, but how to do it in R? this is where &lt;code&gt;outer&lt;/code&gt; funciton comes in handy. Let’s take the first example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# first example
+#1 @ 1,3: 4x4 
+
+from_left_edge &amp;lt;- 1 
+width &amp;lt;- 4
+from_top_endge &amp;lt;- 3
+height &amp;lt;- 4
+
+# create a series of coordinates per set of dimensions
+dims &amp;lt;- as.vector(outer(from_left_edge + 1:width,
+                          from_top_endge + 1:height,
+                          paste, sep = &amp;#39;.&amp;#39;))
+
+sort(dims)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;2.4&amp;quot; &amp;quot;2.5&amp;quot; &amp;quot;2.6&amp;quot; &amp;quot;2.7&amp;quot; &amp;quot;3.4&amp;quot; &amp;quot;3.5&amp;quot; &amp;quot;3.6&amp;quot; &amp;quot;3.7&amp;quot; &amp;quot;4.4&amp;quot; &amp;quot;4.5&amp;quot; &amp;quot;4.6&amp;quot;
+## [12] &amp;quot;4.7&amp;quot; &amp;quot;5.4&amp;quot; &amp;quot;5.5&amp;quot; &amp;quot;5.6&amp;quot; &amp;quot;5.7&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Neat! Now, let’s wrap it up in a function and apply it to the challenge dataset:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#function that creates coordicates for squares occupied by each claim
+get_dimensions &amp;lt;- function(from_left_edge,
+                           width,
+                           from_top_endge,
+                           height
+) {
+  
+  dims &amp;lt;- as.vector(outer(from_left_edge + 1:width,
+                          from_top_endge + 1:height,
+                          paste, sep = &amp;#39;.&amp;#39;)) 
+  return(dims)
+  
+}
+
+
+## apply the function to the challenge dataset 
+final_list &amp;lt;- pmap(list(from_left_edge = clean_input$from_left_edge,
+                      width = clean_input$width,
+                      from_top_endge = clean_input$from_top_endge,
+                      height = clean_input$height),
+                 get_dimensions)
+
+# a list of &amp;#39;coordinates&amp;#39; for the first claim
+head(final_list[[1]])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;851.302&amp;quot; &amp;quot;852.302&amp;quot; &amp;quot;853.302&amp;quot; &amp;quot;854.302&amp;quot; &amp;quot;855.302&amp;quot; &amp;quot;856.302&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, let’s calculate the number of those coordiates that appear more than once in our list, which will give us the final solution to the Day 3 Puzzle:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## final solution
+final_list%&amp;gt;% 
+  unlist() %&amp;gt;% 
+  table() %&amp;gt;% # get counts per coordinate
+  as_tibble() %&amp;gt;% # put it in usable format
+  filter(n &amp;gt; 1) %&amp;gt;%  
+  nrow() &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 113576&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
       <title>My R take on Advent of Code - Day 2</title>
-      <link>/post/my-r-take-on-advent-of-code-day-2/</link>
+      <link>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/my-r-take-on-advent-of-code-day-2/</guid>
+      <guid>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</guid>
       <description>
 
 
@@ -200,10 +349,10 @@ length(occurs2[occurs2 != 0]) * length(occurs3[occurs3 != 0])&lt;/code&gt;&lt;/p
     
     <item>
       <title>My R take on Advent of Code - Day 1</title>
-      <link>/post/advent-of-code-in-r-day-1/</link>
+      <link>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/advent-of-code-in-r-day-1/</guid>
+      <guid>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</guid>
       <description>
 
 
@@ -266,29 +415,29 @@ base[nchar(base)&amp;gt;0] %&amp;gt;% # remove empty character strings
     
     <item>
       <title>Exploring London Crime with R heat maps</title>
-      <link>/post/exploring-london-crime-with-r-heat-maps/</link>
+      <link>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
+      <guid>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</guid>
       <description>
-&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/leaflet/leaflet.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet/leaflet.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/leafletfix/leafletfix.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/Proj4Leaflet/proj4-compressed.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/Proj4Leaflet/proj4leaflet.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/rstudio_leaflet/rstudio_leaflet.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-binding/leaflet.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-providers/leaflet-providers.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-providers-plugin/leaflet-providers-plugin.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/lfx-heat/lfx-heat-prod.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/lfx-heat/lfx-heat-bindings.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/leaflet-markercluster/MarkerCluster.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;link href=&#34;/rmarkdown-libs/leaflet-markercluster/MarkerCluster.Default.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.freezable.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.layersupport.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet/leaflet.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet/leaflet.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://r-tastic.co.uk/rmarkdown-libs/leafletfix/leafletfix.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/Proj4Leaflet/proj4-compressed.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/Proj4Leaflet/proj4leaflet.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://r-tastic.co.uk/rmarkdown-libs/rstudio_leaflet/rstudio_leaflet.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-binding/leaflet.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-providers/leaflet-providers.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-providers-plugin/leaflet-providers-plugin.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/lfx-heat/lfx-heat-prod.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/lfx-heat/lfx-heat-bindings.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-markercluster/MarkerCluster.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;link href=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-markercluster/MarkerCluster.Default.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.freezable.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://r-tastic.co.uk/rmarkdown-libs/leaflet-markercluster/leaflet.markercluster.layersupport.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being &lt;a href=&#34;https://data.police.uk/&#34;&gt;data.police.uk API&lt;/a&gt;. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and &lt;a href=&#34;https://kkulma.github.io/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis/&#34;&gt;I explored it using heat maps in the past&lt;/a&gt;. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information. I’m dedicating this post to my favourite heat maps, so expect some lovely colours (side by side with insightful findings on London crime)!&lt;/p&gt;
@@ -595,7 +744,7 @@ ggplot(police_grid,aes(x=date,y=location, fill=n_crimes))+
     #remove plot border
     panel.border=element_blank()
   ) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;So pretty! I’m a big-big fan of &lt;code&gt;viridis&lt;/code&gt; colour pallette and I must say you see it at its best in heat maps. And how informative this heat map is! From the first glimpse you can see straight away which areas tend to have more crime (e.g. Bethnal Green, Bayswater) and when (summer months). We know what and when, what about the type of crime they experiene most? This can be sorted with another faceted heatmap:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# summarise data by location and crime type
 crime_grid &amp;lt;- final_df %&amp;gt;% 
@@ -617,7 +766,7 @@ ggplot(crime_grid,aes(x=category,y=location, fill=n_crimes))+
     plot.background=element_blank(),
     panel.border=element_blank()
   ) #+&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2018-08-26-exploring-london-crime-with-r-heat-maps_files/figure-html/tiled-heatmap2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  #guides(fill=guide_legend(title=&amp;quot;Number of crimes&amp;quot;),
   #       colour = guide_legend(reverse=T))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Another informative beauty! You can see that 3 types of crime dominate: anit-social behaviour, violent crime and vehicle theft. Again, avoid Bethnal Green if you can and make sure you hang out in Epping, instead!&lt;/p&gt;
@@ -702,10 +851,10 @@ july_data %&amp;gt;%
     
     <item>
       <title>First post in new r-tastic</title>
-      <link>/post/first-post-in-new-r-tastic/</link>
+      <link>https://r-tastic.co.uk/post/first-post-in-new-r-tastic/</link>
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/first-post-in-new-r-tastic/</guid>
+      <guid>https://r-tastic.co.uk/post/first-post-in-new-r-tastic/</guid>
       <description>
 
 
@@ -729,10 +878,10 @@ july_data %&amp;gt;%
     
     <item>
       <title>Prime hints for running a data project in R</title>
-      <link>/post/prime-hints/</link>
+      <link>https://r-tastic.co.uk/post/prime-hints/</link>
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/prime-hints/</guid>
+      <guid>https://r-tastic.co.uk/post/prime-hints/</guid>
       <description>
 
 
@@ -753,7 +902,7 @@ july_data %&amp;gt;%
 &lt;p&gt;If you’re not convinced, read &lt;a href=&#34;https://www.tidyverse.org/articles/2017/12/workflow-vs-script/&#34;&gt;a more thorough explanation given by Jenny Bryan&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;So, go on and start a New Project today! Otherwise, your computer may be at risk of being set on fire…&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jb_tweet.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jb_tweet.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -791,7 +940,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;p&gt;You create a new code section by writing &lt;code&gt;####&lt;/code&gt; or &lt;code&gt;----&lt;/code&gt; at the end of any comment that is to become a new code section.&lt;/p&gt;
 &lt;p&gt;See the image below for a simplified example:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/code_sections.png&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/code_sections.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;div id=&#34;update-1&#34; class=&#34;section level4&#34;&gt;
@@ -803,7 +952,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;h3&gt;&lt;strong&gt;05. Make your life easier and mark your code when you need to.&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;Did you know that if you click anywhere left from line numbers in RStudio, it will create a red mark? I think this is one of the most underused features in RStudio, and a very useful one, too! Imagine having to define a function using another part of a very long R script? Instead of finding a relevant part of the script and then spending seconds or minutes on finding the function that you were about to define, you first mark that function, go to the relevant bit of code and then have no problems finding the function to be defined again, as the red mark will tell you where to look. BTW, it works only in already saved R scripts and it doesn’t work in RMarkdown files.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/red_dot.png&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/red_dot.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;div id=&#34;update-2&#34; class=&#34;section level4&#34;&gt;
@@ -849,7 +998,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;p&gt;This way it will be easy to search for files later and/or narrow file lists based on names.&lt;/p&gt;
 &lt;p&gt;Jenny’s example:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny1.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny1.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
 
 &lt;/div&gt;
 &lt;ul&gt;
@@ -857,7 +1006,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;/ul&gt;
 &lt;p&gt;See Jenny’s example below for clarification:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny2.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny2.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -869,7 +1018,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;/blockquote&gt;
 &lt;p&gt;I should add, it’s easy to figure it out also for someone who doesn’t know your work very well (this is a clear reminder of the previous point). I love the example below:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny3.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny3.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -883,7 +1032,7 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;/ul&gt;
 &lt;p&gt;Again, one of Jenny’s examples:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny4.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
+&lt;img src=&#34;https://r-tastic.co.uk/post/2018-03-18-prime-hints-forrrunning-a-data-project-in-r_files/jenny4.png&#34; style=&#34;width:90.0%&#34; style=&#34;height:90.0%&#34; /&gt;
 
 &lt;/div&gt;
 &lt;p&gt;I couldn’t believe how much these little hacks improved the flow of my work. Paying attention to file names was also appreciated by my coworkers, I’m sure.&lt;/p&gt;
@@ -950,10 +1099,10 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
     
     <item>
       <title>Trump VS Clinton Interpretable Text Classifier</title>
-      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <link>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <guid>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</guid>
       <description>&lt;p&gt;I&amp;rsquo;ve been writing/talking a lot about &lt;a href=&#34;https://www.oreilly.com/learning/introduction-to-local-interpretable-model-agnostic-explanations-lime&#34;&gt;LIME&lt;/a&gt; recently: in &lt;a href=&#34;https://kkulma.github.io/2017-11-07-automated_machine_learning_in_cancer_detection/&#34;&gt;this blog&lt;/a&gt;/ at &lt;a href=&#34;https://www.youtube.com/watch?v=CY3t11vuuOM&#34;&gt;H20 meetup&lt;/a&gt;, or at coming &lt;a href=&#34;https://theaicongress.com/&#34;&gt;AI Congress&lt;/a&gt; and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the &lt;a href=&#34;https://arxiv.org/abs/1602.04938&#34;&gt;original publication&lt;/a&gt;. &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Pedersen&lt;/a&gt; did an amazing job building &lt;code&gt;lime&lt;/code&gt; package for R with excellent documentation and &lt;a href=&#34;https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html&#34;&gt;vignette&lt;/a&gt;. In fact, the &lt;code&gt;lime&lt;/code&gt; vignette inspired a big part of this post. As you&amp;rsquo;ll soon see, &lt;code&gt;lime&lt;/code&gt; keeps on giving when it comes to text classification. What do you say for classifying Clinton and Trump tweets?&lt;/p&gt;
 
 &lt;p&gt;As always, let&amp;rsquo;s start with loading necessary packages.&lt;/p&gt;
@@ -1135,7 +1284,7 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 &lt;pre&gt;&lt;code&gt;plot_features(corr_explanation)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Remember that &lt;code&gt;Label == 1&lt;/code&gt; means Donald Trump was the author of the tweet, otherwise it was Hilary Clinton. What does &lt;code&gt;lime&lt;/code&gt; tell us? Funnily enough, it looks like presence of words like &lt;code&gt;Donald&lt;/code&gt;, &lt;code&gt;Trump&lt;/code&gt;, &lt;code&gt;candidate&lt;/code&gt; and &lt;code&gt;president&lt;/code&gt; indicates that Hilary was the author, whereas words like &lt;code&gt;Hilary&lt;/code&gt; and &lt;code&gt;me&lt;/code&gt; or &lt;code&gt;my&lt;/code&gt; are indicative of Donald Trump. Sounds reasonable to me ;)&lt;/p&gt;
 
@@ -1144,7 +1293,7 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 &lt;pre&gt;&lt;code&gt;plot_text_explanations(corr_explanation)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;It will give you a clearer view of support or contradiction of certain words for a given label, if you&amp;rsquo;re interested only in direction but not strength of this relationship.&lt;/p&gt;
 
@@ -1159,10 +1308,10 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
     
     <item>
       <title>End of Year thoughts</title>
-      <link>/post/end-of-year-thoughts/</link>
+      <link>https://r-tastic.co.uk/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/end-of-year-thoughts/</guid>
+      <guid>https://r-tastic.co.uk/post/end-of-year-thoughts/</guid>
       <description>
 
 &lt;p&gt;Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done. But I can&amp;rsquo;t write all this without mentioning a very special group of people - &lt;a href=&#34;https://twitter.com/search?q=%23rstats&amp;amp;src=typd&#34;&gt;#rstats community&lt;/a&gt;! - that is now a big part of everything that gets published here.&lt;/p&gt;
@@ -1221,10 +1370,10 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
     
     <item>
       <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>/post/star-wars-vs-star-trek-word-battle/</link>
+      <link>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
+      <guid>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</guid>
       <description>
 
 
@@ -1355,7 +1504,7 @@ final_tokens %&amp;gt;%
   ylab(&amp;quot;log(word_prop)&amp;quot;) +
   scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
   ggtitle(&amp;quot;Sample of words that occur with the same frequency in SW and ST&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;I must say, I expected this most similar vocabulary to be much more technical. At the same time, this time according to expectations, those words reflect action and drama in both movies: things &lt;code&gt;cease&lt;/code&gt;, &lt;code&gt;emanate&lt;/code&gt; and &lt;code&gt;shove&lt;/code&gt;, people &lt;code&gt;shock&lt;/code&gt;, experience &lt;code&gt;agony&lt;/code&gt; and are &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;What about most polarizing words? I chose to show the words that were at least 12 times (log_word_prop &amp;gt; 2.4) more common in one movie than the other. What are they?&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
@@ -1369,7 +1518,7 @@ final_tokens %&amp;gt;%
   ylab(&amp;quot;log(word_prop)&amp;quot;) +
   scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
   ggtitle(&amp;quot;Words that show strikingly different frequencies in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Haha! You may not be surprised that the most &lt;em&gt;Star Wars-y&lt;/em&gt; vocabulary is full of words like &lt;code&gt;death&lt;/code&gt;, &lt;code&gt;star&lt;/code&gt;, &lt;code&gt;imperial&lt;/code&gt; or even &lt;code&gt;father&lt;/code&gt;, but I didn’t expect &lt;code&gt;female&lt;/code&gt; or &lt;code&gt;cloud&lt;/code&gt; to be THAT much more present in Star Trek! Some things never &lt;code&gt;cease&lt;/code&gt; to surprise even most &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt; people, even if they have assistance of &lt;code&gt;imperial technician&lt;/code&gt; ;-)&lt;/p&gt;
 &lt;div id=&#34;update&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;UPDATE!!&lt;/h3&gt;
@@ -1384,7 +1533,7 @@ final_tokens %&amp;gt;%
   xlab(&amp;quot;log(word_prop)&amp;quot;) +
   scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
   ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Not a bad start! A much more appealing - although a bit less readable - look can be achieved with &lt;code&gt;geom_label()&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
   mutate(dominant_freq = as.numeric(ifelse(sw_n &amp;gt; st_n, sw_n, st_n))) %&amp;gt;% 
@@ -1396,353 +1545,8 @@ final_tokens %&amp;gt;%
   xlab(&amp;quot;log(word_prop)&amp;quot;) +
   scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
   ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://r-tastic.co.uk/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
-      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
-      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
-      <description>
-
-&lt;p&gt;I get bored from doing two things: i) &lt;a href=&#34;https://machinelearningmastery.com/why-you-should-be-spot-checking-algorithms-on-your-machine-learning-problems/&#34;&gt;spot-checking&lt;/a&gt; + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they &lt;a href=&#34;https://codewords.recurse.com/issues/five/why-do-neural-networks-think-a-panda-is-a-vulture&#34;&gt;take a panda bear for a vulture&lt;/a&gt;!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function &lt;code&gt;h2o.automl()&lt;/code&gt; that may help me automate the former and b) &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Pedersen&lt;/a&gt;&amp;rsquo;s &lt;code&gt;library(lime)&lt;/code&gt; that may help clarify the latter.&lt;/p&gt;
-
-&lt;h3 id=&#34;accurate-automated-predictive-models-using-h2o-automl&#34;&gt;ACCURATE &amp;amp; AUTOMATED PREDICTIVE MODELS USING &lt;code&gt;h2o.automl()&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;This post would never happen if not for the inspiration I got from two excellent blog posts: &lt;a href=&#34;https://twitter.com/ShirinGlander&#34;&gt;Shirin Glander&lt;/a&gt;&amp;rsquo;s &lt;a href=&#34;https://shiring.github.io/machine_learning/2017/04/23/lime&#34;&gt;Lime presentation&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/mdancho84&#34;&gt;Matt Dancho&lt;/a&gt; &amp;rsquo;s &lt;a href=&#34;http://www.business-science.io/business/2017/09/18/hr_employee_attrition.html&#34;&gt;HR data analysis&lt;/a&gt;. There&amp;rsquo;s no hiding that this post is basically copy-catting their work - at least I&amp;rsquo;m standing on the shoulders of giants, hey!&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ll use the powerful &lt;code&gt;h2o.automl()&lt;/code&gt; function to optimise and choose the most accurate model classifying benign and malignant cancer cells from the Wisconsin dataset.&lt;/p&gt;
-
-&lt;p&gt;First, let&amp;rsquo;s load the data:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;### loading cancer data ####
-library(mlbench)
-
-data(BreastCancer)
-str(BreastCancer)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    699 obs. of  11 variables:
-##  $ Id             : chr  &amp;quot;1000025&amp;quot; &amp;quot;1002945&amp;quot; &amp;quot;1015425&amp;quot; &amp;quot;1016277&amp;quot; ...
-##  $ Cl.thickness   : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 5 5 3 6 4 8 1 2 2 4 ...
-##  $ Cell.size      : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 4 1 8 1 10 1 1 1 2 ...
-##  $ Cell.shape     : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 4 1 8 1 10 1 2 1 1 ...
-##  $ Marg.adhesion  : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 1 5 1 1 3 8 1 1 1 1 ...
-##  $ Epith.c.size   : Ord.factor w/ 10 levels &amp;quot;1&amp;quot;&amp;lt;&amp;quot;2&amp;quot;&amp;lt;&amp;quot;3&amp;quot;&amp;lt;&amp;quot;4&amp;quot;&amp;lt;..: 2 7 2 3 2 7 2 2 2 2 ...
-##  $ Bare.nuclei    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 10 2 4 1 10 10 1 1 1 ...
-##  $ Bl.cromatin    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 3 3 3 3 3 9 3 3 1 2 ...
-##  $ Normal.nucleoli: Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 2 1 7 1 7 1 1 1 1 ...
-##  $ Mitoses        : Factor w/ 9 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
-##  $ Class          : Factor w/ 2 levels &amp;quot;benign&amp;quot;,&amp;quot;malignant&amp;quot;: 1 1 1 1 1 2 1 1 1 1 ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;.. and do some data cleaning: change column names, get rid of the order in factor levels and remove rows with empty cells:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;### data pre-processing ####
-
-library(dplyr)
-library(janitor)
-library(h2o)
-
-bc_edited =
-  BreastCancer %&amp;gt;% 
-  janitor::clean_names() %&amp;gt;% # changes dots in colnames to underscores
-  mutate_if(is.factor, factor, ordered = FALSE) %&amp;gt;% # changes all columns to unordered factors
-  select(class, everything(), -id) %&amp;gt;% 
-  na.omit() 
-
-str(bc_edited)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## &#39;data.frame&#39;:    683 obs. of  10 variables:
-##  $ class          : Factor w/ 2 levels &amp;quot;benign&amp;quot;,&amp;quot;malignant&amp;quot;: 1 1 1 1 1 2 1 1 1 1 ...
-##  $ cl_thickness   : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 5 5 3 6 4 8 1 2 2 4 ...
-##  $ cell_size      : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 4 1 8 1 10 1 1 1 2 ...
-##  $ cell_shape     : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 4 1 8 1 10 1 2 1 1 ...
-##  $ marg_adhesion  : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 5 1 1 3 8 1 1 1 1 ...
-##  $ epith_c_size   : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 2 7 2 3 2 7 2 2 2 2 ...
-##  $ bare_nuclei    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 10 2 4 1 10 10 1 1 1 ...
-##  $ bl_cromatin    : Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 3 3 3 3 3 9 3 3 1 2 ...
-##  $ normal_nucleoli: Factor w/ 10 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 2 1 7 1 7 1 1 1 1 ...
-##  $ mitoses        : Factor w/ 9 levels &amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
-##  - attr(*, &amp;quot;na.action&amp;quot;)=Class &#39;omit&#39;  Named int [1:16] 24 41 140 146 159 165 236 250 276 293 ...
-##   .. ..- attr(*, &amp;quot;names&amp;quot;)= chr [1:16] &amp;quot;24&amp;quot; &amp;quot;41&amp;quot; &amp;quot;140&amp;quot; &amp;quot;146&amp;quot; ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That&amp;rsquo;s better! Now, let&amp;rsquo;s set up the local H2O instance&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;h2o.init() # initializes Java Virtual Machine (JVM)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##  Connection successful!
-## 
-## R is connected to the H2O cluster: 
-##     H2O cluster uptime:         7 hours 8 minutes 
-##     H2O cluster version:        3.14.0.3 
-##     H2O cluster version age:    1 month and 16 days  
-##     H2O cluster name:           H2O_started_from_R_katarzynakulma_ihv753 
-##     H2O cluster total nodes:    1 
-##     H2O cluster total memory:   0.11 GB 
-##     H2O cluster total cores:    4 
-##     H2O cluster allowed cores:  4 
-##     H2O cluster healthy:        TRUE 
-##     H2O Connection ip:          localhost 
-##     H2O Connection port:        54321 
-##     H2O Connection proxy:       NA 
-##     H2O Internal Security:      FALSE 
-##     H2O API Extensions:         XGBoost, Algos, AutoML, Core V3, Core V4 
-##     R Version:                  R version 3.3.3 (2017-03-06)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;h2o.no_progress() # Turn off output of progress bars
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; and split the data into training, validation and testing datasets.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;bc_h2o &amp;lt;- as.h2o(bc_edited)
-
-split_h2o &amp;lt;- h2o.splitFrame(bc_h2o, c(0.7, 0.15), seed = 13 ) #splits data into random 70%/15%15% chunks
-
-train_h2o &amp;lt;- h2o.assign(split_h2o[[1]], &amp;quot;train&amp;quot; ) # 70%
-valid_h2o &amp;lt;- h2o.assign(split_h2o[[2]], &amp;quot;valid&amp;quot; ) # 15%
-test_h2o  &amp;lt;- h2o.assign(split_h2o[[3]], &amp;quot;test&amp;quot; )  # 15%
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Finally, we can now use the famous &lt;code&gt;h2o.automl()&lt;/code&gt; function and set the model up: set the target, feature names, training and validation sets, as well as how long we want the algorithm to run for (for this you can use either &lt;code&gt;max_runtime_secs&lt;/code&gt; argument, like I did here, or &lt;code&gt;max_models&lt;/code&gt;, see &lt;a href=&#34;https://h2o-release.s3.amazonaws.com/h2o/rel-vapnik/1/docs-website/h2o-docs/automl.html&#34;&gt;&lt;code&gt;h2o.automl()&lt;/code&gt; documentation&lt;/a&gt; for details.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# Sets target and feature names for h2o
-y &amp;lt;- &amp;quot;class&amp;quot;
-x &amp;lt;- setdiff(names(train_h2o), y)        
-
-# Run the automated machine learning 
-models_h2o &amp;lt;- h2o.automl(
-  x = x, # predictors
-  y = y, # labels
-  training_frame    = train_h2o, # training set
-  leaderboard_frame = valid_h2o, # validation set
-  max_runtime_secs  = 60 # run-time can be increased/decreased according to your needs
-)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The algorithm will run random forest (RF), gradient boosting machines (GBM), generalised linear models (GLM) and deep learning (DL) models. It will then produce a leaderboard based on the best stopping metric (which you can choose by defining &lt;code&gt;stopping_metric&lt;/code&gt; parameter). For more details see &lt;a href=&#34;https://www.safaribooksonline.com/library/view/practical-machine-learning/9781491964590/ch04.html&#34;&gt;this chapter&lt;/a&gt; from &lt;a href=&#34;http://shop.oreilly.com/product/0636920053170.do&#34;&gt;Practical Machine Learning with H2O by Darren Cook&lt;/a&gt;. You can see the best model by picking up a &lt;code&gt;@leader&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;### leaderboard
-
-lb &amp;lt;- models_h2o@leaderboard
-lb
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##                                    model_id      auc  logloss
-## 1     DeepLearning_0_AutoML_20171107_162913 0.996622 0.081152
-## 2     DeepLearning_0_AutoML_20171107_230040 0.994932 0.090049
-## 3 GBM_grid_1_AutoML_20171107_162650_model_1 0.994088 0.637539
-## 4 GBM_grid_1_AutoML_20171107_170043_model_6 0.993243 0.101251
-## 5 GBM_grid_1_AutoML_20171107_230502_model_0 0.993243 0.104345
-## 6 GBM_grid_0_AutoML_20171107_170043_model_4 0.992821 0.107482
-## 
-## [402 rows x 3 columns]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Neural network wins, followed by gradient boost models - no surprise here!&lt;/p&gt;
-
-&lt;p&gt;Finally, you can use the Leader to predict labels of the testing set:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;automl_leader &amp;lt;- models_h2o@leader
-
-h20_pred &amp;lt;- h2o.predict(automl_leader, test_h2o)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It &lt;strong&gt;IS&lt;/strong&gt; that easy, no joke. Let&amp;rsquo;s have a quick look at the confusion matrix&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;library(tibble)
-
-test_performance &amp;lt;- test_h2o %&amp;gt;%
-  tibble::as_tibble() %&amp;gt;%
-  select(class) %&amp;gt;%
-  tibble::add_column(prediction = as.vector(h20_pred$predict)) %&amp;gt;%
-  mutate(correct = ifelse(class == prediction, &amp;quot;correct&amp;quot;, &amp;quot;wrong&amp;quot;)) %&amp;gt;% 
-  mutate_if(is.character, as.factor)
-
-head(test_performance)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
-##       class prediction correct
-##      &amp;lt;fctr&amp;gt;     &amp;lt;fctr&amp;gt;  &amp;lt;fctr&amp;gt;
-## 1    benign     benign correct
-## 2    benign     benign correct
-## 3 malignant     benign   wrong
-## 4    benign     benign correct
-## 5 malignant  malignant correct
-## 6 malignant  malignant correct
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;confusion_matrix &amp;lt;- test_performance %&amp;gt;% select(-correct) %&amp;gt;% table() 
-confusion_matrix
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##            prediction
-## class       benign malignant
-##   benign        61         1
-##   malignant      5        33
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; and more detailed performance of the model.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#### Performance analysis ####
-tn &amp;lt;- confusion_matrix[1]
-tp &amp;lt;- confusion_matrix[4]
-fp &amp;lt;- confusion_matrix[3]
-fn &amp;lt;- confusion_matrix[2]
-
-accuracy &amp;lt;- (tp + tn) / (tp + tn + fp + fn)
-misclassification_rate &amp;lt;- 1 - accuracy
-recall &amp;lt;- tp / (tp + fn)
-precision &amp;lt;- tp / (tp + fp)
-null_error_rate &amp;lt;- tn / (tp + tn + fp + fn)
-
-library(purrr)
-
-tibble(
-  accuracy,
-  misclassification_rate,
-  recall,
-  precision,
-  null_error_rate
-) %&amp;gt;% 
-  purrr::transpose() 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [[1]]
-## [[1]]$accuracy
-## [1] 0.94
-## 
-## [[1]]$misclassification_rate
-## [1] 0.06
-## 
-## [[1]]$recall
-## [1] 0.8684211
-## 
-## [[1]]$precision
-## [1] 0.9705882
-## 
-## [[1]]$null_error_rate
-## [1] 0.61
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Given that it is cancer data I&amp;rsquo;d be happier if &lt;a href=&#34;https://www.quora.com/What-does-recall-mean-in-machine-learning&#34;&gt;recall&lt;/a&gt; was higher, but longer running times would improve this. Now, can we understand the neural network - the king of &amp;lsquo;black-box&amp;rsquo; learners - that produced those predictions?&lt;/p&gt;
-
-&lt;h3 id=&#34;making-obscure-less-obscure-using-library-lime&#34;&gt;MAKING OBSCURE LESS OBSCURE USING &lt;code&gt;library(lime)&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;The answer is (to certain extend) &lt;strong&gt;YES&lt;/strong&gt; and package &lt;code&gt;lime&lt;/code&gt; will help us with it. Following Shirin&amp;rsquo;s example, I&amp;rsquo;ll split the data into correct and wrong predictions to better understand what confused the model about misclassified observations.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;test_h2o_df = as.data.frame(test_h2o)
-
-test_h2o_2 = test_h2o_df %&amp;gt;%
-  as.data.frame() %&amp;gt;% 
-  mutate(sample_id = rownames(test_h2o_df ))
-
-test_correct &amp;lt;- test_performance %&amp;gt;% 
-  mutate(sample_id = rownames(test_performance)) %&amp;gt;% 
-  filter(correct == &#39;correct&#39;) %&amp;gt;%
-  inner_join(test_h2o_2) %&amp;gt;% 
-  select(-c(prediction, correct, sample_id))
-
-test_wrong &amp;lt;- test_performance %&amp;gt;% 
-  mutate(sample_id = rownames(test_performance)) %&amp;gt;% 
-  filter(correct == &#39;wrong&#39;) %&amp;gt;%
-  inner_join(test_h2o_2) %&amp;gt;% 
-  select(-c(prediction, correct, sample_id))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now, let&amp;rsquo;s prepare &lt;code&gt;lime&lt;/code&gt; so that it works with H2O model correctly. No one will explain this step better than Matt (the author) himself:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The &lt;code&gt;lime&lt;/code&gt; package implements LIME in R. One thing to note is that it’s not setup out-of-the-box to work with h2o. The good news is with a few functions we can get everything working properly. We’ll need to make two custom functions:&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;model_type&lt;/code&gt;: Used to tell lime what type of model we are dealing with. It could be classification, regression, survival, etc.&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;predict_model&lt;/code&gt;: Used to allow lime to perform predictions that its algorithm can interpret.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;library(lime)
-
-# Setup lime::model_type() function for h2o
-model_type.H2OBinomialModel &amp;lt;- function(x, ...) {
-  return(&amp;quot;classification&amp;quot;)
-}
-
-# Setup lime::predict_model() function for h2o
-predict_model.H2OBinomialModel &amp;lt;- function(x, newdata, type, ...) {
-  pred &amp;lt;- h2o.predict(x, as.h2o(newdata))
-  # return probs
-  return(as.data.frame(pred[,-1]))
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;re nearly there! Let&amp;rsquo;s just define our explainer&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;predict_model(x = automl_leader, newdata = as.data.frame(test_h2o[,-1]), type = &#39;raw&#39;) %&amp;gt;%
-  tibble::as_tibble()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 2
-##        benign    malignant
-##         &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;
-##  1 0.99912117 0.0008788323
-##  2 0.99911889 0.0008811068
-##  3 0.86410812 0.1358918824
-##  4 0.99884181 0.0011581938
-##  5 0.02542826 0.9745717393
-##  6 0.01327680 0.9867232037
-##  7 0.02752797 0.9724720317
-##  8 0.80216260 0.1978373974
-##  9 0.99859496 0.0014050448
-## 10 0.99271180 0.0072882030
-## # ... with 90 more rows
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;explainer &amp;lt;- lime::lime(
-  as.data.frame(train_h2o[,-1]), 
-  model          = automl_leader, 
-  bin_continuous = FALSE)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; and let&amp;rsquo;s start explaining! All our work so far lead to this feature importance plots (not the same for each case!). The green bars mean that the feature supports predicted label, and the red bars contradict it. Let&amp;rsquo;s have a look at the correctly predicted labels:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;explanation_corr &amp;lt;- explain(
-  test_correct[1:9, -1],
-  explainer = explainer,
-  n_labels = 1,
-  n_features = 5,
-  kernel_width = 0.5)
-
-plot_features(explanation_corr, ncol = 3)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;You can see that smaller and more regular cells with low values of bare nuclei (&lt;code&gt;bare_nuclei&lt;/code&gt;) correctly indicate benign cells, whereas big, irregular cells with higher values of clump thickness (&lt;code&gt;cl_thickness&lt;/code&gt;) support malignant label. It all makes sense.&lt;/p&gt;
-
-&lt;p&gt;What about the misclasified labels?&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;explanation_wrong &amp;lt;- explain(
-  test_wrong[1:6, -1],
-  explainer = explainer,
-  n_labels = 1,
-  n_features = 5,
-  kernel_width = 0.5)
-
-plot_features(explanation_wrong)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;And here&amp;rsquo;s where the true power of &lt;code&gt;lime&lt;/code&gt; package is: understanding what made model missclasify labels. All the wrong cases were predcited to be benign while they were malignant, why? It looks like they were mainly small and quite regular cells, altough some malignant characterstics were still present (e.g. higher values of bare nuclei and clump thickness). What a great improvement of our understanding of how the &amp;lsquo;black box&amp;rsquo; model works and why it makes mistakes. Even though it doesn&amp;rsquo;t produce &amp;lsquo;fixed&amp;rsquo; feature importance plots (i.e. a general, not case-to-case view of which variables are most informative when making a prediction), it allows you to make a good educated guess of which features matter. We live in beautiful times!&lt;/p&gt;
 </description>
     </item>
     

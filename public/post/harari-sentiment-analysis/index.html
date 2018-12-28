@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -48,7 +48,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -67,7 +67,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -75,25 +75,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -223,9 +223,9 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/text-analysis">text analysis</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/sentiment-analysis">sentiment analysis</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/sentiment-analysis">sentiment analysis</a>
     
   </div>
   
@@ -517,7 +517,7 @@ all_words %&gt;% arrange(sentiment) %&gt;% head() %&gt;% kable()
   scale_fill_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;))
 </code></pre>
 
-<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/score_box-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-03-28-harari-sentiment-analysis_files/score_box-1.png" alt="" /></p>
 
 <p>Not at all! Distribution of <strong>afinn</strong> sentiment score for both books looks very similar. Does it mean that the star number reflects different level of positivity in different book? Let&rsquo;s have a look:</p>
 
@@ -531,7 +531,7 @@ all_words %&gt;%
   scale_fill_manual(values=c(&quot;#333333&quot;, &quot;#CC0000&quot;))
 </code></pre>
 
-<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/avg_word_sent-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-03-28-harari-sentiment-analysis_files/avg_word_sent-1.png" alt="" /></p>
 
 <p>Not quite. Although the within-star_number difference in sentiment are not drastically different between the two books, indeed <em>Sapiens</em> tends to have its medians shifted upwards compared to <em>Homo Deus</em>.</p>
 
@@ -581,7 +581,7 @@ all_words %&gt;%
   coord_flip()
 </code></pre>
 
-<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/unnamed-chunk-2-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-03-28-harari-sentiment-analysis_files/unnamed-chunk-2-1.png" alt="" /></p>
 
 <p>Because <em>Sapiens</em> reviews contain overall higher proportion of positive words across pretty much all the reviews except 3-star ones, that&rsquo;s why!</p>
 
@@ -619,7 +619,7 @@ head(out2)
 plot(out2)  
 </code></pre>
 
-<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/sentimentr_results-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-03-28-harari-sentiment-analysis_files/sentimentr_results-1.png" alt="" /></p>
 
 <p>Again, like with previous approaches, sentence - level sentiment looks very similar for both books, perhaps with <em>Sapiens</em> being marginally more positive. However, the really interesting stuff starts when we look at those sentiments grouped by the book <strong>AND</strong> the number of stars:</p>
 
@@ -643,7 +643,7 @@ out3
 <pre><code>plot(out3)
 </code></pre>
 
-<p><img src="/post/2017-03-28-harari-sentiment-analysis_files/sentence_star-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-03-28-harari-sentiment-analysis_files/sentence_star-1.png" alt="" /></p>
 
 <p>As you can see, number of stars given by the reviewer doesn&rsquo;t always exactly reflect its sentiment! Here, I mean examples where fewer - stars reviews show higher sentiment than those reviews with more stars. But it&rsquo;s fair to say that this seem to be off the general trend where number of stars positively correlates with the sentence-levels sentiment score. And again, <em>Sapiens</em> reviews with 5 stars are much more positive than respective <em>Homo Deus</em> reviews. At the same time, the more critical reviews with 1 and 2 stars are more negative for <em>Homo Deus</em> than they are for <em>Sapiens</em>. Together, this explains why at the book level the sentiment score is very similar between the two books, despite <em>Homo Deus&rsquo;</em> receiving much more 5-star reviews overall.</p>
 
@@ -676,13 +676,13 @@ out3
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/amazon-reviews-word-cloud/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://r-tastic.co.uk/post/amazon-reviews-word-cloud/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/amazon-reviews-word-cloud/">Amazon Reviews Wordcloud</a>
+      <a href="https://r-tastic.co.uk/post/amazon-reviews-word-cloud/">Amazon Reviews Wordcloud</a>
     </nav>
     
   </div>
@@ -692,13 +692,13 @@ out3
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/scraping-online-table-with-info-on-r-datasets/">Scraping Online Table With Info on R datasets</a>
+      <a href="https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/">Scraping Online Table With Info on R datasets</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/scraping-online-table-with-info-on-r-datasets/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -729,7 +729,7 @@ out3
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
+<script src="https://r-tastic.co.uk/js/ui.js"></script>
 
 
 <script>

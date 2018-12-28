@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Network Analysis on r-tastic</title>
-    <link>/tags/network-analysis/</link>
+    <link>https://r-tastic.co.uk/tags/network-analysis/</link>
     <description>Recent content in Network Analysis on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Sun, 13 Aug 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/network-analysis/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/tags/network-analysis/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Friendships among top R-twitterers</title>
-      <link>/post/friendships-among-top-twitterers/</link>
+      <link>https://r-tastic.co.uk/post/friendships-among-top-twitterers/</link>
       <pubDate>Sun, 13 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/friendships-among-top-twitterers/</guid>
+      <guid>https://r-tastic.co.uk/post/friendships-among-top-twitterers/</guid>
       <description>Have you ever wondered whether the most active/popular R-twitterers are virtual friends? :) And by friends here I simply mean mutual followers on Twitter. In this post, I score and pick top 30 #rstats twitter users and analyse their Twitter friends&amp;rsquo; network. You&amp;rsquo;ll see a lot of applications of rtweet and ggraph packages, as well as a very useful twist using purrr library, so let&amp;rsquo;s begin!
 BEFORE I START: OFF - TOPIC ON PERFECTIONISM After weeks and months (!</description>
     </item>

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Machine Learning on r-tastic</title>
-    <link>/tags/machine-learning/</link>
+    <link>https://r-tastic.co.uk/tags/machine-learning/</link>
     <description>Recent content in Machine Learning on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Tue, 07 Nov 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
-      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
+      <link>https://r-tastic.co.uk/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
       <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
+      <guid>https://r-tastic.co.uk/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
       <description>I get bored from doing two things: i) spot-checking + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they take a panda bear for a vulture!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function h2o.automl() that may help me automate the former and b) Thomas Lin Pedersen&amp;rsquo;s library(lime) that may help clarify the latter.</description>
     </item>
     

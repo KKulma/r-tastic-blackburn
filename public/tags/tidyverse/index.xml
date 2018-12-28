@@ -2,31 +2,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tidyverse on r-tastic</title>
-    <link>/tags/tidyverse/</link>
+    <link>https://r-tastic.co.uk/tags/tidyverse/</link>
     <description>Recent content in Tidyverse on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Wed, 19 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 28 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/tidyverse/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/tags/tidyverse/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>My R Take on Advent of Code - Day 3</title>
+      <link>https://r-tastic.co.uk/post/advent-of-code-day-3/</link>
+      <pubDate>Fri, 28 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://r-tastic.co.uk/post/advent-of-code-day-3/</guid>
+      <description>Ho, ho, ho, Happy Chris.. New Year? Between eating the sea of fish (as the Polish tradition requires), assembling doll houses and designing a new kitchen, I finally managed to publish the third post on My R take on Advent of Code. To keep things short and sweet, here’s the original challenge:
+Each Elf has made a claim about which area of fabric would be ideal for Santa’s suit.</description>
+    </item>
+    
+    <item>
       <title>My R take on Advent of Code - Day 2</title>
-      <link>/post/my-r-take-on-advent-of-code-day-2/</link>
+      <link>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/my-r-take-on-advent-of-code-day-2/</guid>
+      <guid>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</guid>
       <description>This is my second blog post from the series of My R take on Advent of Code. If you’d like to know more about Advent of Code, check out the first post from the series or simply go to their website. Below you’ll find the challnge from Day 2 and the solution that worked for me. As always, feel free to leave comments if you have different ideas on how this could have been solved!</description>
     </item>
     
     <item>
       <title>My R take on Advent of Code - Day 1</title>
-      <link>/post/advent-of-code-in-r-day-1/</link>
+      <link>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/advent-of-code-in-r-day-1/</guid>
+      <guid>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</guid>
       <description>Ho, ho, ho! It’s almost Christmas time and I don’t know about you, but I can’t wait for it! And what can be a better way of killing the waiting time (advent!) than participating in excellent Advent od Code. Big thanks to Colin Fay for telling me about it! It’s a series of coding riddles, one published every day between 1st and 25th of December. The riddles increase in difficulty level over time and they can be solved in any programming language, including R.</description>
     </item>
     
