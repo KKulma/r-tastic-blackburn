@@ -1,19 +1,14 @@
 ---
-title: End of 2018 R Thoughts
+title: End of 2018 Thoughts
 author: Kasia Kulma
 date: '2018-12-31'
-slug: end-of-2018-thouhgts
-categories: []
 tags:
   - opinion
-description: ''
-topics: []
+slug: end-of-2018-thouhgts
 ---
 
 Here we are, ending yet another year and starting something new. I wanted to take a minute to dwell on 2018, what happened in my R world this year and reflexions I take from that.   
 
-
-# My R world in 2018...
 
 ### public speaking 
 
