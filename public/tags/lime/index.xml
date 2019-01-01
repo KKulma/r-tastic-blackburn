@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Lime on r-tastic</title>
-    <link>/tags/lime/</link>
+    <link>https://r-tastic.co.uk/tags/lime/</link>
     <description>Recent content in Lime on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Fri, 26 Jan 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/lime/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/tags/lime/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Trump VS Clinton Interpretable Text Classifier</title>
-      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <link>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <guid>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</guid>
       <description>I&amp;rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
     </item>
     
     <item>
       <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
-      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
+      <link>https://r-tastic.co.uk/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
       <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
+      <guid>https://r-tastic.co.uk/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
       <description>I get bored from doing two things: i) spot-checking + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they take a panda bear for a vulture!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function h2o.automl() that may help me automate the former and b) Thomas Lin Pedersen&amp;rsquo;s library(lime) that may help clarify the latter.</description>
     </item>
     

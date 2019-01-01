@@ -2,103 +2,103 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on r-tastic</title>
-    <link>/tags/</link>
+    <link>https://r-tastic.co.uk/tags/</link>
     <description>Recent content in Tags on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Tue, 07 Mar 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Amazon</title>
-      <link>/tags/amazon/</link>
+      <link>https://r-tastic.co.uk/tags/amazon/</link>
       <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/tags/amazon/</guid>
+      <guid>https://r-tastic.co.uk/tags/amazon/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Babynames</title>
-      <link>/tags/babynames/</link>
+      <link>https://r-tastic.co.uk/tags/babynames/</link>
       <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>/tags/babynames/</guid>
+      <guid>https://r-tastic.co.uk/tags/babynames/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Best Practice</title>
-      <link>/tags/best-practice/</link>
+      <link>https://r-tastic.co.uk/tags/best-practice/</link>
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/best-practice/</guid>
+      <guid>https://r-tastic.co.uk/tags/best-practice/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Blogdown</title>
-      <link>/tags/blogdown/</link>
+      <link>https://r-tastic.co.uk/tags/blogdown/</link>
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/blogdown/</guid>
+      <guid>https://r-tastic.co.uk/tags/blogdown/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Clustering</title>
-      <link>/tags/clustering/</link>
+      <link>https://r-tastic.co.uk/tags/clustering/</link>
       <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
       
-      <guid>/tags/clustering/</guid>
+      <guid>https://r-tastic.co.uk/tags/clustering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Data Vis</title>
-      <link>/tags/data-vis/</link>
+      <link>https://r-tastic.co.uk/tags/data-vis/</link>
       <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
       
-      <guid>/tags/data-vis/</guid>
+      <guid>https://r-tastic.co.uk/tags/data-vis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ggplot2</title>
-      <link>/tags/ggplot2/</link>
+      <link>https://r-tastic.co.uk/tags/ggplot2/</link>
       <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>/tags/ggplot2/</guid>
+      <guid>https://r-tastic.co.uk/tags/ggplot2/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Heat Maps</title>
-      <link>/tags/heat-maps/</link>
+      <link>https://r-tastic.co.uk/tags/heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/heat-maps/</guid>
+      <guid>https://r-tastic.co.uk/tags/heat-maps/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Leaflet</title>
-      <link>/tags/leaflet/</link>
+      <link>https://r-tastic.co.uk/tags/leaflet/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/leaflet/</guid>
+      <guid>https://r-tastic.co.uk/tags/leaflet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Lime</title>
-      <link>/tags/lime/</link>
+      <link>https://r-tastic.co.uk/tags/lime/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/lime/</guid>
+      <guid>https://r-tastic.co.uk/tags/lime/</guid>
       <description></description>
     </item>
     

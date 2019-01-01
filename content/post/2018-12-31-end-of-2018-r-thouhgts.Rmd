@@ -1,5 +1,5 @@
 ---
-title: End of 2018 R Thouhgts
+title: End of 2018 R Thoughts
 author: Kasia Kulma
 date: '2018-12-31'
 slug: end-of-2018-thouhgts
@@ -10,47 +10,60 @@ description: ''
 topics: []
 ---
 
-And here 
+Here we are, ending yet another year and starting something new. I wanted to take a minute to dwell on 2018, what happened in my R world this year and reflexions I take from that.   
 
 
-# 2018 for me...
+# My R world in 2018...
 
-R world:
-- Public speaking
-- Workshop at eRum
-- New job
-- R ladies 
+### public speaking 
 
-Real world:
-- selling the flat
-- buying the house
-- renovating the house
-- changing jobs 
+This year started for me with a bang - as a result of my [presentation about LIME at one of H2O meetups](https://www.youtube.com/watch?v=CY3t11vuuOM&t=2003s) (of which YouTube video has now reached unthinkable 11K views!) I was invited to speak at various events - be it AI Congress, LSE's Python Group or Data Science Festival. New and scary experience of public speaking about ML and Data Science soon became more familiar and comfortable. It also gave me a sense of fulfilment talking about explainable Machine Learning and making others aware of its importance.   
+
+### workshop at eRum 2018
+
+When [Grace Meyer](https://www.linkedin.com/in/grace-meyer-b039803b/) first suggested that we should submit an idea for an eRum 2018 workshop, I thought she was mad. And still, the idea for text analysis (using mainly `quanteda` package) on Trump & Clinton tweets (now published on [GitHub](https://github.com/KKulma/2018_eRum_TextClassification_workshop)) caught on and was accepted by the organisers. We learnt A LOT in the process of preparing, trialling and finally running the workshop and I'll be forever grateful to Grace of the idea of trying. Also, I try to learn from her energy, enthusiasm and 'give it a go and see how it goes' attitude! 
+
+### coding and Open Source
+This year I also had a great time trying new challenges: one of them being [Hacktoberfest 2018](https://hacktoberfest.digitalocean.com/) where for the first time I contributed to other people's Open Source code, including `readr` package. I can't recommend initiatives like this one enough as it really highlights a phenomenon of Open Source where anyone, no matter how junior, can contribute something and makes things better. I absolutely loved the experience, not to mention the t-shirt!
+
+```{r echo=FALSE}
+blogdown::shortcode('tweet', '1079796931176681472')
+```
+
+
+Another new challenge I tried was [Advent of Code](https://adventofcode.com/), which I wrote about more [on my blog](https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/). Again, it was something totally new to me as I'm used to using R in a purely data context, not necessarily in order to solve maths puzzles! Even though I haven't finished all the challenges, it was amazing to try and think outside the box, as well as to share my code and hear how others would approach the same problem.   
+
+### R-ladies London 
+
+R-ladies London and their initiatives always make me excited and proud. And it's definitely been a very busy for us! We went much more hands-on this year by organising the [very first hackathon](https://www.meetup.com/rladies-london/events/253352011/) together with Dog Trust and [TidyTuesday session](https://www.meetup.com/rladies-london/events/256553328/). We organised various courses: our now standard [R from scratch](https://www.meetup.com/rladies-london/events/247492507/), [Dive into dplyr](https://www.meetup.com/rladies-london/events/247712800/) and two Shiny tutorials. Finally, our excellent speakers covered a variety of data topics, ranging from using R for Spatial analysis, to Data Science for Social Good, to Explainable Machine Learning, to contributing to Open Source. I'm very grateful and impressed by Grace Meyer, [Hanna Frick](https://twitter.com/hfcfrick), [Emma Vestesson](https://twitter.com/Gummifot), [Agnes Salanki](https://twitter.com/salankia), [Erle Holgersen](https://twitter.com/wuergh), [Fiona Grimm](https://twitter.com/fiona_grimm) and [Fiona Spooner](https://twitter.com/f_spooner) and thank you ladies for all your help, energy and time this year, we smashed it big time!  
+
+### working for Mango Solutions 
+
+Last but not least, this year I started working for [Mango Solutions](https://twitter.com/MangoTheCat), where I feel like I can finally do for a living things that I've been doing in my spare time :) Not only I'm surrounded by R experts that I can only (humbly!) learn from, but I'm part of the company that supports and cares about R community as well as their employees. I'm so looking forward to being part of it in 2019 :)
 
 
 # Thoughts for 2019 and beyond
 
 ### 01. You can contribute to R community in many meaningful ways... 
 
-... not just by writing new packages, blog posts or working on new data projects. My main 2018 contributions revolved around 
+... not just by writing new packages, blog posts or working on new data projects, as [Mara Averick can tell you](https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/). My main contributions later this year revolved around 
 
  - sharing valuable content created by others 
  - organising and co-organising events that promoted interesting speakers and allowed others to learn
  - encouraging beginner bloggers/speakers/R contributors to continue contributing to the community, no matter how small or insignificant those contributions seemed to them at the time. 
  
+These things may sometimes feel like 'backseat' activities, but they are important building blocks of any good community.
+
 ### 02. New lessons can come from unexpected places 
 
-Hactoberfest
-Advent of Code
-Tidy Tuesday
-exposing my code
-Other people
-Jasmine Peng
+I'm used to learning R from online resources, be it online courses, blogs, tweets, etc. But this year I also learned lots from online initiatives such as Hactoberfest
+Advent of Code, Tidy Tuesday, as well as simply exposing my code to other people. It may feel embarrassing at times to realise how convoluted and not elegant your code is, but hey, that's how you learn!
 
 
 ### 03. Public speaking can be hard and demanding but also lazy and unrewarding (if you're not careful)
 
-### 04. R's online community is amazing.. but these people met offline simply blow your mind away! 
+You prepare to give a talk to the point where you remember where to take a breath or make a pause... and then you give the same talk 10 times. It's absolutely fine then that you prepare less then (or not at all), but there's also a temptation to stop reviewing or updating your content. I gave one talk this year when this happened and I felt disappointed, unrewarded and lazy. It felt like talking about last year's snow. It was a reminder to me there's a diligence and hard work involved in becoming (and staying!) a good and informative public speaker.   
 
-### 05. It's OK to slow down and take a break
-There was a time in 2018 when the busy time in R community coincided with very busy times in my private life and I had a sense of obligation to the R community to keep contributing as I have so far. But really, at the end of the day you don't have to excuse yourself or wait for permission to slow down. Firstly, no one really cares. If you produce stuff, great. If not, someone else will and that's great, too. Secondly, even if people care, they also understand - things happen and it's all about living a satisfying and fulfilling life, not an overwhelming and miserable one. 
+
+### 04. It's OK to slow down and take a break
+There was a time in 2018 when the busy time in R community coincided with very busy times in my private life (selling a flat, buying a house, renovating a house, changing jobs, my mum's cancer...) but despite this I had a sense of obligation to the R community to keep contributing as I have so far. But really, at the end of the day you don't have to excuse yourself or wait for permission to slow down. Firstly, no one really cares. If you produce stuff, great. If not, someone else will and that's great, too. Secondly, even if people care, they will also understand - things happen and it's all about living a satisfying and fulfilling life, not an overwhelming and miserable one. That's why my 2019 R goals are very cautious and really, what I wish myself and everyone is to have a lot of fun this New Year. Happy New Year!
