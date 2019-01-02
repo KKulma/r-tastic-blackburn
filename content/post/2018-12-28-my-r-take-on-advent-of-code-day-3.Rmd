@@ -43,7 +43,7 @@ A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies a rectangle 3 inc
 .11XX22.    
 .111133.    
 .111133.    
-........    
+........      
 
 >>The four square inches marked with X are claimed by both 1 and 2. (Claim 3, while adjacent to the others, does not overlap either of them.). If the Elves all proceed with their own plans, none of them will have enough fabric. How many square inches of fabric are within two or more claims?
 

@@ -1,0 +1,109 @@
+---
+title: My R Take on Advent of Code - Day 4
+author: Kasia Kulma
+date: '2019-01-02'
+categories:
+  - r
+tags:
+  - tidyverse
+slug: advent-of-code-day-4
+---
+
+After some wonderful Christmas and New Year's distractions, now it's time to continue with my [Advent of Code challenges in R](https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/) (before the summer comes...).
+
+To avoid waffling, the 4th puzzle offers a record of guards' shifts with various activities plus the time they started and time. We need to gather two things from this dataset:
+
+1) Which guard sleeps most (minutes) and 
+2) What minute does that guard spend asleep the most? 
+
+Then, we have to multiply the guard number by the most common minute he/she falls asleep to get the final solution. Let's get down to work, then!
+
+First, let's have a look at the data:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+raw_input <- read.delim('day4-raw-input.txt', header = F)
+head(raw_input)
+```
+
+
+This data needs some serious cleaning! Let's brush up on our regex knowledge a bit and seperate timestamps from guard activities:
+
+```{r, warning=FALSE, message=FALSE}
+# clean the input
+clean_input <- raw_input %>%
+  rename(value = V1) %>% 
+  mutate(timestamp = lubridate::ymd_hm(str_extract(value,                                              '[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+')),
+         action = str_extract(value, '[:alpha:]+..[:alpha:]+'),
+         guard_num = ifelse(str_detect(value, '#'),
+                            str_extract(value, '#[:digit:]+'), NA),
+         date = lubridate::date(timestamp),
+         minute = lubridate::minute(timestamp) # minute that the activity started 
+  ) %>%
+  arrange(timestamp) %>% # sort in chronological order
+  fill(guard_num) # fill in missing guard numbers 
+
+head(clean_input)
+```
+
+Now that we have a clean dataset, we can determine who sleeps most: 
+
+```{r}
+# who sleeps most 
+clean_input %>% 
+  filter(action != 'Guard') %>% # we don't need this anymore 
+  group_by(guard_num, date) %>% 
+  #calculate time asleep
+  mutate(time_asleep = ifelse(action == 'wakes up', minute - lag(minute), NA ) 
+  ) %>% 
+  group_by(guard_num) %>% 
+  na.omit() %>% 
+  summarise(total_asleep = sum(time_asleep)) %>%  # sum it
+  arrange(desc(total_asleep)) %>% # sort it
+  slice(1) # pick the guard that sleeps most 
+```
+
+There you go, shame on guard number #409! Now, how can we see what is the most common time for him (her?) to fall asleep? This will require some data re-arranging:  
+  
+```{r}
+# what's the most common time to sleep for guard #409
+
+guard_data <- clean_input %>% 
+  filter(action != 'Guard') %>% # we don;t need it anymore!
+  filter(guard_num == '#409') %>% # pick the winner
+  arrange(timestamp) %>% 
+  spread(action, minute) %>% # prep the data for sequences
+  rename(falls_asleep = `falls asleep`,
+         wakes_up = `wakes up`) %>% 
+  mutate(falls_asleep = ifelse(!is.na(wakes_up), lag(falls_asleep), falls_asleep )) %>% 
+  na.omit()
+
+head(guard_data)
+```
+
+My idea is to create sequences of minutes between the minute the guard falls asleep and wakes up using `seq()`. Check out this simple example:
+
+```{r}
+seq(3, 40)
+```
+
+Easy - peasy! We can apply it to the our data using `map2()`:
+
+```{r}
+# apply the funtion to the #409 guard's data
+map2(guard_data$falls_asleep,
+          guard_data$wakes_up, seq) %>% 
+  unlist() %>%  # turn a list into a vector
+  table() %>%  # get a frequency table
+  sort() # sort it in ascending order. There are three potential answers! the middle one is correct (?!?!?!)
+```
+
+Now, that's interesting. The top number is minute and the bottom number is the number of times the guard slept during this time. So, when you look at the last (most common) minutes in the vector you'll notice that there are THREE (not one!) different times of the same highest frequency and they are minute 50, 51 and 52. I'm not sure if this means there's a flaw in my solution, but after trying all three numbers it's clear that the middle one (51) is correct: 
+
+```{r}
+## final solution
+## guard number multiplied by the most "commonly slept"" minute number
+
+409*51
+```

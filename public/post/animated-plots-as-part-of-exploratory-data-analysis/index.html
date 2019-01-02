@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -48,7 +48,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -67,7 +67,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -75,25 +75,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -223,9 +223,9 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/data-vis">data vis</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/data-vis">data vis</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/uk-police-data">uk police data</a>
+      <a class="post-taxonomy-tag" href="/tags/uk-police-data">uk police data</a>
     
   </div>
   
@@ -350,7 +350,7 @@ evaluate(&quot;london_map = get_map(location = 'London', maptype='toner',  zoom 
 <pre><code>ggmap(london_map)
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png" alt="" width="105%" height="105%"/></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png" alt="" width="105%" height="105%"/></p>
 
 <p>Not bad for two lines of code, ey!</p>
 
@@ -367,7 +367,7 @@ evaluate(&quot;london_map = get_map(location = 'London', maptype='toner',  zoom 
 weapon_london_heat_map
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="105%" height="105%"/></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="105%" height="105%"/></p>
 
 <p>Not bad at all! We can now identify the crime hotspots, but there&rsquo;s no way we can infer anything about the crime seasonality. And here&rsquo;s where the first serious use of animated graphs comes in!</p>
 
@@ -391,7 +391,7 @@ map_anime&lt;- ggmap(london_map, extent = &quot;device&quot;) +
 <pre><code>gganimate(map_anime)
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="105%" height="105%"/></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="105%" height="105%"/></p>
 
 <p>From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to &lsquo;focus&rsquo; on more central areas, supposedly while keeping up with their criminal activity&hellip;?</p>
 
@@ -415,7 +415,7 @@ all_london_heat_map&lt;- ggmap(london_map, extent = &quot;device&quot;) +
 gganimate(all_london_heat_map)
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" width="105%" height="105%"/></p>
+<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" width="105%" height="105%"/></p>
 
 <p>So, there you go! At the first glance it may look a bit chaotic, but such visualization will quickly make you realise that some crimes always have a narrow geographical range ( <em>Theft from the person</em> or <em>Other theft</em>, for example), especially compared to some with universally wide range (e.g. <em>Burglary</em> or <em>Criminal damage and arson</em>). And this is the first step for generating new questions and hypotheses, the integral (and very desirable) part of any exploratory analysis!</p>
 
@@ -426,13 +426,13 @@ gganimate(all_london_heat_map)
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://r-tastic.co.uk/post/cluster-validation-in-unsupervised-machine-learning/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/cluster-validation-in-unsupervised-machine-learning/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://r-tastic.co.uk/post/cluster-validation-in-unsupervised-machine-learning/">Cluster Validation In Unsupervised Machine Learning</a>
+      <a href="/post/cluster-validation-in-unsupervised-machine-learning/">Cluster Validation In Unsupervised Machine Learning</a>
     </nav>
     
   </div>
@@ -442,13 +442,13 @@ gganimate(all_london_heat_map)
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="https://r-tastic.co.uk/post/friendships-among-top-twitterers/">Friendships among top R-twitterers</a>
+      <a href="/post/friendships-among-top-twitterers/">Friendships among top R-twitterers</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="https://r-tastic.co.uk/post/friendships-among-top-twitterers/"><i class="fa fa-chevron-right"></i></a>
+    <a href="/post/friendships-among-top-twitterers/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -479,7 +479,7 @@ gganimate(all_london_heat_map)
 
 </div>
 </div>
-<script src="https://r-tastic.co.uk/js/ui.js"></script>
+<script src="/js/ui.js"></script>
 
 
 <script>
