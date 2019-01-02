@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -48,7 +48,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -67,7 +67,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -75,25 +75,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -223,9 +223,9 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/text-analysis">text analysis</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/text-analysis">text analysis</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/lime">lime</a>
+      <a class="post-taxonomy-tag" href="/tags/lime">lime</a>
     
   </div>
   
@@ -414,7 +414,7 @@ corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 <pre><code>plot_features(corr_explanation)
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png" alt="" /></p>
+<p><img src="/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png" alt="" /></p>
 
 <p>Remember that <code>Label == 1</code> means Donald Trump was the author of the tweet, otherwise it was Hilary Clinton. What does <code>lime</code> tell us? Funnily enough, it looks like presence of words like <code>Donald</code>, <code>Trump</code>, <code>candidate</code> and <code>president</code> indicates that Hilary was the author, whereas words like <code>Hilary</code> and <code>me</code> or <code>my</code> are indicative of Donald Trump. Sounds reasonable to me ;)</p>
 
@@ -423,7 +423,7 @@ corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 <pre><code>plot_text_explanations(corr_explanation)
 </code></pre>
 
-<p><img src="https://r-tastic.co.uk/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png" alt="" /></p>
+<p><img src="/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png" alt="" /></p>
 
 <p>It will give you a clearer view of support or contradiction of certain words for a given label, if you&rsquo;re interested only in direction but not strength of this relationship.</p>
 
@@ -439,13 +439,13 @@ corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://r-tastic.co.uk/post/end-of-year-thoughts/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/end-of-year-thoughts/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://r-tastic.co.uk/post/end-of-year-thoughts/">End of Year thoughts</a>
+      <a href="/post/end-of-year-thoughts/">End of Year thoughts</a>
     </nav>
     
   </div>
@@ -455,13 +455,13 @@ corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1,
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="https://r-tastic.co.uk/post/prime-hints/">Prime hints for running a data project in R</a>
+      <a href="/post/prime-hints/">Prime hints for running a data project in R</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="https://r-tastic.co.uk/post/prime-hints/"><i class="fa fa-chevron-right"></i></a>
+    <a href="/post/prime-hints/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -492,7 +492,7 @@ corr_explanation &lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 
 </div>
 </div>
-<script src="https://r-tastic.co.uk/js/ui.js"></script>
+<script src="/js/ui.js"></script>
 
 
 <script>

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Public Api on r-tastic</title>
-    <link>https://r-tastic.co.uk/tags/public-api/</link>
+    <link>/tags/public-api/</link>
     <description>Recent content in Public Api on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Sun, 26 Aug 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://r-tastic.co.uk/tags/public-api/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/public-api/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Exploring London Crime with R heat maps</title>
-      <link>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</link>
+      <link>/post/exploring-london-crime-with-r-heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</guid>
+      <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
       <description>Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being data.police.uk API. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and I explored it using heat maps in the past. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information.</description>
     </item>
     

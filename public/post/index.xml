@@ -2,69 +2,69 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on r-tastic</title>
-    <link>https://r-tastic.co.uk/post/</link>
+    <link>/post/</link>
     <description>Recent content in Posts on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://r-tastic.co.uk/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>End of 2018 R Thoughts</title>
-      <link>https://r-tastic.co.uk/post/end-of-2018-thouhgts/</link>
+      <title>End of 2018 Thoughts</title>
+      <link>/post/end-of-2018-thouhgts/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/end-of-2018-thouhgts/</guid>
+      <guid>/post/end-of-2018-thouhgts/</guid>
       <description>Here we are, ending yet another year and starting something new. I wanted to take a minute to dwell on 2018, what happened in my R world this year and reflexions I take from that.
-My R world in 2018…public speakingThis year started for me with a bang - as a result of my presentation about LIME at one of H2O meetups (of which YouTube video has now reached unthinkable 11K views!</description>
+public speakingThis year started for me with a bang - as a result of my presentation about LIME at one of H2O meetups (of which YouTube video has now reached unthinkable 11K views!) I was invited to speak at various events - be it AI Congress, LSE’s Python Group or Data Science Festival.</description>
     </item>
     
     <item>
       <title>My R Take on Advent of Code - Day 3</title>
-      <link>https://r-tastic.co.uk/post/advent-of-code-day-3/</link>
+      <link>/post/advent-of-code-day-3/</link>
       <pubDate>Fri, 28 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/advent-of-code-day-3/</guid>
+      <guid>/post/advent-of-code-day-3/</guid>
       <description>Ho, ho, ho, Happy Chris.. New Year? Between eating the sea of fish (as the Polish tradition requires), assembling doll houses and designing a new kitchen, I finally managed to publish the third post on My R take on Advent of Code. To keep things short and sweet, here’s the original challenge:
 Each Elf has made a claim about which area of fabric would be ideal for Santa’s suit.</description>
     </item>
     
     <item>
       <title>My R take on Advent of Code - Day 2</title>
-      <link>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</link>
+      <link>/post/my-r-take-on-advent-of-code-day-2/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</guid>
+      <guid>/post/my-r-take-on-advent-of-code-day-2/</guid>
       <description>This is my second blog post from the series of My R take on Advent of Code. If you’d like to know more about Advent of Code, check out the first post from the series or simply go to their website. Below you’ll find the challnge from Day 2 and the solution that worked for me. As always, feel free to leave comments if you have different ideas on how this could have been solved!</description>
     </item>
     
     <item>
       <title>My R take on Advent of Code - Day 1</title>
-      <link>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</link>
+      <link>/post/advent-of-code-in-r-day-1/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</guid>
+      <guid>/post/advent-of-code-in-r-day-1/</guid>
       <description>Ho, ho, ho! It’s almost Christmas time and I don’t know about you, but I can’t wait for it! And what can be a better way of killing the waiting time (advent!) than participating in excellent Advent od Code. Big thanks to Colin Fay for telling me about it! It’s a series of coding riddles, one published every day between 1st and 25th of December. The riddles increase in difficulty level over time and they can be solved in any programming language, including R.</description>
     </item>
     
     <item>
       <title>Exploring London Crime with R heat maps</title>
-      <link>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</link>
+      <link>/post/exploring-london-crime-with-r-heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</guid>
+      <guid>/post/exploring-london-crime-with-r-heat-maps/</guid>
       <description>Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being data.police.uk API. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and I explored it using heat maps in the past. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information.</description>
     </item>
     
     <item>
       <title>First post in new r-tastic</title>
-      <link>https://r-tastic.co.uk/post/first-post-in-new-r-tastic/</link>
+      <link>/post/first-post-in-new-r-tastic/</link>
       <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/first-post-in-new-r-tastic/</guid>
+      <guid>/post/first-post-in-new-r-tastic/</guid>
       <description>OK, it had to happen and here it is: I moved my old r-tastic blog to blogdown and I’m not going to look back :) There are numerous resources that will:
  highlight the advantages of using blogdown with Hugo over other static site generators, such as Jekyll (my previous choice)
  explain how to set everything up (there are some excellent resources here, here or here) or
@@ -73,37 +73,37 @@ My R world in 2018…public speakingThis year started for me with a bang - as 
     
     <item>
       <title>Prime hints for running a data project in R</title>
-      <link>https://r-tastic.co.uk/post/prime-hints/</link>
+      <link>/post/prime-hints/</link>
       <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/prime-hints/</guid>
+      <guid>/post/prime-hints/</guid>
       <description>I’ve been asked more and more for hints and best practices when working with R. It can be a daunting task, depending on how deep or specialised you want to be. So I tried to keep it as balanced as I could and mentioned point that definitely helped me in the last couple of years. Finally, there’s lots (and I mean, LOTS) of good advice out there that you should definitely check out - see some examples in the Quick Reference section below.</description>
     </item>
     
     <item>
       <title>Trump VS Clinton Interpretable Text Classifier</title>
-      <link>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</link>
+      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</guid>
+      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
       <description>I&amp;rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
     </item>
     
     <item>
       <title>End of Year thoughts</title>
-      <link>https://r-tastic.co.uk/post/end-of-year-thoughts/</link>
+      <link>/post/end-of-year-thoughts/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/end-of-year-thoughts/</guid>
+      <guid>/post/end-of-year-thoughts/</guid>
       <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
     </item>
     
     <item>
       <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</link>
+      <link>/post/star-wars-vs-star-trek-word-battle/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</guid>
+      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
       <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
