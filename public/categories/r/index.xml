@@ -7,10 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Fri, 28 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>My R Take on Advent of Code - Day 4</title>
+      <link>/post/advent-of-code-day-4/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-day-4/</guid>
+      <description>glimpse(raw_input)
+clean the inputclean_input &amp;lt;- raw_input %&amp;gt;%strsplit(‘’) %&amp;gt;%unlist() %&amp;gt;%as_tibble() %&amp;gt;%mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),date = ymd(str_sub(timestamp, start = 1, end = 10)),minute = minute(timestamp)) %&amp;gt;%arrange(timestamp) %&amp;gt;%fill(guard_num) # fill in missing guard numbers
+head(clean_input)
+who sleeps mostclean_input %&amp;gt;%filter(action != ‘Guard’) %&amp;gt;%group_by(guard_num, date) %&amp;gt;%mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep) %&amp;gt;%group_by(guard_num) %&amp;gt;%na.</description>
+    </item>
     
     <item>
       <title>My R Take on Advent of Code - Day 3</title>
@@ -95,15 +107,6 @@
       
       <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
       <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
-    </item>
-    
-    <item>
-      <title>Automated and Unmysterious Machine Learning in Cancer Detection</title>
-      <link>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</link>
-      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</guid>
-      <description>I get bored from doing two things: i) spot-checking + optimising parameters of my predictive models and ii) reading about how &amp;lsquo;black box&amp;rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they take a panda bear for a vulture!). In this post I&amp;rsquo;ll test a) H2O&amp;rsquo;s function h2o.automl() that may help me automate the former and b) Thomas Lin Pedersen&amp;rsquo;s library(lime) that may help clarify the latter.</description>
     </item>
     
   </channel>

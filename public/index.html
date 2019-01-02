@@ -212,6 +212,55 @@
   
     <article>
   <header>
+    <h2><a href="/post/advent-of-code-day-4/">My R Take on Advent of Code - Day 4</a></h2>
+
+    <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>05 Jan 2019</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  </header>
+
+  <p>
+  glimpse(raw_input)
+clean the inputclean_input &lt;- raw_input %&gt;%strsplit(‘’) %&gt;%unlist() %&gt;%as_tibble() %&gt;%mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),date = ymd(str_sub(timestamp, start = 1, end = 10)),minute = minute(timestamp)) %&gt;%arrange(timestamp) %&gt;%fill(guard_num) # fill in missing guard numbers
+head(clean_input)
+who sleeps mostclean_input %&gt;%filter(action != ‘Guard’) %&gt;%group_by(guard_num, date) %&gt;%mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep) %&gt;%group_by(guard_num) %&gt;%na.
+  </p>
+
+  
+  <footer>
+    <a href="/post/advent-of-code-day-4/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+  </footer>
+  
+</article>
+
+  
+    <article>
+  <header>
     <h2><a href="/post/end-of-2018-thoughts/">End of 2018 Thoughts</a></h2>
 
     <div class="post-meta">
@@ -379,56 +428,6 @@ public speakingThis year started for me with a bang - as a result of my present
   
   <footer>
     <a href="/post/advent-of-code-in-r-day-1/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
-  </footer>
-  
-</article>
-
-  
-    <article>
-  <header>
-    <h2><a href="/post/exploring-london-crime-with-r-heat-maps/">Exploring London Crime with R heat maps</a></h2>
-
-    <div class="post-meta">
-
-  <div>
-    <i class="fa fa-calendar fa-fw"></i>
-    <time>26 Aug 2018</time>
-  </div>
-
-  
-
-  
-  
-  
-  
-
-  
-  
-  
-  <div>
-    <i class="fa fa-tags fa-fw"></i>
-    
-      <a class="post-taxonomy-tag" href="/tags/leaflet">leaflet</a>&nbsp;&#47;
-    
-      <a class="post-taxonomy-tag" href="/tags/public-api">public api</a>&nbsp;&#47;
-    
-      <a class="post-taxonomy-tag" href="/tags/heat-maps">heat maps</a>
-    
-  </div>
-  
-  
-
-</div>
-
-  </header>
-
-  <p>
-  Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being data.police.uk API. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and I explored it using heat maps in the past. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information.
-  </p>
-
-  
-  <footer>
-    <a href="/post/exploring-london-crime-with-r-heat-maps/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
   </footer>
   
 </article>

@@ -1,0 +1,78 @@
+---
+title: My R Take on Advent of Code - Day 4
+author: Kasia Kulma
+date: '2019-01-05'
+slug: advent-of-code-day-4
+categories:
+  - r
+tags:
+  - tidyverse
+description: ''
+topics: []
+draft: true
+---
+
+
+
+<p>glimpse(raw_input)</p>
+<div id="clean-the-input" class="section level1">
+<h1>clean the input</h1>
+<p>clean_input &lt;- raw_input %&gt;%
+strsplit(‘’) %&gt;%
+unlist() %&gt;%
+as_tibble() %&gt;%
+mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),
+action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),
+guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),
+date = ymd(str_sub(timestamp, start = 1, end = 10)),
+minute = minute(timestamp)
+) %&gt;%
+arrange(timestamp) %&gt;%
+fill(guard_num) # fill in missing guard numbers</p>
+<p>head(clean_input)</p>
+</div>
+<div id="who-sleeps-most" class="section level1">
+<h1>who sleeps most</h1>
+<p>clean_input %&gt;%
+filter(action != ‘Guard’) %&gt;%
+group_by(guard_num, date) %&gt;%
+mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep
+) %&gt;%
+group_by(guard_num) %&gt;%
+na.omit() %&gt;%
+summarise(total_asleep = sum(time_asleep)) %&gt;% # sum it
+arrange(desc(total_asleep)) %&gt;%
+head(1)</p>
+</div>
+<div id="whats-the-most-common-time-to-sleep" class="section level1">
+<h1>what’s the most common time to sleep</h1>
+<p>guard_data &lt;- clean_input %&gt;%
+filter(action != ‘Guard’) %&gt;%
+filter(guard_num == ‘#409’) %&gt;% # pick the winner
+arrange(timestamp) %&gt;%
+spread(action, minute) %&gt;% # prep the data for sequences
+rename(falls_asleep = <code>falls asleep</code>,
+wakes_up = <code>wakes up</code>) %&gt;%
+mutate(falls_asleep = ifelse(!is.na(wakes_up), lag(falls_asleep), falls_asleep )) %&gt;%
+na.omit()</p>
+</div>
+<div id="function-that-generates-sequence-of-minutes-between-falling-asslep-and-waking-up" class="section level1">
+<h1>function that generates sequence of minutes between falling asslep and waking up</h1>
+<p>time_seq &lt;- function(falls, wakes) {
+result &lt;- seq(falls, wakes)
+return(result)
+}</p>
+</div>
+<div id="test-the-function" class="section level1">
+<h1>test the function</h1>
+<p>time_seq(guard_data<span class="math inline">\(falls_asleep[1], guard_data\)</span>wakes_up[1])</p>
+</div>
+<div id="apply-the-funtion-to-the-409-guards-data" class="section level1">
+<h1>apply the funtion to the #409 guard’s data</h1>
+<p>pmap(list(guard_data<span class="math inline">\(falls_asleep,  guard_data\)</span>wakes_up
+), time_seq) %&gt;%
+unlist() %&gt;%
+table() %&gt;%
+sort() # three potential answers! the middle one is correct@</p>
+<p>409*51</p>
+</div>

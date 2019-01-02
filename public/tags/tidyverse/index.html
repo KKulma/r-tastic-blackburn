@@ -211,6 +211,55 @@
   
     <article>
   <header>
+    <h2><a href="/post/advent-of-code-day-4/">My R Take on Advent of Code - Day 4</a></h2>
+
+    <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>05 Jan 2019</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  </header>
+
+  <p>
+  glimpse(raw_input)
+clean the inputclean_input &lt;- raw_input %&gt;%strsplit(‘’) %&gt;%unlist() %&gt;%as_tibble() %&gt;%mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),date = ymd(str_sub(timestamp, start = 1, end = 10)),minute = minute(timestamp)) %&gt;%arrange(timestamp) %&gt;%fill(guard_num) # fill in missing guard numbers
+head(clean_input)
+who sleeps mostclean_input %&gt;%filter(action != ‘Guard’) %&gt;%group_by(guard_num, date) %&gt;%mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep) %&gt;%group_by(guard_num) %&gt;%na.
+  </p>
+
+  
+  <footer>
+    <a href="/post/advent-of-code-day-4/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+  </footer>
+  
+</article>
+
+  
+    <article>
+  <header>
     <h2><a href="/post/advent-of-code-day-3/">My R Take on Advent of Code - Day 3</a></h2>
 
     <div class="post-meta">

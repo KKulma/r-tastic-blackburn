@@ -7,10 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>My R Take on Advent of Code - Day 4</title>
+      <link>/post/advent-of-code-day-4/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-day-4/</guid>
+      <description>glimpse(raw_input)
+clean the inputclean_input &amp;lt;- raw_input %&amp;gt;%strsplit(‘’) %&amp;gt;%unlist() %&amp;gt;%as_tibble() %&amp;gt;%mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),date = ymd(str_sub(timestamp, start = 1, end = 10)),minute = minute(timestamp)) %&amp;gt;%arrange(timestamp) %&amp;gt;%fill(guard_num) # fill in missing guard numbers
+head(clean_input)
+who sleeps mostclean_input %&amp;gt;%filter(action != ‘Guard’) %&amp;gt;%group_by(guard_num, date) %&amp;gt;%mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep) %&amp;gt;%group_by(guard_num) %&amp;gt;%na.</description>
+    </item>
     
     <item>
       <title>End of 2018 Thoughts</title>
@@ -96,15 +108,6 @@ public speakingThis year started for me with a bang - as a result of my present
       
       <guid>/post/end-of-year-thoughts/</guid>
       <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
-    </item>
-    
-    <item>
-      <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>/post/star-wars-vs-star-trek-word-battle/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
-      <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
   </channel>
