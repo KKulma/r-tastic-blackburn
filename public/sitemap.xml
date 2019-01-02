@@ -3,260 +3,255 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/about/</loc>
+    <loc>https://r-tastic.co.uk/about/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/advent-of-code-day-4/</loc>
-    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/end-of-2018-thoughts/</loc>
+    <loc>https://r-tastic.co.uk/post/end-of-2018-thoughts/</loc>
     <lastmod>2018-12-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/advent-of-code-day-3/</loc>
+    <loc>https://r-tastic.co.uk/post/advent-of-code-day-3/</loc>
     <lastmod>2018-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/my-r-take-on-advent-of-code-day-2/</loc>
+    <loc>https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/</loc>
     <lastmod>2018-12-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/advent-of-code-in-r-day-1/</loc>
+    <loc>https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/</loc>
     <lastmod>2018-12-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/exploring-london-crime-with-r-heat-maps/</loc>
+    <loc>https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/first-post-in-new-r-tastic/</loc>
+    <loc>https://r-tastic.co.uk/post/first-post-in-new-r-tastic/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/prime-hints/</loc>
+    <loc>https://r-tastic.co.uk/post/prime-hints/</loc>
     <lastmod>2018-03-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/trump-vs-clinton-interpretable-text-classifier/</loc>
+    <loc>https://r-tastic.co.uk/post/trump-vs-clinton-interpretable-text-classifier/</loc>
     <lastmod>2018-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/end-of-year-thoughts/</loc>
+    <loc>https://r-tastic.co.uk/post/end-of-year-thoughts/</loc>
     <lastmod>2017-12-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/star-wars-vs-star-trek-word-battle/</loc>
+    <loc>https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/</loc>
     <lastmod>2017-12-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</loc>
+    <loc>https://r-tastic.co.uk/post/automated-and-unmysterious-machine-learning-in-cancer-detection/</loc>
     <lastmod>2017-11-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/friendships-among-top-twitterers/</loc>
+    <loc>https://r-tastic.co.uk/post/friendships-among-top-twitterers/</loc>
     <lastmod>2017-08-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/animated-plots-as-part-of-exploratory-data-analysis/</loc>
+    <loc>https://r-tastic.co.uk/post/animated-plots-as-part-of-exploratory-data-analysis/</loc>
     <lastmod>2017-05-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/cluster-validation-in-unsupervised-machine-learning/</loc>
+    <loc>https://r-tastic.co.uk/post/cluster-validation-in-unsupervised-machine-learning/</loc>
     <lastmod>2017-05-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/optimal-number-of-clusters/</loc>
+    <loc>https://r-tastic.co.uk/post/optimal-number-of-clusters/</loc>
     <lastmod>2017-04-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/scraping-online-table-with-info-on-r-datasets/</loc>
+    <loc>https://r-tastic.co.uk/post/scraping-online-table-with-info-on-r-datasets/</loc>
     <lastmod>2017-03-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/harari-sentiment-analysis/</loc>
+    <loc>https://r-tastic.co.uk/post/harari-sentiment-analysis/</loc>
     <lastmod>2017-03-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/amazon-reviews-word-cloud/</loc>
+    <loc>https://r-tastic.co.uk/post/amazon-reviews-word-cloud/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/did-disney-princesses-distort-girl-names-in-usa/</loc>
+    <loc>https://r-tastic.co.uk/post/did-disney-princesses-distort-girl-names-in-usa/</loc>
     <lastmod>2017-02-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/contact/</loc>
+    <loc>https://r-tastic.co.uk/contact/</loc>
     <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/amazon/</loc>
+    <loc>https://r-tastic.co.uk/tags/amazon/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/babynames/</loc>
+    <loc>https://r-tastic.co.uk/tags/babynames/</loc>
     <lastmod>2017-02-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/best-practice/</loc>
+    <loc>https://r-tastic.co.uk/tags/best-practice/</loc>
     <lastmod>2018-03-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/blogdown/</loc>
+    <loc>https://r-tastic.co.uk/tags/blogdown/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://r-tastic.co.uk/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/clustering/</loc>
+    <loc>https://r-tastic.co.uk/tags/clustering/</loc>
     <lastmod>2017-05-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/data-vis/</loc>
+    <loc>https://r-tastic.co.uk/tags/data-vis/</loc>
     <lastmod>2017-05-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/ggplot2/</loc>
+    <loc>https://r-tastic.co.uk/tags/ggplot2/</loc>
     <lastmod>2017-02-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/heat-maps/</loc>
+    <loc>https://r-tastic.co.uk/tags/heat-maps/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/leaflet/</loc>
+    <loc>https://r-tastic.co.uk/tags/leaflet/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/lime/</loc>
+    <loc>https://r-tastic.co.uk/tags/lime/</loc>
     <lastmod>2018-01-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/machine-learning/</loc>
+    <loc>https://r-tastic.co.uk/tags/machine-learning/</loc>
     <lastmod>2017-11-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/network-analysis/</loc>
+    <loc>https://r-tastic.co.uk/tags/network-analysis/</loc>
     <lastmod>2017-08-13T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/opinion/</loc>
+    <loc>https://r-tastic.co.uk/tags/opinion/</loc>
     <lastmod>2018-12-31T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/post/</loc>
-    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
+    <loc>https://r-tastic.co.uk/post/</loc>
+    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/public-api/</loc>
+    <loc>https://r-tastic.co.uk/tags/public-api/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
-    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
+    <loc>https://r-tastic.co.uk/categories/r/</loc>
+    <lastmod>2018-12-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/sentiment-analysis/</loc>
+    <loc>https://r-tastic.co.uk/tags/sentiment-analysis/</loc>
     <lastmod>2017-03-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>https://r-tastic.co.uk/tags/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/text-analysis/</loc>
+    <loc>https://r-tastic.co.uk/tags/text-analysis/</loc>
     <lastmod>2018-01-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/tidyverse/</loc>
-    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
+    <loc>https://r-tastic.co.uk/tags/tidyverse/</loc>
+    <lastmod>2018-12-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/uk-police-data/</loc>
+    <loc>https://r-tastic.co.uk/tags/uk-police-data/</loc>
     <lastmod>2017-05-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/web-scraping/</loc>
+    <loc>https://r-tastic.co.uk/tags/web-scraping/</loc>
     <lastmod>2017-12-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/wordcloud/</loc>
+    <loc>https://r-tastic.co.uk/tags/wordcloud/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>https://r-tastic.co.uk/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

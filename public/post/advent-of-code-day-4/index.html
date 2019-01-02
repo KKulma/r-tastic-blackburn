@@ -234,68 +234,112 @@
   
 
 
-<p>glimpse(raw_input)</p>
-<div id="clean-the-input" class="section level1">
-<h1>clean the input</h1>
-<p>clean_input &lt;- raw_input %&gt;%
-strsplit(‘’) %&gt;%
-unlist() %&gt;%
-as_tibble() %&gt;%
-mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),
-action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),
-guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),
-date = ymd(str_sub(timestamp, start = 1, end = 10)),
-minute = minute(timestamp)
-) %&gt;%
-arrange(timestamp) %&gt;%
-fill(guard_num) # fill in missing guard numbers</p>
-<p>head(clean_input)</p>
-</div>
-<div id="who-sleeps-most" class="section level1">
-<h1>who sleeps most</h1>
-<p>clean_input %&gt;%
-filter(action != ‘Guard’) %&gt;%
-group_by(guard_num, date) %&gt;%
-mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep
-) %&gt;%
-group_by(guard_num) %&gt;%
-na.omit() %&gt;%
-summarise(total_asleep = sum(time_asleep)) %&gt;% # sum it
-arrange(desc(total_asleep)) %&gt;%
-head(1)</p>
-</div>
-<div id="whats-the-most-common-time-to-sleep" class="section level1">
-<h1>what’s the most common time to sleep</h1>
-<p>guard_data &lt;- clean_input %&gt;%
-filter(action != ‘Guard’) %&gt;%
-filter(guard_num == ‘#409’) %&gt;% # pick the winner
-arrange(timestamp) %&gt;%
-spread(action, minute) %&gt;% # prep the data for sequences
-rename(falls_asleep = <code>falls asleep</code>,
-wakes_up = <code>wakes up</code>) %&gt;%
-mutate(falls_asleep = ifelse(!is.na(wakes_up), lag(falls_asleep), falls_asleep )) %&gt;%
-na.omit()</p>
-</div>
-<div id="function-that-generates-sequence-of-minutes-between-falling-asslep-and-waking-up" class="section level1">
-<h1>function that generates sequence of minutes between falling asslep and waking up</h1>
-<p>time_seq &lt;- function(falls, wakes) {
-result &lt;- seq(falls, wakes)
-return(result)
-}</p>
-</div>
-<div id="test-the-function" class="section level1">
-<h1>test the function</h1>
-<p>time_seq(guard_data<span class="math inline">\(falls_asleep[1], guard_data\)</span>wakes_up[1])</p>
-</div>
-<div id="apply-the-funtion-to-the-409-guards-data" class="section level1">
-<h1>apply the funtion to the #409 guard’s data</h1>
-<p>pmap(list(guard_data<span class="math inline">\(falls_asleep,  guard_data\)</span>wakes_up
-), time_seq) %&gt;%
-unlist() %&gt;%
-table() %&gt;%
-sort() # three potential answers! the middle one is correct@</p>
-<p>409*51</p>
-</div>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>raw_input &lt;- read.delim(&#39;day4-raw-input.txt&#39;, header = F)
+head(raw_input)</code></pre>
+<pre><code>##                                           V1
+## 1                [1518-09-28 00:56] wakes up
+## 2            [1518-10-15 00:05] falls asleep
+## 3                [1518-02-15 00:58] wakes up
+## 4                [1518-08-26 00:51] wakes up
+## 5                [1518-03-23 00:32] wakes up
+## 6 [1518-05-04 23:56] Guard #523 begins shift</code></pre>
+<pre class="r"><code># clean the input
+clean_input &lt;- raw_input %&gt;%
+  rename(value = V1) %&gt;% 
+  mutate(timestamp = lubridate::ymd_hm(str_extract(value, &#39;[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+&#39;)),
+         action = str_extract(value, &#39;[:alpha:]+..[:alpha:]+&#39;),
+         guard_num = ifelse(str_detect(value, &#39;#&#39;), str_extract(value, &#39;#[:digit:]+&#39;), NA),
+         date = lubridate::date(timestamp),
+         #date = ymd(str_sub(timestamp, start = 1, end = 10)),
+         minute = lubridate::minute(timestamp)
+  ) %&gt;%
+  arrange(timestamp) %&gt;% 
+  fill(guard_num) # fill in missing guard numbers </code></pre>
+<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.4</code></pre>
+<pre class="r"><code>head(clean_input)</code></pre>
+<pre><code>##                                         value           timestamp
+## 1  [1518-01-28 00:00] Guard #151 begins shift 1518-01-28 00:00:00
+## 2             [1518-01-28 00:40] falls asleep 1518-01-28 00:40:00
+## 3                 [1518-01-28 00:49] wakes up 1518-01-28 00:49:00
+## 4             [1518-01-28 00:57] falls asleep 1518-01-28 00:57:00
+## 5                 [1518-01-28 00:58] wakes up 1518-01-28 00:58:00
+## 6 [1518-01-29 00:04] Guard #2017 begins shift 1518-01-29 00:04:00
+##         action guard_num       date minute
+## 1        Guard      #151 1518-01-28      0
+## 2 falls asleep      #151 1518-01-28     40
+## 3     wakes up      #151 1518-01-28     49
+## 4 falls asleep      #151 1518-01-28     57
+## 5     wakes up      #151 1518-01-28     58
+## 6        Guard     #2017 1518-01-29      4</code></pre>
+<pre class="r"><code># who sleeps most 
+clean_input %&gt;% 
+  filter(action != &#39;Guard&#39;) %&gt;%
+  group_by(guard_num, date) %&gt;% 
+  mutate(time_asleep = ifelse(action == &#39;wakes up&#39;, minute - lag(minute), NA ) #calculate time asleep
+  ) %&gt;% 
+  group_by(guard_num) %&gt;% 
+  na.omit() %&gt;% 
+  summarise(total_asleep = sum(time_asleep)) %&gt;%  # sum it
+  arrange(desc(total_asleep)) %&gt;% 
+  slice(1)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   guard_num total_asleep
+##   &lt;chr&gt;            &lt;int&gt;
+## 1 #409               544</code></pre>
+<pre class="r"><code># what&#39;s the most common time to sleep
+
+guard_data &lt;- clean_input %&gt;% 
+  filter(action != &#39;Guard&#39;) %&gt;% 
+  filter(guard_num == &#39;#409&#39;) %&gt;% # pick the winner
+  arrange(timestamp) %&gt;% 
+  spread(action, minute) %&gt;% # prep the data for sequences
+  rename(falls_asleep = `falls asleep`,
+         wakes_up = `wakes up`) %&gt;% 
+  mutate(falls_asleep = ifelse(!is.na(wakes_up), lag(falls_asleep), falls_asleep )) %&gt;% 
+  na.omit()
+
+head(guard_data)</code></pre>
+<pre><code>##                          value           timestamp guard_num       date
+## 2  [1518-02-25 00:40] wakes up 1518-02-25 00:40:00      #409 1518-02-25
+## 4  [1518-04-02 00:24] wakes up 1518-04-02 00:24:00      #409 1518-04-02
+## 6  [1518-04-02 00:52] wakes up 1518-04-02 00:52:00      #409 1518-04-02
+## 8  [1518-04-12 00:59] wakes up 1518-04-12 00:59:00      #409 1518-04-12
+## 10 [1518-04-15 00:14] wakes up 1518-04-15 00:14:00      #409 1518-04-15
+## 12 [1518-04-15 00:50] wakes up 1518-04-15 00:50:00      #409 1518-04-15
+##    falls_asleep wakes_up
+## 2             3       40
+## 4             1       24
+## 6            49       52
+## 8            57       59
+## 10            4       14
+## 12           25       50</code></pre>
+<pre class="r"><code># function that generates sequence of minutes between falling asslep and waking up  
+time_seq &lt;- function(falls, wakes) {
+  result &lt;- seq(falls, wakes)
+  return(result)
+}</code></pre>
+<pre class="r"><code># test the function
+time_seq(guard_data$falls_asleep[1], guard_data$wakes_up[1])</code></pre>
+<pre><code>##  [1]  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+## [24] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40</code></pre>
+<pre class="r"><code># apply the funtion to the #409 guard&#39;s data
+pmap(list(guard_data$falls_asleep,
+          guard_data$wakes_up
+          ), time_seq) %&gt;% 
+  unlist() %&gt;% 
+  table() %&gt;% 
+  sort() # three potential answers! the middle one is correct@</code></pre>
+<pre><code>## .
+##  1  2 59  3 58  4  5  6 15 56 57  7  8  9 10 11 12 13 14 16 17 18 19 20 21 
+##  1  3  3  5  5  6  7  7  7  7  7  8  8  8  8  8  8  8  8  8  8  8  8  8  8 
+## 22 23 24 25 26 55 27 47 28 29 33 34 46 54 30 31 32 35 45 48 43 44 49 53 36 
+##  8  8  8  8  9  9 10 10 11 11 11 11 11 11 12 12 12 12 12 12 13 13 13 13 14 
+## 37 38 39 40 41 42 50 51 52 
+## 14 14 14 14 14 14 15 15 15</code></pre>
+<pre class="r"><code># final solution
+409*51</code></pre>
+<pre><code>## [1] 20859</code></pre>
 
 
   

@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -40,7 +40,7 @@
 
  
   
-  <link rel="alternate" type="application/rss+xml" title="r-tastic" href="/index.xml" />
+  <link rel="alternate" type="application/rss+xml" title="r-tastic" href="https://r-tastic.co.uk/index.xml" />
   
 
   
@@ -50,7 +50,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -69,7 +69,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -77,25 +77,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -107,7 +107,7 @@
 
     
     <li class="pure-menu-item">
-      <a class="pure-menu-link" href="/index.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      <a class="pure-menu-link" href="https://r-tastic.co.uk/index.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
     </li>
     
 
@@ -212,56 +212,7 @@
   
     <article>
   <header>
-    <h2><a href="/post/advent-of-code-day-4/">My R Take on Advent of Code - Day 4</a></h2>
-
-    <div class="post-meta">
-
-  <div>
-    <i class="fa fa-calendar fa-fw"></i>
-    <time>05 Jan 2019</time>
-  </div>
-
-  
-
-  
-  
-  
-  
-
-  
-  
-  
-  <div>
-    <i class="fa fa-tags fa-fw"></i>
-    
-      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
-    
-  </div>
-  
-  
-
-</div>
-
-  </header>
-
-  <p>
-  glimpse(raw_input)
-clean the inputclean_input &lt;- raw_input %&gt;%strsplit(‘’) %&gt;%unlist() %&gt;%as_tibble() %&gt;%mutate(timestamp = ymd_hm(str_extract(value, ‘[:digit:]+-[:digit:]+-[:digit:]+..[:digit:]+:[:digit:]+’)),action = str_extract(value, ‘[:alpha:]+..[:alpha:]+’),guard_num = ifelse(str_detect(value, ‘#’), str_extract(value, ‘#[:digit:]+’), NA),date = ymd(str_sub(timestamp, start = 1, end = 10)),minute = minute(timestamp)) %&gt;%arrange(timestamp) %&gt;%fill(guard_num) # fill in missing guard numbers
-head(clean_input)
-who sleeps mostclean_input %&gt;%filter(action != ‘Guard’) %&gt;%group_by(guard_num, date) %&gt;%mutate(time_asleep = ifelse(action == ‘wakes up’, minute - lag(minute), NA ) #calculate time asleep) %&gt;%group_by(guard_num) %&gt;%na.
-  </p>
-
-  
-  <footer>
-    <a href="/post/advent-of-code-day-4/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
-  </footer>
-  
-</article>
-
-  
-    <article>
-  <header>
-    <h2><a href="/post/end-of-2018-thoughts/">End of 2018 Thoughts</a></h2>
+    <h2><a href="https://r-tastic.co.uk/post/end-of-2018-thoughts/">End of 2018 Thoughts</a></h2>
 
     <div class="post-meta">
 
@@ -280,7 +231,7 @@ head(clean_input)
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/opinion">opinion</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/opinion">opinion</a>
     
   </div>
   
@@ -297,7 +248,7 @@ public speakingThis year started for me with a bang - as a result of my present
 
   
   <footer>
-    <a href="/post/end-of-2018-thoughts/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+    <a href="https://r-tastic.co.uk/post/end-of-2018-thoughts/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
   </footer>
   
 </article>
@@ -305,7 +256,7 @@ public speakingThis year started for me with a bang - as a result of my present
   
     <article>
   <header>
-    <h2><a href="/post/advent-of-code-day-3/">My R Take on Advent of Code - Day 3</a></h2>
+    <h2><a href="https://r-tastic.co.uk/post/advent-of-code-day-3/">My R Take on Advent of Code - Day 3</a></h2>
 
     <div class="post-meta">
 
@@ -324,7 +275,7 @@ public speakingThis year started for me with a bang - as a result of my present
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/tidyverse">tidyverse</a>
     
   </div>
   
@@ -341,7 +292,7 @@ public speakingThis year started for me with a bang - as a result of my present
 
   
   <footer>
-    <a href="/post/advent-of-code-day-3/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+    <a href="https://r-tastic.co.uk/post/advent-of-code-day-3/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
   </footer>
   
 </article>
@@ -349,7 +300,7 @@ public speakingThis year started for me with a bang - as a result of my present
   
     <article>
   <header>
-    <h2><a href="/post/my-r-take-on-advent-of-code-day-2/">My R take on Advent of Code - Day 2</a></h2>
+    <h2><a href="https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/">My R take on Advent of Code - Day 2</a></h2>
 
     <div class="post-meta">
 
@@ -368,7 +319,7 @@ public speakingThis year started for me with a bang - as a result of my present
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/tidyverse">tidyverse</a>
     
   </div>
   
@@ -384,7 +335,7 @@ public speakingThis year started for me with a bang - as a result of my present
 
   
   <footer>
-    <a href="/post/my-r-take-on-advent-of-code-day-2/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+    <a href="https://r-tastic.co.uk/post/my-r-take-on-advent-of-code-day-2/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
   </footer>
   
 </article>
@@ -392,7 +343,7 @@ public speakingThis year started for me with a bang - as a result of my present
   
     <article>
   <header>
-    <h2><a href="/post/advent-of-code-in-r-day-1/">My R take on Advent of Code - Day 1</a></h2>
+    <h2><a href="https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/">My R take on Advent of Code - Day 1</a></h2>
 
     <div class="post-meta">
 
@@ -411,7 +362,7 @@ public speakingThis year started for me with a bang - as a result of my present
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidyverse">tidyverse</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/tidyverse">tidyverse</a>
     
   </div>
   
@@ -427,7 +378,57 @@ public speakingThis year started for me with a bang - as a result of my present
 
   
   <footer>
-    <a href="/post/advent-of-code-in-r-day-1/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+    <a href="https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
+  </footer>
+  
+</article>
+
+  
+    <article>
+  <header>
+    <h2><a href="https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/">Exploring London Crime with R heat maps</a></h2>
+
+    <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>26 Aug 2018</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/leaflet">leaflet</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/public-api">public api</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/heat-maps">heat maps</a>
+    
+  </div>
+  
+  
+
+</div>
+
+  </header>
+
+  <p>
+  Recently, I had a real pleasure to work with various types of data pulled from public APIs, one of them being data.police.uk API. Oh, those hours of pure intellectual exploration it’s given me! I have a soft spot for crime data and I explored it using heat maps in the past. Apart from checking and visualising stats for the new area in London we just moved to, it made me think more about good and better ways of presenting complex and multidimensional information.
+  </p>
+
+  
+  <footer>
+    <a href="https://r-tastic.co.uk/post/exploring-london-crime-with-r-heat-maps/">Read more<i class="fa fa-angle-double-right fa-fw"></i></a>
   </footer>
   
 </article>
@@ -443,7 +444,7 @@ public speakingThis year started for me with a bang - as a result of my present
   
   <span>&nbsp;1 / 4&nbsp;</span>
   
-  <a href="/page/2/"><i class="fa fa-chevron-right"></i></a>
+  <a href="https://r-tastic.co.uk/page/2/"><i class="fa fa-chevron-right"></i></a>
   
 </nav>
 
@@ -453,7 +454,7 @@ public speakingThis year started for me with a bang - as a result of my present
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
+<script src="https://r-tastic.co.uk/js/ui.js"></script>
 
 
 <script>

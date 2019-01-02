@@ -21,13 +21,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://r-tastic.co.uk/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -48,7 +48,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://r-tastic.co.uk/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -67,7 +67,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Kasia Kulma</a>
+  <a class="pure-menu-heading brand" href="https://r-tastic.co.uk/">Kasia Kulma</a>
 
 
   <div class="pure-menu">
@@ -75,25 +75,25 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
+          <a class="pure-menu-link" href="https://r-tastic.co.uk/contact/"><i class='fa fa-phone fa-fw'></i>Contact</a>
       
         </li>
       
@@ -223,9 +223,9 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/machine-learning">machine learning</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/machine-learning">machine learning</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/lime">lime</a>
+      <a class="post-taxonomy-tag" href="https://r-tastic.co.uk/tags/lime">lime</a>
     
   </div>
   
@@ -550,7 +550,7 @@ predict_model.H2OBinomialModel &lt;- function(x, newdata, type, ...) {
 plot_features(explanation_corr, ncol = 3)
 </code></pre>
 
-<p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png" alt="" /></p>
 
 <p>You can see that smaller and more regular cells with low values of bare nuclei (<code>bare_nuclei</code>) correctly indicate benign cells, whereas big, irregular cells with higher values of clump thickness (<code>cl_thickness</code>) support malignant label. It all makes sense.</p>
 
@@ -566,7 +566,7 @@ plot_features(explanation_corr, ncol = 3)
 plot_features(explanation_wrong)
 </code></pre>
 
-<p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png" alt="" /></p>
+<p><img src="https://r-tastic.co.uk/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png" alt="" /></p>
 
 <p>And here&rsquo;s where the true power of <code>lime</code> package is: understanding what made model missclasify labels. All the wrong cases were predcited to be benign while they were malignant, why? It looks like they were mainly small and quite regular cells, altough some malignant characterstics were still present (e.g. higher values of bare nuclei and clump thickness). What a great improvement of our understanding of how the &lsquo;black box&rsquo; model works and why it makes mistakes. Even though it doesn&rsquo;t produce &lsquo;fixed&rsquo; feature importance plots (i.e. a general, not case-to-case view of which variables are most informative when making a prediction), it allows you to make a good educated guess of which features matter. We live in beautiful times!</p>
 
@@ -575,13 +575,13 @@ plot_features(explanation_wrong)
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/friendships-among-top-twitterers/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://r-tastic.co.uk/post/friendships-among-top-twitterers/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/friendships-among-top-twitterers/">Friendships among top R-twitterers</a>
+      <a href="https://r-tastic.co.uk/post/friendships-among-top-twitterers/">Friendships among top R-twitterers</a>
     </nav>
     
   </div>
@@ -591,13 +591,13 @@ plot_features(explanation_wrong)
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/star-wars-vs-star-trek-word-battle/">Star Wars Vs Star Trek Word Battle</a>
+      <a href="https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/">Star Wars Vs Star Trek Word Battle</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/star-wars-vs-star-trek-word-battle/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://r-tastic.co.uk/post/star-wars-vs-star-trek-word-battle/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -628,7 +628,7 @@ plot_features(explanation_wrong)
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
+<script src="https://r-tastic.co.uk/js/ui.js"></script>
 
 
 <script>

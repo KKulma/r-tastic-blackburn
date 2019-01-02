@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on r-tastic</title>
-    <link>/categories/</link>
+    <link>https://r-tastic.co.uk/categories/</link>
     <description>Recent content in Categories on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://r-tastic.co.uk/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>R</title>
-      <link>/categories/r/</link>
-      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      <link>https://r-tastic.co.uk/categories/r/</link>
+      <pubDate>Fri, 28 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/r/</guid>
+      <guid>https://r-tastic.co.uk/categories/r/</guid>
       <description></description>
     </item>
     
