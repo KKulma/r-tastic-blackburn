@@ -4,8 +4,8 @@ author: Kasia Kulma
 date: '2018-12-31'
 tags:
   - opinion
-slug: end-of-2018-thouhgts
-blogdow---
+slug: end-of-2018-thoughts
+---
 
 Here we are, ending yet another year and starting something new. I wanted to take a minute to dwell on 2018, what happened in my R world this year and reflexions I take from that.   
 

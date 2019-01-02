@@ -40,6 +40,69 @@ Having said that, I do work with Python, too, so don&amp;rsquo;t be surprised to
     </item>
     
     <item>
+      <title>End of 2018 Thoughts</title>
+      <link>/post/end-of-2018-thoughts/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/end-of-2018-thoughts/</guid>
+      <description>
+
+
+&lt;p&gt;Here we are, ending yet another year and starting something new. I wanted to take a minute to dwell on 2018, what happened in my R world this year and reflexions I take from that.&lt;/p&gt;
+&lt;div id=&#34;public-speaking&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;public speaking&lt;/h3&gt;
+&lt;p&gt;This year started for me with a bang - as a result of my &lt;a href=&#34;https://www.youtube.com/watch?v=CY3t11vuuOM&amp;amp;t=2003s&#34;&gt;presentation about LIME at one of H2O meetups&lt;/a&gt; (of which YouTube video has now reached unthinkable 11K views!) I was invited to speak at various events - be it AI Congress, LSE’s Python Group or Data Science Festival. New and scary experience of public speaking about ML and Data Science soon became more familiar and comfortable. It also gave me a sense of fulfilment talking about explainable Machine Learning and making others aware of its importance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;workshop-at-erum-2018&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;workshop at eRum 2018&lt;/h3&gt;
+&lt;p&gt;When &lt;a href=&#34;https://www.linkedin.com/in/grace-meyer-b039803b/&#34;&gt;Grace Meyer&lt;/a&gt; first suggested that we should submit an idea for an eRum 2018 workshop, I thought she was mad. And still, the idea for text analysis (using mainly &lt;code&gt;quanteda&lt;/code&gt; package) on Trump &amp;amp; Clinton tweets (now published on &lt;a href=&#34;https://github.com/KKulma/2018_eRum_TextClassification_workshop&#34;&gt;GitHub&lt;/a&gt;) caught on and was accepted by the organisers. We learnt A LOT in the process of preparing, trialling and finally running the workshop and I’ll be forever grateful to Grace of the idea of trying. Also, I try to learn from her energy, enthusiasm and ‘give it a go and see how it goes’ attitude!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;coding-and-open-source&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;coding and Open Source&lt;/h3&gt;
+&lt;p&gt;This year I also had a great time trying new challenges: one of them being &lt;a href=&#34;https://hacktoberfest.digitalocean.com/&#34;&gt;Hacktoberfest 2018&lt;/a&gt; where for the first time I contributed to other people’s Open Source code, including &lt;code&gt;readr&lt;/code&gt; package. I can’t recommend initiatives like this one enough as it really highlights a phenomenon of Open Source where anyone, no matter how junior, can contribute something and makes things better. I absolutely loved the experience, not to mention the t-shirt!&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;2018 couldn&amp;#39;t end with a better arrival... Thank you, &lt;a href=&#34;https://twitter.com/hacktoberfest?ref_src=twsrc%5Etfw&#34;&gt;@hacktoberfest&lt;/a&gt; !!! &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/opensource?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#opensource&lt;/a&gt; &lt;a href=&#34;https://t.co/OOY6X8dKhn&#34;&gt;pic.twitter.com/OOY6X8dKhn&lt;/a&gt;&lt;/p&gt;&amp;mdash; kasiek (@KKulma) &lt;a href=&#34;https://twitter.com/KKulma/status/1079796931176681472?ref_src=twsrc%5Etfw&#34;&gt;December 31, 2018&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;Another new challenge I tried was &lt;a href=&#34;https://adventofcode.com/&#34;&gt;Advent of Code&lt;/a&gt;, which I wrote about more &lt;a href=&#34;https://r-tastic.co.uk/post/advent-of-code-in-r-day-1/&#34;&gt;on my blog&lt;/a&gt;. Again, it was something totally new to me as I’m used to using R in a purely data context, not necessarily in order to solve maths puzzles! Even though I haven’t finished all the challenges, it was amazing to try and think outside the box, as well as to share my code and hear how others would approach the same problem.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;r-ladies-london&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;R-ladies London&lt;/h3&gt;
+&lt;p&gt;R-ladies London and their initiatives always make me excited and proud. And it’s definitely been a very busy for us! We went much more hands-on this year by organising the &lt;a href=&#34;https://www.meetup.com/rladies-london/events/253352011/&#34;&gt;very first hackathon&lt;/a&gt; together with Dog Trust and &lt;a href=&#34;https://www.meetup.com/rladies-london/events/256553328/&#34;&gt;TidyTuesday session&lt;/a&gt;. We organised various courses: our now standard &lt;a href=&#34;https://www.meetup.com/rladies-london/events/247492507/&#34;&gt;R from scratch&lt;/a&gt;, &lt;a href=&#34;https://www.meetup.com/rladies-london/events/247712800/&#34;&gt;Dive into dplyr&lt;/a&gt; and two Shiny tutorials. Finally, our excellent speakers covered a variety of data topics, ranging from using R for Spatial analysis, to Data Science for Social Good, to Explainable Machine Learning, to contributing to Open Source. I’m very grateful and impressed by Grace Meyer, &lt;a href=&#34;https://twitter.com/hfcfrick&#34;&gt;Hanna Frick&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/Gummifot&#34;&gt;Emma Vestesson&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/salankia&#34;&gt;Agnes Salanki&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/wuergh&#34;&gt;Erle Holgersen&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/fiona_grimm&#34;&gt;Fiona Grimm&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/f_spooner&#34;&gt;Fiona Spooner&lt;/a&gt; and thank you ladies for all your help, energy and time this year, we smashed it big time!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;working-for-mango-solutions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;working for Mango Solutions&lt;/h3&gt;
+&lt;p&gt;Last but not least, this year I started working for &lt;a href=&#34;https://twitter.com/MangoTheCat&#34;&gt;Mango Solutions&lt;/a&gt;, where I feel like I can finally do for a living things that I’ve been doing in my spare time :) Not only I’m surrounded by R experts that I can only (humbly!) learn from, but I’m part of the company that supports and cares about R community as well as their employees. I’m so looking forward to being part of it in 2019 :)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;thoughts-for-2019-and-beyond&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Thoughts for 2019 and beyond&lt;/h1&gt;
+&lt;div id=&#34;you-can-contribute-to-r-community-in-many-meaningful-ways&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;01. You can contribute to R community in many meaningful ways…&lt;/h3&gt;
+&lt;p&gt;… not just by writing new packages, blog posts or working on new data projects, as &lt;a href=&#34;https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/&#34;&gt;Mara Averick can tell you&lt;/a&gt;. My main contributions later this year revolved around&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;sharing valuable content created by others&lt;/li&gt;
+&lt;li&gt;organising and co-organising events that promoted interesting speakers and allowed others to learn&lt;/li&gt;
+&lt;li&gt;encouraging beginner bloggers/speakers/R contributors to continue contributing to the community, no matter how small or insignificant those contributions seemed to them at the time.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These things may sometimes feel like ‘backseat’ activities, but they are important building blocks of any good community.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;new-lessons-can-come-from-unexpected-places&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;02. New lessons can come from unexpected places&lt;/h3&gt;
+&lt;p&gt;I’m used to learning R from online resources, be it online courses, blogs, tweets, etc. But this year I also learned lots from online initiatives such as Hactoberfest
+Advent of Code, Tidy Tuesday, as well as simply exposing my code to other people. It may feel embarrassing at times to realise how convoluted and not elegant your code is, but hey, that’s how you learn!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;public-speaking-can-be-hard-and-demanding-but-also-lazy-and-unrewarding-if-youre-not-careful&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;03. Public speaking can be hard and demanding but also lazy and unrewarding (if you’re not careful)&lt;/h3&gt;
+&lt;p&gt;You prepare to give a talk to the point where you remember where to take a breath or make a pause… and then you give the same talk 10 times. It’s absolutely fine then that you prepare less then (or not at all), but there’s also a temptation to stop reviewing or updating your content. I gave one talk this year when this happened and I felt disappointed, unrewarded and lazy. It felt like talking about last year’s snow. It was a reminder to me there’s a diligence and hard work involved in becoming (and staying!) a good and informative public speaker.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;its-ok-to-slow-down-and-take-a-break&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;04. It’s OK to slow down and take a break&lt;/h3&gt;
+&lt;p&gt;There was a time in 2018 when the busy time in R community coincided with very busy times in my private life (selling a flat, buying a house, renovating a house, changing jobs, my mum’s cancer…) but despite this I had a sense of obligation to the R community to keep contributing as I have so far. But really, at the end of the day you don’t have to excuse yourself or wait for permission to slow down. Firstly, no one really cares. If you produce stuff, great. If not, someone else will and that’s great, too. Secondly, even if people care, they will also understand - things happen and it’s all about living a satisfying and fulfilling life, not an overwhelming and miserable one. That’s why my 2019 R goals are very cautious and really, what I wish myself and everyone is to have a lot of fun this New Year. Happy New Year!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>My R Take on Advent of Code - Day 3</title>
       <link>/post/advent-of-code-day-3/</link>
       <pubDate>Fri, 28 Dec 2018 00:00:00 +0000</pubDate>
@@ -1365,188 +1428,6 @@ corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1,
 &lt;h4 id=&#34;what-a-year&#34;&gt;&lt;strong&gt;WHAT A YEAR&lt;/strong&gt;&lt;/h4&gt;
 
 &lt;p&gt;2017 was absolutely mind-blowing for me. I started this year not being at all confident in my coding or data science skills, I&amp;rsquo;m finishing it writing a semi-successful R blog, co-organizing R-ladies meetups in London, getting invited to give DS talks at meetups and conferences and definitely feeling that I&amp;rsquo;m part of R community. Most importantly, my learning rate has gone through the roof and it doesn&amp;rsquo;t look it will be stopping anytime soon :) Thanks everyone for this year, it wouldn&amp;rsquo;t happen without you!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>/post/star-wars-vs-star-trek-word-battle/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
-      <description>
-
-
-&lt;p&gt;It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with &lt;a href=&#34;https://twitter.com/pmigdal&#34;&gt;Piotr Migdal’s&lt;/a&gt; challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979). I chose these two because of 1) the obvious “competition” going on between the two camps and 2) similar time they were first broadcast. Let’s get cracking!&lt;/p&gt;
-&lt;p&gt;Let’s load necessary packages:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
-library(dplyr)
-library(tm)
-library(tidytext)
-library(ggthemes)
-library(ggplot2)
-library(DT)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The first one, &lt;code&gt;rvest&lt;/code&gt;, comes in handy in web-scraping text from the movie scripts (it’s amazing what you can get online for free these days):&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# SW and StarTrek URLs
-swIV_url &amp;lt;-&amp;quot;http://www.imsdb.com/scripts/Star-Wars-A-New-Hope.html&amp;quot;
-startrek_url &amp;lt;- &amp;quot;http://www.dailyscript.com/scripts/startrek01.html&amp;quot;
-
-## scrape movie scripts
-# StarWars
-star_wars &amp;lt;- read_html(swIV_url) %&amp;gt;%
-  html_nodes(&amp;quot;td&amp;quot;) %&amp;gt;% 
-  html_text() %&amp;gt;% 
-  .[[88]]
-
-#StarTrek
-star_trek &amp;lt;- read_html(startrek_url) %&amp;gt;%
-  html_nodes(&amp;quot;pre&amp;quot;) %&amp;gt;%
-  html_text() 
-
-# here&amp;#39;s what we&amp;#39;ve got
-str(star_wars)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  chr &amp;quot;\r\n\r\n\n\n\n                                        STAR WARS\n\n                                        Epis&amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;As you can see, the script texts are very messy, so I write a customised function to clean them up a bit:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# remove messy bits ;)
-clean_text &amp;lt;- function(x) {
-  x &amp;lt;- gsub(&amp;quot;\\\n&amp;quot;, &amp;quot; &amp;quot;, x)
-  x &amp;lt;- gsub(&amp;quot;\\\r&amp;quot;, &amp;quot; &amp;quot;, x)
-  x &amp;lt;- gsub(&amp;quot;\\\t&amp;quot;, &amp;quot; &amp;quot;, x)
-  x &amp;lt;- gsub(&amp;quot;[[:punct:]]&amp;quot;, &amp;quot; &amp;quot;, x)
-  x &amp;lt;- x %&amp;gt;% 
-    tolower() %&amp;gt;% 
-    removeNumbers() %&amp;gt;% 
-    stripWhitespace()
-  x}
-    
-# apply the customised function to both datasets
-clean_star_trek &amp;lt;- clean_text(star_trek)
-clean_star_wars &amp;lt;- clean_text(star_wars)
-
-# result
-str(clean_star_wars)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  chr &amp;quot; star wars episode iv a new hope from the journal of the whills by george lucas revised fourth draft january lu&amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That’s MUCH better! From here, we are only a few steps away from getting the desired word frequency tables:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(&amp;quot;stop_words&amp;quot;)
-
-
-sw_tokens &amp;lt;- clean_star_wars %&amp;gt;%
-  as_tibble() %&amp;gt;% # trasforming vector to tibble
-  rename_(sw_text = names(.)[1]) %&amp;gt;% # assign a column name
-  mutate_if(is.factor, as.character) %&amp;gt;% # convert it from factor to character
-  mutate(swt=unlist(sw_text)) %&amp;gt;% 
-  unique() %&amp;gt;% 
-  unnest_tokens(&amp;quot;word&amp;quot;, sw_text) %&amp;gt;% # break text down into single words
-  anti_join(stop_words) %&amp;gt;% # remove stop words
-  count(word, sort = TRUE) %&amp;gt;% # count word frequency and sort it in decreasing order
-  rename(sw_n = n)
-
-
-st_tokens &amp;lt;- clean_star_trek %&amp;gt;%
-  as_tibble() %&amp;gt;% 
-  rename_(st_text = names(.)[1]) %&amp;gt;%
-  mutate_if(is.factor, as.character) %&amp;gt;% 
-  mutate(stt=unlist(st_text)) %&amp;gt;% 
-  unique() %&amp;gt;% 
-  unnest_tokens(&amp;quot;word&amp;quot;, st_text) %&amp;gt;% 
-  anti_join(stop_words) %&amp;gt;% 
-  count(word, sort = TRUE) %&amp;gt;% 
-  rename(st_n = n)
-
-sw_tokens&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 3,385 x 2
-##    word      sw_n
-##    &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
-##  1 luke       726
-##  2 int        314
-##  3 han        269
-##  4 star       235
-##  5 death      229
-##  6 threepio   217
-##  7 cockpit    196
-##  8 ben        176
-##  9 ext        167
-## 10 vader      162
-## # ... with 3,375 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;TA-DA! Our tables are ready and squeky clean :) Now, I’ll use &lt;code&gt;inner_join()&lt;/code&gt; to narrow down the data to only those words that the two scripts have in common. To compare the frequencies I’ll use a variable called &lt;code&gt;log_word_prop&lt;/code&gt;: logarithm of the proportion between Star Wars and Star Trek word frequency. This means that the more positive the value, the more drastic the difference in frequency it is in favour of Star Wars. On the other hand, the more negative the value, the more commonly it was used in Star Trek (in comparison to Star Wars).&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens = sw_tokens %&amp;gt;% 
-  inner_join(st_tokens) %&amp;gt;% 
-  mutate(log_word_prop =  round(log(sw_n / st_n),3),
-         dominates_in = as.factor(ifelse(log_word_prop &amp;gt; 0, &amp;quot;star_wars&amp;quot;, &amp;quot;star_trek&amp;quot;))) 
-
-final_tokens&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 1,293 x 5
-##    word     sw_n  st_n log_word_prop dominates_in
-##    &amp;lt;chr&amp;gt;   &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;       
-##  1 int       314   110         1.05  star_wars   
-##  2 star      235     9         3.26  star_wars   
-##  3 death     229     1         5.43  star_wars   
-##  4 ext       167    49         1.23  star_wars   
-##  5 red       152     7         3.08  star_wars   
-##  6 fighter   121     1         4.80  star_wars   
-##  7 wing      112     1         4.72  star_wars   
-##  8 ship      109    48         0.820 star_wars   
-##  9 space      90    45         0.693 star_wars   
-## 10 surface    87     5         2.86  star_wars   
-## # ... with 1,283 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And we can finally visualise our findings: first, let’s have a quick glipse on what words occured in pretty much the same frequency in both movies:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(13)
-
-final_tokens %&amp;gt;% 
-  filter(abs(log_word_prop) == 0) %&amp;gt;% 
-  arrange(desc(sw_n)) %&amp;gt;% 
-  sample_n(30) %&amp;gt;% 
-  ggplot(aes(x = reorder(word, log_word_prop),  y = log_word_prop, fill = dominates_in)) +
-  geom_bar(stat  = &amp;quot;identity&amp;quot;, show.legend = FALSE) +
-  theme_minimal() +
-  coord_flip() +
-  xlab(&amp;quot;&amp;quot;) +
-  ylab(&amp;quot;log(word_prop)&amp;quot;) +
-  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
-  ggtitle(&amp;quot;Sample of words that occur with the same frequency in SW and ST&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;I must say, I expected this most similar vocabulary to be much more technical. At the same time, this time according to expectations, those words reflect action and drama in both movies: things &lt;code&gt;cease&lt;/code&gt;, &lt;code&gt;emanate&lt;/code&gt; and &lt;code&gt;shove&lt;/code&gt;, people &lt;code&gt;shock&lt;/code&gt;, experience &lt;code&gt;agony&lt;/code&gt; and are &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;What about most polarizing words? I chose to show the words that were at least 12 times (log_word_prop &amp;gt; 2.4) more common in one movie than the other. What are they?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
-  filter(abs(log_word_prop) &amp;gt; 2.4) %&amp;gt;% 
-  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
-  ggplot(aes(x = reorder(word, log_word_prop),  y = log_word_prop, fill = dominates_in)) +
-  geom_bar(stat  = &amp;quot;identity&amp;quot;) +
-  theme_minimal() +
-  coord_flip() +
-  xlab(&amp;quot;&amp;quot;) +
-  ylab(&amp;quot;log(word_prop)&amp;quot;) +
-  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
-  ggtitle(&amp;quot;Words that show strikingly different frequencies in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Haha! You may not be surprised that the most &lt;em&gt;Star Wars-y&lt;/em&gt; vocabulary is full of words like &lt;code&gt;death&lt;/code&gt;, &lt;code&gt;star&lt;/code&gt;, &lt;code&gt;imperial&lt;/code&gt; or even &lt;code&gt;father&lt;/code&gt;, but I didn’t expect &lt;code&gt;female&lt;/code&gt; or &lt;code&gt;cloud&lt;/code&gt; to be THAT much more present in Star Trek! Some things never &lt;code&gt;cease&lt;/code&gt; to surprise even most &lt;code&gt;determined&lt;/code&gt; and &lt;code&gt;knowledgeable&lt;/code&gt; people, even if they have assistance of &lt;code&gt;imperial technician&lt;/code&gt; ;-)&lt;/p&gt;
-&lt;div id=&#34;update&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;UPDATE!!&lt;/h3&gt;
-&lt;p&gt;After Piotr’s suggestion, I decided to play a bit with &lt;code&gt;ggplot&lt;/code&gt;’s excellent &lt;code&gt;geom_text()&lt;/code&gt;. This little tweak can give you surprising inisghts into the Word Battle matter! Below I plotted the more dominant frequency of a given word againts a relative difference in word proportion:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
-  mutate(dominant_freq = as.numeric(ifelse(sw_n &amp;gt; st_n, sw_n, st_n))) %&amp;gt;% 
-  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
-  ggplot(aes(log_word_prop, dominant_freq, label = word)) +
-  geom_text(check_overlap = TRUE) +
-  theme_minimal() +
-  ylab(&amp;quot;Word frequency in a dominating movie&amp;quot;) +
-  xlab(&amp;quot;log(word_prop)&amp;quot;) +
-  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
-  ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Not a bad start! A much more appealing - although a bit less readable - look can be achieved with &lt;code&gt;geom_label()&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_tokens %&amp;gt;% 
-  mutate(dominant_freq = as.numeric(ifelse(sw_n &amp;gt; st_n, sw_n, st_n))) %&amp;gt;% 
-  filter(!word %in% c(&amp;quot;ext&amp;quot;, &amp;quot;int&amp;quot;)) %&amp;gt;% 
-  ggplot(aes(log_word_prop, dominant_freq, label = word)) +
-  geom_label(aes(fill = dominates_in), colour = &amp;quot;white&amp;quot;, fontface = &amp;quot;bold&amp;quot;) +
-  theme_minimal() +
-  ylab(&amp;quot;Word frequency in a dominating movie&amp;quot;) +
-  xlab(&amp;quot;log(word_prop)&amp;quot;) +
-  scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
-  ggtitle(&amp;quot;Word frequency by word proportion in Star Wars and Star Trek&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-16-star-wars-vs-star-trek-word-battle_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
 </description>
     </item>
     
