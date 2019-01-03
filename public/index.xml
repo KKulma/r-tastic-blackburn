@@ -40,6 +40,91 @@ Having said that, I do work with Python, too, so don&amp;rsquo;t be surprised to
     </item>
     
     <item>
+      <title>My R Take in Advent of Code - Day 5</title>
+      <link>/post/advent-of-code-day-5/</link>
+      <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-day-5/</guid>
+      <description>
+
+
+&lt;p&gt;There’s no time to lose, so here comes another &lt;a href=&#34;https://adventofcode.com/2018/about&#34;&gt;Advent of Code&lt;/a&gt; puzzle solved using R. Day 5 challenge, here we come! What are we expected to do?&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The polymer is formed by smaller units which, when triggered, react with each other such that two adjacent units of the same type and opposite polarity are destroyed. Units’ types are represented by letters; units’ polarity is represented by capitalization. For instance, r and R are units with the same type but opposite polarity, whereas r and s are entirely different types and do not react.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For example:
+In &lt;strong&gt;aA&lt;/strong&gt;, a and A react, leaving nothing behind.
+In &lt;strong&gt;abBA&lt;/strong&gt;, bB destroys itself, leaving aA. As above, this then destroys itself, leaving nothing.
+In &lt;strong&gt;abAB&lt;/strong&gt;, no two adjacent units are of the same type, and so nothing happens.
+In &lt;strong&gt;aabAAB&lt;/strong&gt;, even though aa and AA are of the same type, their polarities match, and so nothing happens.
+Now, consider a larger example, &lt;strong&gt;dabAcCaCBAcCcaDA&lt;/strong&gt;:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;dabAcCaCBAcCcaDA&lt;/strong&gt; The first ‘cC’ is removed.&lt;br /&gt;
+&lt;strong&gt;dabAaCBAcCcaDA&lt;/strong&gt; This creates ‘Aa’, which is removed.&lt;br /&gt;
+&lt;strong&gt;dabCBAcCcaDA&lt;/strong&gt; Either ‘cC’ or ‘Cc’ are removed (the result is the same).&lt;br /&gt;
+&lt;strong&gt;dabCBAcaDA&lt;/strong&gt; No further actions can be taken.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;After all possible reactions, the resulting polymer contains &lt;strong&gt;10 units&lt;/strong&gt;.
+&lt;strong&gt;How many units remain after fully reacting the polymer you scanned?&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;OK, this one actually doesn’t sound too bad. Basically, we need to keep removing 2-letter combinations of same lowercase and capital letters until the letter sequence stops changing in length.&lt;/p&gt;
+&lt;p&gt;Let’s have a look at the data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+raw_input &amp;lt;- read_delim(&amp;#39;day5-raw-input.txt&amp;#39;, delim = &amp;#39;\t&amp;#39;, col_names = FALSE) %&amp;gt;% 
+  as.character()
+
+glimpse(raw_input) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  chr &amp;quot;nVvNOoHhiJjlLSuUvVsHhIpiIPIhHgqNVvnQGaAbBiFfbBFQqKaAkfsNxXnpPrSIikKsBcCbdDaMDdmAkKEebBNnRpPGgxXyYJjrRSvKkoOlLrR&amp;quot;| __truncated__&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As expected, just a string of letters. How long?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# original length
+nchar(raw_input) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 50000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;50000-letters long! I wish I knew that was the right length from the beginning - this puzzle took me way longer than necessary to solve because I didn’t copy a complete sequence into the &lt;code&gt;.txt&lt;/code&gt; file!&lt;/p&gt;
+&lt;p&gt;Anyway, instead of coming up with a fancy regex pattern I hard-coded or possible combination of letters that we want to remove from the sequence. Not elegant but very effective.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pattern &amp;lt;- c(&amp;#39;Aa|aA|Bb|bB|Cc|cC|Dd|dD|Ee|eE|Ff|fF|Gg|gG|Hh|hH|Ii|iI|Jj|jJ|Kk|kK|Ll|lL|Mm|mM|Nn|nN|Oo|oO|Pp|pP|Qq|qQ|Rr|rR|Ss|sS|Tt|tT|Uu|uU|Vv|vV|Ww|wW|Xx|xX|Yy|yY|Zz|zZ&amp;#39;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s test on the first example if this pattern works:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test the example 
+
+## dabAcCaCBAcCcaDA  The first &amp;#39;cC&amp;#39; is removed.
+#dabAaCBAcCcaDA    This creates &amp;#39;Aa&amp;#39;, which is removed.
+#dabCBAcCcaDA      Either &amp;#39;cC&amp;#39; or &amp;#39;Cc&amp;#39; are removed (the result is the same).
+#dabCBAcaDA 
+
+  
+str_remove_all(&amp;#39;dabAcCaCBAcCcaDA&amp;#39;, pattern) %&amp;gt;% 
+  str_remove_all(pattern) %&amp;gt;% nchar()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 10&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Yes! We get the right answer after 2 rounds of ‘removals! Now, we don’t know how many rounds need to applied to the puzzle dataset in order reach the final solution, so how do we go about it? It’s a perfect case for a &lt;a href=&#34;https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r&#34;&gt;repeat loop&lt;/a&gt;. In such loop we keep repeating a specified operation until a condition is met. In our case, we want to keep applying the removal of ’reactive units’ until the length of the letter sequence stops changing. And once it happens, we want to know how long is the final (shortest) sequence. This will be our solution to the puzzle:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# now, put it in the repeat loop
+# final solution
+
+input &amp;lt;- raw_input
+
+repeat {   
+  output &amp;lt;- str_remove_all(input, pattern)
+  if (nchar(input) == nchar(output)) {
+    print(nchar(output));
+    break
+  } else input &amp;lt;- output;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 11194&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, that’s what I call an ELEGANT solution!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>My R Take on Advent of Code - Day 4</title>
       <link>/post/advent-of-code-day-4/</link>
       <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
@@ -1286,215 +1371,6 @@ all_tweets &amp;lt;- tweets %&amp;gt;%
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Trump VS Clinton Interpretable Text Classifier</title>
-      <link>/post/trump-vs-clinton-interpretable-text-classifier/</link>
-      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
-      <description>&lt;p&gt;I&amp;rsquo;ve been writing/talking a lot about &lt;a href=&#34;https://www.oreilly.com/learning/introduction-to-local-interpretable-model-agnostic-explanations-lime&#34;&gt;LIME&lt;/a&gt; recently: in &lt;a href=&#34;https://kkulma.github.io/2017-11-07-automated_machine_learning_in_cancer_detection/&#34;&gt;this blog&lt;/a&gt;/ at &lt;a href=&#34;https://www.youtube.com/watch?v=CY3t11vuuOM&#34;&gt;H20 meetup&lt;/a&gt;, or at coming &lt;a href=&#34;https://theaicongress.com/&#34;&gt;AI Congress&lt;/a&gt; and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the &lt;a href=&#34;https://arxiv.org/abs/1602.04938&#34;&gt;original publication&lt;/a&gt;. &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Pedersen&lt;/a&gt; did an amazing job building &lt;code&gt;lime&lt;/code&gt; package for R with excellent documentation and &lt;a href=&#34;https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html&#34;&gt;vignette&lt;/a&gt;. In fact, the &lt;code&gt;lime&lt;/code&gt; vignette inspired a big part of this post. As you&amp;rsquo;ll soon see, &lt;code&gt;lime&lt;/code&gt; keeps on giving when it comes to text classification. What do you say for classifying Clinton and Trump tweets?&lt;/p&gt;
-
-&lt;p&gt;As always, let&amp;rsquo;s start with loading necessary packages.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;library(readr)
-library(lime)
-library(xgboost) # the classifier
-library(caret)
-library(dplyr)
-library(tibble)
-library(text2vec) 
-library(qdapRegex) # removes urls from text
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, let&amp;rsquo;s load the data that was kindly provided on &lt;a href=&#34;https://www.kaggle.com/benhamner/clinton-trump-tweets&#34;&gt;Kaggle&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;tweets &amp;lt;- read_csv(&#39;data/tweets.csv&#39;)
-dim(tweets)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [1] 6444   28
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;head(tweets)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 28
-##             id          handle
-##          &amp;lt;dbl&amp;gt;           &amp;lt;chr&amp;gt;
-## 1 7.809256e+17  HillaryClinton
-## 2 7.809162e+17  HillaryClinton
-## 3 7.809116e+17  HillaryClinton
-## 4 7.809070e+17  HillaryClinton
-## 5 7.808974e+17  HillaryClinton
-## 6 7.808931e+17 realDonaldTrump
-## # ... with 26 more variables: text &amp;lt;chr&amp;gt;, is_retweet &amp;lt;chr&amp;gt;,
-## #   original_author &amp;lt;chr&amp;gt;, time &amp;lt;dttm&amp;gt;, in_reply_to_screen_name &amp;lt;chr&amp;gt;,
-## #   in_reply_to_status_id &amp;lt;dbl&amp;gt;, in_reply_to_user_id &amp;lt;dbl&amp;gt;,
-## #   is_quote_status &amp;lt;chr&amp;gt;, lang &amp;lt;chr&amp;gt;, retweet_count &amp;lt;int&amp;gt;,
-## #   favorite_count &amp;lt;int&amp;gt;, longitude &amp;lt;dbl&amp;gt;, latitude &amp;lt;dbl&amp;gt;, place_id &amp;lt;chr&amp;gt;,
-## #   place_full_name &amp;lt;chr&amp;gt;, place_name &amp;lt;chr&amp;gt;, place_type &amp;lt;chr&amp;gt;,
-## #   place_country_code &amp;lt;chr&amp;gt;, place_country &amp;lt;chr&amp;gt;,
-## #   place_contained_within &amp;lt;chr&amp;gt;, place_attributes &amp;lt;chr&amp;gt;,
-## #   place_bounding_box &amp;lt;chr&amp;gt;, source_url &amp;lt;chr&amp;gt;, truncated &amp;lt;chr&amp;gt;,
-## #   entities &amp;lt;chr&amp;gt;, extended_entities &amp;lt;chr&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Quick glimpse on the class balance, which looks very good, BTW.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;table(tweets$handle)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## 
-##  HillaryClinton realDonaldTrump 
-##            3226            3218
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Finally, let&amp;rsquo;s clean the data a little: select only tweets text and author, change column names to something more readable and remove URLs from text.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;all_tweets &amp;lt;- tweets %&amp;gt;% 
-  rename(author = handle) %&amp;gt;% 
-  select(author, text) %&amp;gt;% 
-  mutate(text = qdapRegex::rm_url(text)) %&amp;gt;% #removes URLs from text
-  na.omit()
-
-head(as.data.frame(all_tweets))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##            author
-## 1  HillaryClinton
-## 2  HillaryClinton
-## 3  HillaryClinton
-## 4  HillaryClinton
-## 5  HillaryClinton
-## 6 realDonaldTrump
-##                                                                                                                                          text
-## 1                                           The question in this election: Who can put the plans into action that will make your life better?
-## 2                                           Last night, Donald Trump said not paying taxes was &amp;quot;smart.&amp;quot; You know what I call it? Unpatriotic.
-## 3 Couldn&#39;t be more proud of @HillaryClinton. Her vision and command during last night&#39;s debate showed that she&#39;s ready to be our next @POTUS.
-## 4                                                          If we stand together, there&#39;s nothing we can&#39;t do. Make sure you&#39;re ready to vote:
-## 5                                          Both candidates were asked about how they&#39;d confront racial injustice. Only one had a real answer.
-## 6                                             Join me for a 3pm rally - tomorrow at the Mid-America Center in Council Bluffs, Iowa! Tickets:…
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;OK, once we&amp;rsquo;re happy with the data, it&amp;rsquo;s time to split it into train and test sets - &lt;code&gt;caret&lt;/code&gt; package, as always, does a great job here.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;set.seed(1234)
-trainIndex &amp;lt;- createDataPartition(all_tweets$author, p = .8, 
-                                  list = FALSE, 
-                                  times = 1)
-
-train_tweets &amp;lt;- all_tweets[ trainIndex,]
-test_tweets &amp;lt;- all_tweets[ -trainIndex,]
-
-str(train_tweets)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    5156 obs. of  2 variables:
-##  $ author: chr  &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; &amp;quot;HillaryClinton&amp;quot; ...
-##  $ text  : chr  &amp;quot;The question in this election: Who can put the plans into action that will make your life better?&amp;quot; &amp;quot;Last night, Donald Trump said not paying taxes was \&amp;quot;smart.\&amp;quot; You know what I call it? Unpatriotic.&amp;quot; &amp;quot;Couldn&#39;t be more proud of @HillaryClinton. Her vision and command during last night&#39;s debate showed that she&#39;s &amp;quot;| __truncated__ &amp;quot;If we stand together, there&#39;s nothing we can&#39;t do. Make sure you&#39;re ready to vote:&amp;quot; ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In order to build the model, we need to tokenize our data and transform it to Document Term Matrices. In this example, I&amp;rsquo;ll use word-level tokens:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# tokenizes text data nad creates Document Term Matrix
-get_matrix &amp;lt;- function(text) {
-  it &amp;lt;- itoken(text, progressbar = FALSE)
-  create_dtm(it, vectorizer = hash_vectorizer())
-}
-
-dtm_train= get_matrix(train_tweets$text)
-dtm_test = get_matrix(test_tweets$text)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now, time for the model. I used Extreme Gradient Boosting tree model for classification, which usually gives very good result, even with standard parameters:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;param &amp;lt;- list(max_depth = 7, 
-              eta = 0.1, 
-              objective = &amp;quot;binary:logistic&amp;quot;, 
-              eval_metric = &amp;quot;error&amp;quot;, 
-              nthread = 1)
-
-set.seed(1234)
-xgb_model &amp;lt;- xgb.train(
-  param, 
-  xgb.DMatrix(dtm_train, label = train_tweets$author == &amp;quot;realDonaldTrump&amp;quot;),
-  nrounds = 50,
-  verbose=0
-)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;How does the model do? Would you trust it based on accuracy alone?&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# We use a (standard) threshold of 0.5
-predictions &amp;lt;- predict(xgb_model, dtm_test) &amp;gt; 0.5
-test_labels &amp;lt;- test_tweets$author == &amp;quot;realDonaldTrump&amp;quot;
-
-# Accuracy
-print(mean(predictions == test_labels))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [1] 0.8478261
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The model was accurate in 84% of cases, which is quite impressive, given how little we did in terms of data pre-processing and feature engineering. Now, what clues did the classifier pick on? Are they reasonable?&lt;/p&gt;
-
-&lt;p&gt;In order to understand this, I&amp;rsquo;ll run &lt;code&gt;lime&lt;/code&gt;&amp;rsquo;s &lt;code&gt;explainer()&lt;/code&gt; only on correctly predicted instances while ignoring misclassified observations. I&amp;rsquo;ll pick first 5 observations for interpretation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# select only correct predictions
-predictions_tb = predictions %&amp;gt;% as_tibble() %&amp;gt;% 
-  rename_(predict_label = names(.)[1]) %&amp;gt;%
-  tibble::rownames_to_column()
-
-correct_pred = test_tweets %&amp;gt;%
-  tibble::rownames_to_column() %&amp;gt;% 
-  mutate(test_label = author == &amp;quot;realDonaldTrump&amp;quot;) %&amp;gt;%
-  left_join(predictions_tb) %&amp;gt;%
-  filter(test_label == predict_label) %&amp;gt;% 
-  pull(text) %&amp;gt;% 
-  head(5)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now, this is important. Before we run &lt;code&gt;explainer()&lt;/code&gt;, we need to detach &lt;code&gt;dplyr&lt;/code&gt; package, which is a bit of a pain when you go back and forth between different chunks of code that require or hate &lt;code&gt;dplyr&lt;/code&gt;, but there you go. There are worse things that can happen to your code, I suppose.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;detach(&amp;quot;package:dplyr&amp;quot;, unload=TRUE) # explainer will not run with dplyr in the workspace
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Nearly there! Let&amp;rsquo;s just define the explainer and run it on the sample of correctly predicted tweets.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;explainer &amp;lt;- lime(correct_pred, model = xgb_model, 
-                  preprocess = get_matrix)
-
-corr_explanation &amp;lt;- lime::explain(correct_pred, explainer, n_labels = 1, 
-                       n_features = 6, cols = 2, verbose = 0)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ready? Here we go!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;plot_features(corr_explanation)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Remember that &lt;code&gt;Label == 1&lt;/code&gt; means Donald Trump was the author of the tweet, otherwise it was Hilary Clinton. What does &lt;code&gt;lime&lt;/code&gt; tell us? Funnily enough, it looks like presence of words like &lt;code&gt;Donald&lt;/code&gt;, &lt;code&gt;Trump&lt;/code&gt;, &lt;code&gt;candidate&lt;/code&gt; and &lt;code&gt;president&lt;/code&gt; indicates that Hilary was the author, whereas words like &lt;code&gt;Hilary&lt;/code&gt; and &lt;code&gt;me&lt;/code&gt; or &lt;code&gt;my&lt;/code&gt; are indicative of Donald Trump. Sounds reasonable to me ;)&lt;/p&gt;
-
-&lt;p&gt;If you feel somehow ill at ease with this kind of presentation of model interpretations, try running &lt;code&gt;plot_text_explanations()&lt;/code&gt; instead:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;plot_text_explanations(corr_explanation)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-26-trump-vs-clinton-interpretable-text-classifier_files/features-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;It will give you a clearer view of support or contradiction of certain words for a given label, if you&amp;rsquo;re interested only in direction but not strength of this relationship.&lt;/p&gt;
-
-&lt;p&gt;Last, but definitely not least, it&amp;rsquo;s possible to run a &lt;code&gt;shiny&lt;/code&gt; app to interactively explore text models. It&amp;rsquo;s not possible to run it in this blog, but all you need to do is run the following (single!) line of code to reveal its magic:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;interactive_text_explanations(explainer)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Hope I managed to spread a bit of my love for &lt;code&gt;lime&lt;/code&gt;! Again, big thanks to Thomas for a great job he did with this package! I can&amp;rsquo;t wait to see support for image data in R - but no pressure, the whole Twitter knows how busy you are :) Cheers!&lt;/p&gt;
 </description>
     </item>
     

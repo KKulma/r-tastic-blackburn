@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Wed, 02 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 03 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>My R Take in Advent of Code - Day 5</title>
+      <link>/post/advent-of-code-day-5/</link>
+      <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/advent-of-code-day-5/</guid>
+      <description>There’s no time to lose, so here comes another Advent of Code puzzle solved using R. Day 5 challenge, here we come! What are we expected to do?
+The polymer is formed by smaller units which, when triggered, react with each other such that two adjacent units of the same type and opposite polarity are destroyed. Units’ types are represented by letters; units’ polarity is represented by capitalization.</description>
+    </item>
     
     <item>
       <title>My R Take on Advent of Code - Day 4</title>
@@ -97,15 +107,6 @@ Which guard sleeps most (minutes) andWhat minute does that guard spend asleep t
       
       <guid>/post/end-of-year-thoughts/</guid>
       <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
-    </item>
-    
-    <item>
-      <title>Star Wars Vs Star Trek Word Battle</title>
-      <link>/post/star-wars-vs-star-trek-word-battle/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/star-wars-vs-star-trek-word-battle/</guid>
-      <description>It will go without saying that I’m super excited about the premiere of another Star Wars movie and I’m not an exception. This, together with with Piotr Migdal’s challenge posted on Data Science PL group on Facebook where he suggested comparing word frequencies between two different sources. It didn’t take me long to decide what source to choose! So in this short kand sweer blogpost I’m comparing word frequencies between two movie scripts: “Star Wars: The New Hope” (1977) and “Star Trek: The Motion Picture” (1979).</description>
     </item>
     
   </channel>
