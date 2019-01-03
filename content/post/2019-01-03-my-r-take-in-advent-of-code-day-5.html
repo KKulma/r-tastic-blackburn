@@ -55,21 +55,21 @@ glimpse(raw_input) </code></pre>
 nchar(raw_input) </code></pre>
 <pre><code>## [1] 50000</code></pre>
 <p>50000-letters long! I wish I knew that was the right length from the beginning - this puzzle took me way longer than necessary to solve because I didn’t copy a complete sequence into the <code>.txt</code> file!</p>
-<p>Anyway, instead of coming up with a fancy regex pattern I hard-coded or possible combination of letters that we want to remove from the sequence. Not elegant but very effective.</p>
+<p>Anyway, instead of coming up with a fancy regex pattern I hard-coded all possible combinations of letters that we want to remove from the sequence. Not elegant but very effective.</p>
 <pre class="r"><code>pattern &lt;- c(&#39;Aa|aA|Bb|bB|Cc|cC|Dd|dD|Ee|eE|Ff|fF|Gg|gG|Hh|hH|Ii|iI|Jj|jJ|Kk|kK|Ll|lL|Mm|mM|Nn|nN|Oo|oO|Pp|pP|Qq|qQ|Rr|rR|Ss|sS|Tt|tT|Uu|uU|Vv|vV|Ww|wW|Xx|xX|Yy|yY|Zz|zZ&#39;) </code></pre>
 <p>Let’s test on the first example if this pattern works:</p>
-<pre class="r"><code># test the example 
+<pre class="r"><code>## test the example 
 
 ## dabAcCaCBAcCcaDA  The first &#39;cC&#39; is removed.
-#dabAaCBAcCcaDA    This creates &#39;Aa&#39;, which is removed.
-#dabCBAcCcaDA      Either &#39;cC&#39; or &#39;Cc&#39; are removed (the result is the same).
-#dabCBAcaDA 
+## dabAaCBAcCcaDA    This creates &#39;Aa&#39;, which is removed.
+## dabCBAcCcaDA      Either &#39;cC&#39; or &#39;Cc&#39; are removed (the result is the same).
+## dabCBAcaDA 
 
   
 str_remove_all(&#39;dabAcCaCBAcCcaDA&#39;, pattern) %&gt;% 
   str_remove_all(pattern) %&gt;% nchar()</code></pre>
 <pre><code>## [1] 10</code></pre>
-<p>Yes! We get the right answer after 2 rounds of ‘removals! Now, we don’t know how many rounds need to applied to the puzzle dataset in order reach the final solution, so how do we go about it? It’s a perfect case for a <a href="https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r">repeat loop</a>. In such loop we keep repeating a specified operation until a condition is met. In our case, we want to keep applying the removal of ’reactive units’ until the length of the letter sequence stops changing. And once it happens, we want to know how long is the final (shortest) sequence. This will be our solution to the puzzle:</p>
+<p>Yes! We get the right answer after 2 rounds of ‘removals’! Now, we don’t know how many rounds need to be applied to the puzzle dataset in order to reach the final solution, so how do we go about it? It’s a perfect case for a <a href="https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r">repeat loop</a>. In such loop we keep repeating a specified operation until a condition is met. In our case, we want to keep applying the removal of ‘reactive units’ until the length of the letter sequence stops changing. And once it happens, we want to know how long is the final (shortest) sequence. This will be our solution to the puzzle:</p>
 <pre class="r"><code># now, put it in the repeat loop
 # final solution
 

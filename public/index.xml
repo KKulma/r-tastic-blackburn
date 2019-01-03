@@ -92,21 +92,21 @@ glimpse(raw_input) &lt;/code&gt;&lt;/pre&gt;
 nchar(raw_input) &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 50000&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;50000-letters long! I wish I knew that was the right length from the beginning - this puzzle took me way longer than necessary to solve because I didn’t copy a complete sequence into the &lt;code&gt;.txt&lt;/code&gt; file!&lt;/p&gt;
-&lt;p&gt;Anyway, instead of coming up with a fancy regex pattern I hard-coded or possible combination of letters that we want to remove from the sequence. Not elegant but very effective.&lt;/p&gt;
+&lt;p&gt;Anyway, instead of coming up with a fancy regex pattern I hard-coded all possible combinations of letters that we want to remove from the sequence. Not elegant but very effective.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pattern &amp;lt;- c(&amp;#39;Aa|aA|Bb|bB|Cc|cC|Dd|dD|Ee|eE|Ff|fF|Gg|gG|Hh|hH|Ii|iI|Jj|jJ|Kk|kK|Ll|lL|Mm|mM|Nn|nN|Oo|oO|Pp|pP|Qq|qQ|Rr|rR|Ss|sS|Tt|tT|Uu|uU|Vv|vV|Ww|wW|Xx|xX|Yy|yY|Zz|zZ&amp;#39;) &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s test on the first example if this pattern works:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test the example 
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## test the example 
 
 ## dabAcCaCBAcCcaDA  The first &amp;#39;cC&amp;#39; is removed.
-#dabAaCBAcCcaDA    This creates &amp;#39;Aa&amp;#39;, which is removed.
-#dabCBAcCcaDA      Either &amp;#39;cC&amp;#39; or &amp;#39;Cc&amp;#39; are removed (the result is the same).
-#dabCBAcaDA 
+## dabAaCBAcCcaDA    This creates &amp;#39;Aa&amp;#39;, which is removed.
+## dabCBAcCcaDA      Either &amp;#39;cC&amp;#39; or &amp;#39;Cc&amp;#39; are removed (the result is the same).
+## dabCBAcaDA 
 
   
 str_remove_all(&amp;#39;dabAcCaCBAcCcaDA&amp;#39;, pattern) %&amp;gt;% 
   str_remove_all(pattern) %&amp;gt;% nchar()&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 10&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Yes! We get the right answer after 2 rounds of ‘removals! Now, we don’t know how many rounds need to applied to the puzzle dataset in order reach the final solution, so how do we go about it? It’s a perfect case for a &lt;a href=&#34;https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r&#34;&gt;repeat loop&lt;/a&gt;. In such loop we keep repeating a specified operation until a condition is met. In our case, we want to keep applying the removal of ’reactive units’ until the length of the letter sequence stops changing. And once it happens, we want to know how long is the final (shortest) sequence. This will be our solution to the puzzle:&lt;/p&gt;
+&lt;p&gt;Yes! We get the right answer after 2 rounds of ‘removals’! Now, we don’t know how many rounds need to be applied to the puzzle dataset in order to reach the final solution, so how do we go about it? It’s a perfect case for a &lt;a href=&#34;https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r&#34;&gt;repeat loop&lt;/a&gt;. In such loop we keep repeating a specified operation until a condition is met. In our case, we want to keep applying the removal of ‘reactive units’ until the length of the letter sequence stops changing. And once it happens, we want to know how long is the final (shortest) sequence. This will be our solution to the puzzle:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# now, put it in the repeat loop
 # final solution
 
