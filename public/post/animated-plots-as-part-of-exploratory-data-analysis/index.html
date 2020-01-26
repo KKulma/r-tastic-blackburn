@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
-  <meta name="generator" content="Hugo 0.52" />
+  <meta name="generator" content="Hugo 0.62.0" />
 
   <title>Animated Plots As Part Of Exploratory Data Analysis &middot; r-tastic</title>
 
@@ -233,23 +233,14 @@
 
 </div>
 
-  
-
-<p>The internet seems to be booming with blog posts on animated graphs, whether it&rsquo;s for more serious purposes or not so much. I didn&rsquo;t think anything more of it than just a gimmick or a cool way of spicing up your conference talk. However, I&rsquo;m a total convert now and <strong>in this post I want to show a real value that such graph can add to your (absolutely serious!) exploratory analysis.</strong></p>
-
-<p><br></p>
-
+  <p>The internet seems to be booming with blog posts on animated graphs, whether it's for more serious purposes or not so much. I didn't think anything more of it than just a gimmick or a cool way of spicing up your conference talk. However, I'm a total convert now and <strong>in this post I want to show a real value that such graph can add to your (absolutely serious!) exploratory analysis.</strong></p>
+<!-- raw HTML omitted -->
 <h3 id="import-of-metropolitan-police-data">IMPORT OF METROPOLITAN POLICE DATA</h3>
-
-<p>As an example, I&rsquo;ll use geospatial data about crime and policing in the UK, freely available <a href="https://data.police.uk/data/">here</a>. As I live in London, quite naturally I chose data for <strong>Metropolitan Police</strong> region, starting from <strong>January 2016 to March 2017, with only <em>Include crime data</em> option ticked.</strong>.</p>
-
+<p>As an example, I'll use geospatial data about crime and policing in the UK, freely available <a href="https://data.police.uk/data/">here</a>. As I live in London, quite naturally I chose data for <strong>Metropolitan Police</strong> region, starting from <strong>January 2016 to March 2017, with only <em>Include crime data</em> option ticked.</strong>.</p>
 <p>The data are downloaded in the form of list of folders, each containing data for any specified month. In order to smoothly find and append those files, I used <code>dir()</code> function (after moving the folders to the working directory first, bien sûr):</p>
-
 <pre><code>london_files &lt;- dir(recursive = T, pattern = &quot;*metropolitan-street.csv&quot;, full.names=TRUE)
 london_files
-</code></pre>
-
-<pre><code>##  [1] &quot;./london_police_data/2016-01/2016-01-metropolitan-street.csv&quot;
+</code></pre><pre><code>##  [1] &quot;./london_police_data/2016-01/2016-01-metropolitan-street.csv&quot;
 ##  [2] &quot;./london_police_data/2016-02/2016-02-metropolitan-street.csv&quot;
 ##  [3] &quot;./london_police_data/2016-03/2016-03-metropolitan-street.csv&quot;
 ##  [4] &quot;./london_police_data/2016-04/2016-04-metropolitan-street.csv&quot;
@@ -265,16 +256,11 @@ london_files
 ## [14] &quot;./london_police_data/2017-02/2017-02-metropolitan-street.csv&quot;
 ## [15] &quot;./london_police_data/2017-03/2017-03-metropolitan-street.csv&quot;
 </code></pre>
-
 <p>This function recognizes all the specified files (here: csv files ending with <em>metropolitan-street</em> string) in the main folder, as well as sub-folders, genius! As you can see, thanks to <code>full.names = TRUE</code>, the object will return not only files&rsquo; names, but also their paths.</p>
-
 <p>Next, I only need to append identified files&hellip;</p>
-
 <pre><code>london_police_data &lt;- do.call(rbind,lapply(london_files, read.csv))
 str(london_police_data)
-</code></pre>
-
-<pre><code>## 'data.frame':    1237778 obs. of  12 variables:
+</code></pre><pre><code>## 'data.frame':    1237778 obs. of  12 variables:
 ##  $ Crime.ID             : Factor w/ 905661 levels &quot;&quot;,&quot;0002285d1ab33fde301c313d3654e5bf45ce80eb10a90153f655a625dba32c30&quot;,..: 36371 1 1 1 1 1 1 1347 41162 24388 ...
 ##  $ Month                : Factor w/ 15 levels &quot;2016-01&quot;,&quot;2016-02&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ Reported.by          : Factor w/ 1 level &quot;Metropolitan Police Service&quot;: 1 1 1 1 1 1 1 1 1 1 ...
@@ -288,17 +274,11 @@ str(london_police_data)
 ##  $ Last.outcome.category: Factor w/ 24 levels &quot;&quot;,&quot;Awaiting court outcome&quot;,..: 8 1 1 1 1 1 1 8 13 18 ...
 ##  $ Context              : logi  NA NA NA NA NA NA ...
 </code></pre>
-
 <p>&hellip; and we can now start!</p>
-
 <h4 id="creating-a-static-view-heatmap">CREATING A STATIC VIEW HEATMAP</h4>
-
-<p>Let&rsquo;s have a look at crime types and their frequencies:</p>
-
+<p>Let's have a look at crime types and their frequencies:</p>
 <pre><code>sort(table(london_police_data$Crime.type))
-</code></pre>
-
-<pre><code>##
+</code></pre><pre><code>##
 ##        Possession of weapons                  Other crime
 ##                         5913                        13174
 ##                Bicycle theft                      Robbery
@@ -314,30 +294,21 @@ str(london_police_data)
 ## Violence and sexual offences        Anti-social behaviour
 ##                       258061                       290642
 </code></pre>
-
-<p>It looks like <em>Possession of weapons</em> is, thankfully, the least common reported crime, so let&rsquo;s explore where those crimes usually happen and if there&rsquo;s any obvious seasonality. I&rsquo;ll start with creating a separate dataframe:</p>
-
+<p>It looks like <em>Possession of weapons</em> is, thankfully, the least common reported crime, so let's explore where those crimes usually happen and if there's any obvious seasonality. I'll start with creating a separate dataframe:</p>
 <pre><code>library(dplyr)
 
 weapon_map_data &lt;- london_police_data %&gt;%
   filter(Crime.type == &quot;Possession of weapons&quot;) %&gt;%
   select(Month, Longitude, Latitude, Crime.type)
-</code></pre>
-
-<p>And a quick peek into sample sizes&hellip;</p>
-
+</code></pre><p>And a quick peek into sample sizes&hellip;</p>
 <pre><code>table(weapon_map_data$Month)
-</code></pre>
-
-<pre><code>##
+</code></pre><pre><code>##
 ## 2016-01 2016-02 2016-03 2016-04 2016-05 2016-06 2016-07 2016-08 2016-09
 ##     323     285     310     336     399     488     457     457     401
 ## 2016-10 2016-11 2016-12 2017-01 2017-02 2017-03
 ##     408     351     332     399     415     552
 </code></pre>
-
-<p>Next, I&rsquo;ll create a plain map of London using <code>ggmap</code> package:</p>
-
+<p>Next, I'll create a plain map of London using <code>ggmap</code> package:</p>
 <pre><code>#install.packages(&quot;ggmap&quot;, type = &quot;source&quot;)
 #devtools::install_github(&quot;hadley/ggplot2&quot;)
 library(ggmap)
@@ -345,19 +316,11 @@ library(ggplot2)
 library(evaluate)
 
 evaluate(&quot;london_map = get_map(location = 'London', maptype='toner',  zoom = 10)&quot;)
-</code></pre>
-
-<pre><code>ggmap(london_map)
-</code></pre>
-
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/london_map-1.png" alt="" width="105%" height="105%"/></p>
-
+</code></pre><pre><code>ggmap(london_map)
+</code></pre><!-- raw HTML omitted -->
 <p>Not bad for two lines of code, ey!</p>
-
-<p><em>(Note commented part with package installation: I had to install <code>ggmap</code> and <code>ggplot2</code> packages this way, otherwise the maps presented here wouldn&rsquo;t get generated)</em></p>
-
-<p>Finally, here&rsquo;s a <strong>static</strong> heat map of weapon possession crimes in London, between January 2016 and March 2017:</p>
-
+<p><em>(Note commented part with package installation: I had to install <code>ggmap</code> and <code>ggplot2</code> packages this way, otherwise the maps presented here wouldn't get generated)</em></p>
+<p>Finally, here's a <strong>static</strong> heat map of weapon possession crimes in London, between January 2016 and March 2017:</p>
 <pre><code>weapon_london_heat_map&lt;- ggmap(london_map, extent = &quot;device&quot;) +
   stat_density_2d(aes(x = Longitude, y = Latitude, fill = ..level.., alpha=1),
                   data=weapon_map_data, geom = &quot;polygon&quot;) +
@@ -365,18 +328,11 @@ evaluate(&quot;london_map = get_map(location = 'London', maptype='toner',  zoom 
   scale_alpha(range = c(0.00, 0.5), guide = FALSE)
 
 weapon_london_heat_map
-</code></pre>
-
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapon_static-1.png" alt="" width="105%" height="105%"/></p>
-
-<p>Not bad at all! We can now identify the crime hotspots, but there&rsquo;s no way we can infer anything about the crime seasonality. And here&rsquo;s where the first serious use of animated graphs comes in!</p>
-
-<p><br></p>
-
+</code></pre><!-- raw HTML omitted -->
+<p>Not bad at all! We can now identify the crime hotspots, but there's no way we can infer anything about the crime seasonality. And here's where the first serious use of animated graphs comes in!</p>
+<!-- raw HTML omitted -->
 <h3 id="creating-animated-single-view-heat-map">CREATING ANIMATED SINGLE-VIEW HEAT MAP</h3>
-
-<p>For this purpose I use, now famous, <code>gganimate</code> package. If you ever thought that creating gif&rsquo;s with changing plots is hard, you&rsquo;d better start eyeballing the below code, because the only difference between the static and animated graph is <code>frame = Month</code> part added to graph&rsquo;s <code>aes()</code>. Simples.</p>
-
+<p>For this purpose I use, now famous, <code>gganimate</code> package. If you ever thought that creating gif's with changing plots is hard, you'd better start eyeballing the below code, because the only difference between the static and animated graph is <code>frame = Month</code> part added to graph's <code>aes()</code>. Simples.</p>
 <pre><code>#devtools::install_github(&quot;dgrtwo/gganimate&quot;)
 library(gganimate)
 
@@ -386,19 +342,11 @@ map_anime&lt;- ggmap(london_map, extent = &quot;device&quot;) +
                   data=weapon_map_data, geom = &quot;polygon&quot;) +
   scale_fill_gradient(low = &quot;blue&quot;, high = &quot;red&quot;) +
   scale_alpha(range = c(0.00, 0.5), guide = FALSE)
-</code></pre>
-
-<pre><code>gganimate(map_anime)
-</code></pre>
-
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/weapons_london.gif" alt="" width="105%" height="105%"/></p>
-
+</code></pre><pre><code>gganimate(map_anime)
+</code></pre><!-- raw HTML omitted -->
 <p>From this animation alone (pretty much) you would know which of the following statements is true: i) weapon-carrying criminals like Easter and summer holidays, thus take time off from their criminal activity during these times and thus reducing the geographical range of such crimes, OR ii) during holiday periods the weapon-carrying criminals tend to &lsquo;focus&rsquo; on more central areas, supposedly while keeping up with their criminal activity&hellip;?</p>
-
 <h4 id="creating-animated-multiple-view-heat-map">CREATING ANIMATED MULTIPLE-VIEW HEAT MAP</h4>
-
 <p>Following the same logic, we can create a faceted-animated view of all crimes in London over 15 months. It goes like this:</p>
-
 <pre><code># creating a new data.frame
 all_map_data &lt;- london_police_data %&gt;%
   select(Month, Longitude, Latitude, Crime.type)
@@ -413,12 +361,8 @@ all_london_heat_map&lt;- ggmap(london_map, extent = &quot;device&quot;) +
   facet_wrap(~ Crime.type, nrow = 3)
 
 gganimate(all_london_heat_map)
-</code></pre>
-
-<p><img src="/post/2017-05-30-animated-plots-as-part-of-exploratory-data-analysis_files/all_london.gif" alt="" width="105%" height="105%"/></p>
-
+</code></pre><!-- raw HTML omitted -->
 <p>So, there you go! At the first glance it may look a bit chaotic, but such visualization will quickly make you realise that some crimes always have a narrow geographical range ( <em>Theft from the person</em> or <em>Other theft</em>, for example), especially compared to some with universally wide range (e.g. <em>Burglary</em> or <em>Criminal damage and arson</em>). And this is the first step for generating new questions and hypotheses, the integral (and very desirable) part of any exploratory analysis!</p>
-
 <p>So, what do you think? Are you converted yet? :)</p>
 
 

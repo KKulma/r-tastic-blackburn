@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
-  <meta name="generator" content="Hugo 0.52" />
+  <meta name="generator" content="Hugo 0.62.0" />
 
   <title>Automated and Unmysterious Machine Learning in Cancer Detection &middot; r-tastic</title>
 
@@ -233,26 +233,17 @@
 
 </div>
 
-  
-
-<p>I get bored from doing two things: i) <a href="https://machinelearningmastery.com/why-you-should-be-spot-checking-algorithms-on-your-machine-learning-problems/">spot-checking</a> + optimising parameters of my predictive models and ii) reading about how &lsquo;black box&rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they <a href="https://codewords.recurse.com/issues/five/why-do-neural-networks-think-a-panda-is-a-vulture">take a panda bear for a vulture</a>!). In this post I&rsquo;ll test a) H2O&rsquo;s function <code>h2o.automl()</code> that may help me automate the former and b) <a href="https://twitter.com/thomasp85">Thomas Lin Pedersen</a>&rsquo;s <code>library(lime)</code> that may help clarify the latter.</p>
-
-<h3 id="accurate-automated-predictive-models-using-h2o-automl">ACCURATE &amp; AUTOMATED PREDICTIVE MODELS USING <code>h2o.automl()</code></h3>
-
-<p>This post would never happen if not for the inspiration I got from two excellent blog posts: <a href="https://twitter.com/ShirinGlander">Shirin Glander</a>&rsquo;s <a href="https://shiring.github.io/machine_learning/2017/04/23/lime">Lime presentation</a> and <a href="https://twitter.com/mdancho84">Matt Dancho</a> &rsquo;s <a href="http://www.business-science.io/business/2017/09/18/hr_employee_attrition.html">HR data analysis</a>. There&rsquo;s no hiding that this post is basically copy-catting their work - at least I&rsquo;m standing on the shoulders of giants, hey!</p>
-
-<p>I&rsquo;ll use the powerful <code>h2o.automl()</code> function to optimise and choose the most accurate model classifying benign and malignant cancer cells from the Wisconsin dataset.</p>
-
-<p>First, let&rsquo;s load the data:</p>
-
+  <p>I get bored from doing two things: i) <a href="https://machinelearningmastery.com/why-you-should-be-spot-checking-algorithms-on-your-machine-learning-problems/">spot-checking</a> + optimising parameters of my predictive models and ii) reading about how &lsquo;black box&rsquo; machine learning (particularly deep learning) models are and how little we can do to better understand how they learn (or not learn, for example when they <a href="https://codewords.recurse.com/issues/five/why-do-neural-networks-think-a-panda-is-a-vulture">take a panda bear for a vulture</a>!). In this post I'll test a) H2O's function <code>h2o.automl()</code> that may help me automate the former and b) <a href="https://twitter.com/thomasp85">Thomas Lin Pedersen</a>&lsquo;s <code>library(lime)</code> that may help clarify the latter.</p>
+<h3 id="accurate--automated-predictive-models-using-h2oautoml">ACCURATE &amp; AUTOMATED PREDICTIVE MODELS USING <code>h2o.automl()</code></h3>
+<p>This post would never happen if not for the inspiration I got from two excellent blog posts: <a href="https://twitter.com/ShirinGlander">Shirin Glander</a>&lsquo;s <a href="https://shiring.github.io/machine_learning/2017/04/23/lime">Lime presentation</a> and <a href="https://twitter.com/mdancho84">Matt Dancho</a> &lsquo;s <a href="http://www.business-science.io/business/2017/09/18/hr_employee_attrition.html">HR data analysis</a>. There's no hiding that this post is basically copy-catting their work - at least I'm standing on the shoulders of giants, hey!</p>
+<p>I'll use the powerful <code>h2o.automl()</code> function to optimise and choose the most accurate model classifying benign and malignant cancer cells from the Wisconsin dataset.</p>
+<p>First, let's load the data:</p>
 <pre><code>### loading cancer data ####
 library(mlbench)
 
 data(BreastCancer)
 str(BreastCancer)
-</code></pre>
-
-<pre><code>## 'data.frame':    699 obs. of  11 variables:
+</code></pre><pre><code>## 'data.frame':    699 obs. of  11 variables:
 ##  $ Id             : chr  &quot;1000025&quot; &quot;1002945&quot; &quot;1015425&quot; &quot;1016277&quot; ...
 ##  $ Cl.thickness   : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 5 5 3 6 4 8 1 2 2 4 ...
 ##  $ Cell.size      : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 1 4 1 8 1 10 1 1 1 2 ...
@@ -265,9 +256,7 @@ str(BreastCancer)
 ##  $ Mitoses        : Factor w/ 9 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
 ##  $ Class          : Factor w/ 2 levels &quot;benign&quot;,&quot;malignant&quot;: 1 1 1 1 1 2 1 1 1 1 ...
 </code></pre>
-
 <p>.. and do some data cleaning: change column names, get rid of the order in factor levels and remove rows with empty cells:</p>
-
 <pre><code>### data pre-processing ####
 
 library(dplyr)
@@ -282,9 +271,7 @@ bc_edited =
   na.omit() 
 
 str(bc_edited)
-</code></pre>
-
-<pre><code>## 'data.frame':    683 obs. of  10 variables:
+</code></pre><pre><code>## 'data.frame':    683 obs. of  10 variables:
 ##  $ class          : Factor w/ 2 levels &quot;benign&quot;,&quot;malignant&quot;: 1 1 1 1 1 2 1 1 1 1 ...
 ##  $ cl_thickness   : Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 5 5 3 6 4 8 1 2 2 4 ...
 ##  $ cell_size      : Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 4 1 8 1 10 1 1 1 2 ...
@@ -298,13 +285,9 @@ str(bc_edited)
 ##  - attr(*, &quot;na.action&quot;)=Class 'omit'  Named int [1:16] 24 41 140 146 159 165 236 250 276 293 ...
 ##   .. ..- attr(*, &quot;names&quot;)= chr [1:16] &quot;24&quot; &quot;41&quot; &quot;140&quot; &quot;146&quot; ...
 </code></pre>
-
-<p>That&rsquo;s better! Now, let&rsquo;s set up the local H2O instance&hellip;</p>
-
+<p>That's better! Now, let's set up the local H2O instance&hellip;</p>
 <pre><code>h2o.init() # initializes Java Virtual Machine (JVM)
-</code></pre>
-
-<pre><code>##  Connection successful!
+</code></pre><pre><code>##  Connection successful!
 ## 
 ## R is connected to the H2O cluster: 
 ##     H2O cluster uptime:         7 hours 8 minutes 
@@ -323,12 +306,8 @@ str(bc_edited)
 ##     H2O API Extensions:         XGBoost, Algos, AutoML, Core V3, Core V4 
 ##     R Version:                  R version 3.3.3 (2017-03-06)
 </code></pre>
-
 <pre><code>h2o.no_progress() # Turn off output of progress bars
-</code></pre>
-
-<p>&hellip; and split the data into training, validation and testing datasets.</p>
-
+</code></pre><p>&hellip; and split the data into training, validation and testing datasets.</p>
 <pre><code>bc_h2o &lt;- as.h2o(bc_edited)
 
 split_h2o &lt;- h2o.splitFrame(bc_h2o, c(0.7, 0.15), seed = 13 ) #splits data into random 70%/15%15% chunks
@@ -336,10 +315,7 @@ split_h2o &lt;- h2o.splitFrame(bc_h2o, c(0.7, 0.15), seed = 13 ) #splits data in
 train_h2o &lt;- h2o.assign(split_h2o[[1]], &quot;train&quot; ) # 70%
 valid_h2o &lt;- h2o.assign(split_h2o[[2]], &quot;valid&quot; ) # 15%
 test_h2o  &lt;- h2o.assign(split_h2o[[3]], &quot;test&quot; )  # 15%
-</code></pre>
-
-<p>Finally, we can now use the famous <code>h2o.automl()</code> function and set the model up: set the target, feature names, training and validation sets, as well as how long we want the algorithm to run for (for this you can use either <code>max_runtime_secs</code> argument, like I did here, or <code>max_models</code>, see <a href="https://h2o-release.s3.amazonaws.com/h2o/rel-vapnik/1/docs-website/h2o-docs/automl.html"><code>h2o.automl()</code> documentation</a> for details.</p>
-
+</code></pre><p>Finally, we can now use the famous <code>h2o.automl()</code> function and set the model up: set the target, feature names, training and validation sets, as well as how long we want the algorithm to run for (for this you can use either <code>max_runtime_secs</code> argument, like I did here, or <code>max_models</code>, see <a href="https://h2o-release.s3.amazonaws.com/h2o/rel-vapnik/1/docs-website/h2o-docs/automl.html"><code>h2o.automl()</code> documentation</a> for details.</p>
 <pre><code># Sets target and feature names for h2o
 y &lt;- &quot;class&quot;
 x &lt;- setdiff(names(train_h2o), y)        
@@ -352,17 +328,12 @@ models_h2o &lt;- h2o.automl(
   leaderboard_frame = valid_h2o, # validation set
   max_runtime_secs  = 60 # run-time can be increased/decreased according to your needs
 )
-</code></pre>
-
-<p>The algorithm will run random forest (RF), gradient boosting machines (GBM), generalised linear models (GLM) and deep learning (DL) models. It will then produce a leaderboard based on the best stopping metric (which you can choose by defining <code>stopping_metric</code> parameter). For more details see <a href="https://www.safaribooksonline.com/library/view/practical-machine-learning/9781491964590/ch04.html">this chapter</a> from <a href="http://shop.oreilly.com/product/0636920053170.do">Practical Machine Learning with H2O by Darren Cook</a>. You can see the best model by picking up a <code>@leader</code>.</p>
-
+</code></pre><p>The algorithm will run random forest (RF), gradient boosting machines (GBM), generalised linear models (GLM) and deep learning (DL) models. It will then produce a leaderboard based on the best stopping metric (which you can choose by defining <code>stopping_metric</code> parameter). For more details see <a href="https://www.safaribooksonline.com/library/view/practical-machine-learning/9781491964590/ch04.html">this chapter</a> from <a href="http://shop.oreilly.com/product/0636920053170.do">Practical Machine Learning with H2O by Darren Cook</a>. You can see the best model by picking up a <code>@leader</code>.</p>
 <pre><code>### leaderboard
 
 lb &lt;- models_h2o@leaderboard
 lb
-</code></pre>
-
-<pre><code>##                                    model_id      auc  logloss
+</code></pre><pre><code>##                                    model_id      auc  logloss
 ## 1     DeepLearning_0_AutoML_20171107_162913 0.996622 0.081152
 ## 2     DeepLearning_0_AutoML_20171107_230040 0.994932 0.090049
 ## 3 GBM_grid_1_AutoML_20171107_162650_model_1 0.994088 0.637539
@@ -372,18 +343,12 @@ lb
 ## 
 ## [402 rows x 3 columns]
 </code></pre>
-
 <p>Neural network wins, followed by gradient boost models - no surprise here!</p>
-
 <p>Finally, you can use the Leader to predict labels of the testing set:</p>
-
 <pre><code>automl_leader &lt;- models_h2o@leader
 
 h20_pred &lt;- h2o.predict(automl_leader, test_h2o)
-</code></pre>
-
-<p>It <strong>IS</strong> that easy, no joke. Let&rsquo;s have a quick look at the confusion matrix&hellip;</p>
-
+</code></pre><p>It <strong>IS</strong> that easy, no joke. Let's have a quick look at the confusion matrix&hellip;</p>
 <pre><code>library(tibble)
 
 test_performance &lt;- test_h2o %&gt;%
@@ -394,9 +359,7 @@ test_performance &lt;- test_h2o %&gt;%
   mutate_if(is.character, as.factor)
 
 head(test_performance)
-</code></pre>
-
-<pre><code>## # A tibble: 6 x 3
+</code></pre><pre><code>## # A tibble: 6 x 3
 ##       class prediction correct
 ##      &lt;fctr&gt;     &lt;fctr&gt;  &lt;fctr&gt;
 ## 1    benign     benign correct
@@ -406,19 +369,14 @@ head(test_performance)
 ## 5 malignant  malignant correct
 ## 6 malignant  malignant correct
 </code></pre>
-
 <pre><code>confusion_matrix &lt;- test_performance %&gt;% select(-correct) %&gt;% table() 
 confusion_matrix
-</code></pre>
-
-<pre><code>##            prediction
+</code></pre><pre><code>##            prediction
 ## class       benign malignant
 ##   benign        61         1
 ##   malignant      5        33
 </code></pre>
-
 <p>&hellip; and more detailed performance of the model.</p>
-
 <pre><code>#### Performance analysis ####
 tn &lt;- confusion_matrix[1]
 tp &lt;- confusion_matrix[4]
@@ -441,9 +399,7 @@ tibble(
   null_error_rate
 ) %&gt;% 
   purrr::transpose() 
-</code></pre>
-
-<pre><code>## [[1]]
+</code></pre><pre><code>## [[1]]
 ## [[1]]$accuracy
 ## [1] 0.94
 ## 
@@ -459,13 +415,9 @@ tibble(
 ## [[1]]$null_error_rate
 ## [1] 0.61
 </code></pre>
-
-<p>Given that it is cancer data I&rsquo;d be happier if <a href="https://www.quora.com/What-does-recall-mean-in-machine-learning">recall</a> was higher, but longer running times would improve this. Now, can we understand the neural network - the king of &lsquo;black-box&rsquo; learners - that produced those predictions?</p>
-
-<h3 id="making-obscure-less-obscure-using-library-lime">MAKING OBSCURE LESS OBSCURE USING <code>library(lime)</code></h3>
-
-<p>The answer is (to certain extend) <strong>YES</strong> and package <code>lime</code> will help us with it. Following Shirin&rsquo;s example, I&rsquo;ll split the data into correct and wrong predictions to better understand what confused the model about misclassified observations.</p>
-
+<p>Given that it is cancer data I'd be happier if <a href="https://www.quora.com/What-does-recall-mean-in-machine-learning">recall</a> was higher, but longer running times would improve this. Now, can we understand the neural network - the king of &lsquo;black-box&rsquo; learners - that produced those predictions?</p>
+<h3 id="making-obscure-less-obscure-using-librarylime">MAKING OBSCURE LESS OBSCURE USING <code>library(lime)</code></h3>
+<p>The answer is (to certain extend) <strong>YES</strong> and package <code>lime</code> will help us with it. Following Shirin's example, I'll split the data into correct and wrong predictions to better understand what confused the model about misclassified observations.</p>
 <pre><code>test_h2o_df = as.data.frame(test_h2o)
 
 test_h2o_2 = test_h2o_df %&gt;%
@@ -483,18 +435,16 @@ test_wrong &lt;- test_performance %&gt;%
   filter(correct == 'wrong') %&gt;%
   inner_join(test_h2o_2) %&gt;% 
   select(-c(prediction, correct, sample_id))
-</code></pre>
-
-<p>Now, let&rsquo;s prepare <code>lime</code> so that it works with H2O model correctly. No one will explain this step better than Matt (the author) himself:</p>
-
+</code></pre><p>Now, let's prepare <code>lime</code> so that it works with H2O model correctly. No one will explain this step better than Matt (the author) himself:</p>
 <blockquote>
 <p>The <code>lime</code> package implements LIME in R. One thing to note is that it’s not setup out-of-the-box to work with h2o. The good news is with a few functions we can get everything working properly. We’ll need to make two custom functions:</p>
-
+</blockquote>
+<blockquote>
 <p><code>model_type</code>: Used to tell lime what type of model we are dealing with. It could be classification, regression, survival, etc.</p>
-
+</blockquote>
+<blockquote>
 <p><code>predict_model</code>: Used to allow lime to perform predictions that its algorithm can interpret.</p>
 </blockquote>
-
 <pre><code>library(lime)
 
 # Setup lime::model_type() function for h2o
@@ -508,15 +458,10 @@ predict_model.H2OBinomialModel &lt;- function(x, newdata, type, ...) {
   # return probs
   return(as.data.frame(pred[,-1]))
 }
-</code></pre>
-
-<p>We&rsquo;re nearly there! Let&rsquo;s just define our explainer&hellip;</p>
-
+</code></pre><p>We're nearly there! Let's just define our explainer&hellip;</p>
 <pre><code>predict_model(x = automl_leader, newdata = as.data.frame(test_h2o[,-1]), type = 'raw') %&gt;%
   tibble::as_tibble()
-</code></pre>
-
-<pre><code>## # A tibble: 100 x 2
+</code></pre><pre><code>## # A tibble: 100 x 2
 ##        benign    malignant
 ##         &lt;dbl&gt;        &lt;dbl&gt;
 ##  1 0.99912117 0.0008788323
@@ -531,15 +476,11 @@ predict_model.H2OBinomialModel &lt;- function(x, newdata, type, ...) {
 ## 10 0.99271180 0.0072882030
 ## # ... with 90 more rows
 </code></pre>
-
 <pre><code>explainer &lt;- lime::lime(
   as.data.frame(train_h2o[,-1]), 
   model          = automl_leader, 
   bin_continuous = FALSE)
-</code></pre>
-
-<p>&hellip; and let&rsquo;s start explaining! All our work so far lead to this feature importance plots (not the same for each case!). The green bars mean that the feature supports predicted label, and the red bars contradict it. Let&rsquo;s have a look at the correctly predicted labels:</p>
-
+</code></pre><p>&hellip; and let's start explaining! All our work so far lead to this feature importance plots (not the same for each case!). The green bars mean that the feature supports predicted label, and the red bars contradict it. Let's have a look at the correctly predicted labels:</p>
 <pre><code>explanation_corr &lt;- explain(
   test_correct[1:9, -1],
   explainer = explainer,
@@ -548,14 +489,9 @@ predict_model.H2OBinomialModel &lt;- function(x, newdata, type, ...) {
   kernel_width = 0.5)
 
 plot_features(explanation_corr, ncol = 3)
-</code></pre>
-
-<p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png" alt="" /></p>
-
+</code></pre><p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/corr_lime-1.png" alt=""></p>
 <p>You can see that smaller and more regular cells with low values of bare nuclei (<code>bare_nuclei</code>) correctly indicate benign cells, whereas big, irregular cells with higher values of clump thickness (<code>cl_thickness</code>) support malignant label. It all makes sense.</p>
-
 <p>What about the misclasified labels?</p>
-
 <pre><code>explanation_wrong &lt;- explain(
   test_wrong[1:6, -1],
   explainer = explainer,
@@ -564,11 +500,8 @@ plot_features(explanation_corr, ncol = 3)
   kernel_width = 0.5)
 
 plot_features(explanation_wrong)
-</code></pre>
-
-<p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png" alt="" /></p>
-
-<p>And here&rsquo;s where the true power of <code>lime</code> package is: understanding what made model missclasify labels. All the wrong cases were predcited to be benign while they were malignant, why? It looks like they were mainly small and quite regular cells, altough some malignant characterstics were still present (e.g. higher values of bare nuclei and clump thickness). What a great improvement of our understanding of how the &lsquo;black box&rsquo; model works and why it makes mistakes. Even though it doesn&rsquo;t produce &lsquo;fixed&rsquo; feature importance plots (i.e. a general, not case-to-case view of which variables are most informative when making a prediction), it allows you to make a good educated guess of which features matter. We live in beautiful times!</p>
+</code></pre><p><img src="/post/2017-11-07-automated-and-unmysterious-machine-learning-in-cancer-detection_files/wrong_lime-1.png" alt=""></p>
+<p>And here's where the true power of <code>lime</code> package is: understanding what made model missclasify labels. All the wrong cases were predcited to be benign while they were malignant, why? It looks like they were mainly small and quite regular cells, altough some malignant characterstics were still present (e.g. higher values of bare nuclei and clump thickness). What a great improvement of our understanding of how the &lsquo;black box&rsquo; model works and why it makes mistakes. Even though it doesn't produce &lsquo;fixed&rsquo; feature importance plots (i.e. a general, not case-to-case view of which variables are most informative when making a prediction), it allows you to make a good educated guess of which features matter. We live in beautiful times!</p>
 
 
   

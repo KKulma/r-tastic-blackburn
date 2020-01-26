@@ -1,10 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
     <loc>/about/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/data-wrangling/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/tidyverse/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/web-scraping/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/from-messy-to-tidy/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -19,6 +64,11 @@
   
   <url>
     <loc>/post/end-of-2018-thoughts/</loc>
+    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/opinion/</loc>
     <lastmod>2018-12-31T00:00:00+00:00</lastmod>
   </url>
   
@@ -43,13 +93,48 @@
   </url>
   
   <url>
+    <loc>/tags/heat-maps/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/leaflet/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/public-api/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/blogdown/</loc>
+    <lastmod>2018-08-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/first-post-in-new-r-tastic/</loc>
     <lastmod>2018-08-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
+    <loc>/tags/best-practice/</loc>
+    <lastmod>2018-03-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/prime-hints/</loc>
     <lastmod>2018-03-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/lime/</loc>
+    <lastmod>2018-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/text-analysis/</loc>
+    <lastmod>2018-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -73,7 +158,17 @@
   </url>
   
   <url>
+    <loc>/tags/machine-learning/</loc>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/friendships-among-top-twitterers/</loc>
+    <lastmod>2017-08-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/network-analysis/</loc>
     <lastmod>2017-08-13T00:00:00+00:00</lastmod>
   </url>
   
@@ -83,7 +178,22 @@
   </url>
   
   <url>
+    <loc>/tags/data-vis/</loc>
+    <lastmod>2017-05-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/uk-police-data/</loc>
+    <lastmod>2017-05-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/cluster-validation-in-unsupervised-machine-learning/</loc>
+    <lastmod>2017-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/clustering/</loc>
     <lastmod>2017-05-10T00:00:00+00:00</lastmod>
   </url>
   
@@ -103,8 +213,28 @@
   </url>
   
   <url>
+    <loc>/tags/sentiment-analysis/</loc>
+    <lastmod>2017-03-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/amazon/</loc>
+    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/amazon-reviews-word-cloud/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/wordcloud/</loc>
+    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/babynames/</loc>
+    <lastmod>2017-02-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -113,157 +243,13 @@
   </url>
   
   <url>
-    <loc>/contact/</loc>
-    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/amazon/</loc>
-    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/babynames/</loc>
-    <lastmod>2017-02-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/best-practice/</loc>
-    <lastmod>2018-03-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/blogdown/</loc>
-    <lastmod>2018-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/clustering/</loc>
-    <lastmod>2017-05-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/data-vis/</loc>
-    <lastmod>2017-05-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/ggplot2/</loc>
     <lastmod>2017-02-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/heat-maps/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/leaflet/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/lime/</loc>
-    <lastmod>2018-01-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/machine-learning/</loc>
-    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/network-analysis/</loc>
-    <lastmod>2017-08-13T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/opinion/</loc>
-    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2019-01-03T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/public-api/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/r/</loc>
-    <lastmod>2019-01-03T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/sentiment-analysis/</loc>
-    <lastmod>2017-03-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/text-analysis/</loc>
-    <lastmod>2018-01-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/tidyverse/</loc>
-    <lastmod>2019-01-03T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/uk-police-data/</loc>
-    <lastmod>2017-05-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/web-scraping/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/wordcloud/</loc>
-    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2018-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
+    <loc>/contact/</loc>
+    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>

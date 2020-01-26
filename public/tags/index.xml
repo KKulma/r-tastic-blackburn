@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on r-tastic</title>
@@ -7,76 +7,49 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Tue, 07 Mar 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Amazon</title>
-      <link>/tags/amazon/</link>
-      <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
+      <title>data wrangling</title>
+      <link>/tags/data-wrangling/</link>
+      <pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/amazon/</guid>
+      <guid>/tags/data-wrangling/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Babynames</title>
-      <link>/tags/babynames/</link>
-      <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
+      <title>tidyverse</title>
+      <link>/tags/tidyverse/</link>
+      <pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/babynames/</guid>
+      <guid>/tags/tidyverse/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Best Practice</title>
-      <link>/tags/best-practice/</link>
-      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
+      <title>web scraping</title>
+      <link>/tags/web-scraping/</link>
+      <pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/best-practice/</guid>
+      <guid>/tags/web-scraping/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Blogdown</title>
-      <link>/tags/blogdown/</link>
-      <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
+      <title>opinion</title>
+      <link>/tags/opinion/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/blogdown/</guid>
+      <guid>/tags/opinion/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Clustering</title>
-      <link>/tags/clustering/</link>
-      <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/clustering/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Data Vis</title>
-      <link>/tags/data-vis/</link>
-      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/data-vis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ggplot2</title>
-      <link>/tags/ggplot2/</link>
-      <pubDate>Tue, 28 Feb 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/ggplot2/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Heat Maps</title>
+      <title>heat maps</title>
       <link>/tags/heat-maps/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
@@ -85,7 +58,7 @@
     </item>
     
     <item>
-      <title>Leaflet</title>
+      <title>leaflet</title>
       <link>/tags/leaflet/</link>
       <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
       
@@ -94,7 +67,34 @@
     </item>
     
     <item>
-      <title>Lime</title>
+      <title>public api</title>
+      <link>/tags/public-api/</link>
+      <pubDate>Sun, 26 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/public-api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>blogdown</title>
+      <link>/tags/blogdown/</link>
+      <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/blogdown/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>best practice</title>
+      <link>/tags/best-practice/</link>
+      <pubDate>Sun, 18 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/best-practice/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lime</title>
       <link>/tags/lime/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       

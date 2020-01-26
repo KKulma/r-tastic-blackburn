@@ -1,16 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>R on r-tastic</title>
+    <title>r on r-tastic</title>
     <link>/categories/r/</link>
-    <description>Recent content in R on r-tastic</description>
+    <description>Recent content in r on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
-    <lastBuildDate>Thu, 03 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Webscraping with R - from messy &amp; unstructured to blisfully tidy</title>
+      <link>/post/from-messy-to-tidy/</link>
+      <pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/from-messy-to-tidy/</guid>
+      <description>I stopped caring about the estimates that ocassionally ride the internet about how much time data scientists spend on data wrangling VS modelling. The answer is: probably a lot and likely more than originally planned (probably indicating here dependency on the state and richness of input data and the intended application for it, ekhem).
+Still, the right tools can go a long way in achieving a desired result in the time frame that can surprise even the most optiomistic of us.</description>
+    </item>
     
     <item>
       <title>My R Take in Advent of Code - Day 5</title>
@@ -77,9 +87,9 @@ Which guard sleeps most (minutes) andWhat minute does that guard spend asleep t
       
       <guid>/post/first-post-in-new-r-tastic/</guid>
       <description>OK, it had to happen and here it is: I moved my old r-tastic blog to blogdown and I’m not going to look back :) There are numerous resources that will:
- highlight the advantages of using blogdown with Hugo over other static site generators, such as Jekyll (my previous choice)
- explain how to set everything up (there are some excellent resources here, here or here) or
- deploy your site (e.</description>
+highlight the advantages of using blogdown with Hugo over other static site generators, such as Jekyll (my previous choice)
+explain how to set everything up (there are some excellent resources here, here or here) or
+deploy your site (e.</description>
     </item>
     
     <item>
@@ -97,16 +107,7 @@ Which guard sleeps most (minutes) andWhat minute does that guard spend asleep t
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/trump-vs-clinton-interpretable-text-classifier/</guid>
-      <description>I&amp;rsquo;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&amp;rsquo;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
-    </item>
-    
-    <item>
-      <title>End of Year thoughts</title>
-      <link>/post/end-of-year-thoughts/</link>
-      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/end-of-year-thoughts/</guid>
-      <description>Sometimes it&amp;rsquo;s worth making New Year resolutions&amp;hellip; A year ago I made one for 2017 to start an R blog using RMarkdown and Jekyll static sites. At the time, I didn&amp;rsquo;t even know git that well, had no clue what static sites are and was mostly oblivious to the rich and vibrant R community on Twitter. Fast-forward one year and&amp;hellip; the picture couldn&amp;rsquo;t be any more different! I&amp;rsquo;d like to share my thoughts on writing this blog (and data science blog in general) and how it taught me about getting stuff done.</description>
+      <description>I&#39;ve been writing/talking a lot about LIME recently: in this blog/ at H20 meetup, or at coming AI Congress and I&#39;m still sooo impressed by this tool for interpreting any, even black-box, algorithm! The part I love most is that LIME can be applied to both image and text data, that was well showcased in husky VS wolf (image) and Christian VS atheist (text) examples in the original publication. Thomas Lin Pedersen did an amazing job building lime package for R with excellent documentation and vignette.</description>
     </item>
     
   </channel>

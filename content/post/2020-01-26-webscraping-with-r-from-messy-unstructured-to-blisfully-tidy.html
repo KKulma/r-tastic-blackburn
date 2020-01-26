@@ -1,0 +1,278 @@
+---
+title: Webscraping with R - from messy & unstructured to blisfully tidy
+author: Kasia Kulma
+date: '2020-01-26'
+slug: from-messy-to-tidy
+categories:
+  - r
+tags:
+  - web scraping
+  - data wrangling
+  - tidyverse
+description: ''
+topics: []
+---
+
+
+
+<p>I stopped caring about the estimates that ocassionally <strong>ride</strong> the internet about how much time data scientists spend on data wrangling VS modelling. The answer is: <em>probably</em> a lot and likely more than originally planned (<em>probably</em> indicating here dependency on the state and richness of input data and the intended application for it, ekhem).</p>
+<p>Still, the right tools can go a long way in achieving a desired result in the time frame that can surprise even the most optiomistic of us. Needless to say, R is an excellent example of that right tool :).</p>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>I want to be able to analyse the data on annual CO2 emissions per person for 130 nations worldwide published by Food and Agriculture Organization of the United Nations (FAO), that are nicely summarised on <a href="https://www.nu3.de/blogs/nutrition/food-carbon-footprint-index-2018">nu3 website</a>.</p>
+</div>
+<div id="challenge" class="section level2">
+<h2>Challenge</h2>
+<p>The data resides in the HTML table that has notoriously messy headers. Look and weep:</p>
+<p><img src="/post/2020-01-26-webscraping-with-r-from-messy-unstructured-to-blisfully-tidy_files/messy-html-table.PNG" width="800" /></p>
+<p>But fear not! There’s nothing that R can’t fix in a blink of an eye. And here’s how:</p>
+</div>
+<div id="solution" class="section level2">
+<h2>Solution</h2>
+<p>First, load a handful of classic R packages:</p>
+<ul>
+<li><code>{rvest}</code> for web-scraping</li>
+<li><code>{dplyr}</code> for data-wrangling</li>
+<li><code>{tidyr}</code> for data transformation</li>
+<li><code>{stringr}</code> for string manipulation</li>
+<li><code>{janitor}</code> for clean headers that your OCD will love you for</li>
+</ul>
+<pre class="r"><code>library(rvest)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(janitor)</code></pre>
+<p>Next, scrape the content of the website and extract the HTML table:</p>
+<pre class="r"><code>url &lt;- &quot;https://www.nu3.de/blogs/nutrition/food-carbon-footprint-index-2018&quot;
+
+# scrape the website 
+url_html &lt;- read_html(url) 
+
+# extract the HTML table
+whole_table &lt;- url_html %&gt;%  
+  html_nodes(&#39;table&#39;) %&gt;% 
+  html_table(fill = TRUE) %&gt;% 
+  .[[1]]
+
+str(whole_table)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    133 obs. of  27 variables:
+##  $ X1 : chr  &quot;&quot; &quot;&quot; &quot;#&quot; &quot;1&quot; ...
+##  $ X2 : chr  &quot;&quot; &quot;&quot; &quot;Country&quot; &quot;Argentina&quot; ...
+##  $ X3 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;10.51&quot; ...
+##  $ X4 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;37.20&quot; ...
+##  $ X5 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;38.66&quot; ...
+##  $ X6 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;41.53&quot; ...
+##  $ X7 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;55.48&quot; ...
+##  $ X8 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;1712.00&quot; ...
+##  $ X9 : chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;1.56&quot; ...
+##  $ X10: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;54.63&quot; ...
+##  $ X11: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;4.36&quot; ...
+##  $ X12: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;6.96&quot; ...
+##  $ X13: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;11.39&quot; ...
+##  $ X14: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;10.46&quot; ...
+##  $ X15: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;195.08&quot; ...
+##  $ X16: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;277.87&quot; ...
+##  $ X17: chr  &quot;Animal Products&quot; &quot;&quot; &quot;&quot; &quot;2140.65&quot; ...
+##  $ X18: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;103.11&quot; ...
+##  $ X19: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;19.66&quot; ...
+##  $ X20: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;8.77&quot; ...
+##  $ X21: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;11.22&quot; ...
+##  $ X22: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;0.00&quot; ...
+##  $ X23: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;0.00&quot; ...
+##  $ X24: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;0.49&quot; ...
+##  $ X25: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;0.87&quot; ...
+##  $ X26: chr  &quot;Non-Animal Products&quot; &quot;&quot; &quot;&quot; &quot;31.75&quot; ...
+##  $ X27: chr  &quot;Animal vs. Non-Animal Products:&quot; &quot;Difference - Kg CO2/person/year&quot; &quot;&quot; &quot;2108.90&quot; ...</code></pre>
+<p>The state of column names can be summarised in only one word here: messmessmessmessmessmessmessmess….!!</p>
+<p>Before we tidy them up, let’s scrap the headers and isolate just the content of the table:</p>
+<pre class="r"><code># tidying the table
+table_content &lt;- whole_table %&gt;% 
+  select(-X1) %&gt;% # remove redundant column
+  filter(!dplyr::row_number() %in% 1:3) # remove redundant rows
+
+head(table_content)</code></pre>
+<pre><code>##            X2    X3    X4    X5    X6    X7      X8    X9    X10   X11
+## 1   Argentina 10.51 37.20 38.66 41.53 55.48 1712.00  1.56  54.63  4.36
+## 2   Australia 24.14 85.44 46.12 49.54 33.86 1044.85  9.87 345.65 17.69
+## 3     Albania 10.88 38.51 13.23 14.21 22.50  694.30 15.32 536.50  3.85
+## 4     Iceland 21.69 76.77 26.87 28.86 13.36  412.26 21.12 739.62 74.41
+## 5 New Zealand 22.29 78.90 34.98 37.58 22.49  693.99 18.91 662.23 20.36
+## 6         USA 27.64 97.83 50.01 53.72 36.24 1118.29  0.43  15.06 12.35
+##      X12   X13   X14    X15    X16     X17    X18   X19   X20   X21  X22
+## 1   6.96 11.39 10.46 195.08 277.87 2140.65 103.11 19.66  8.77 11.22 0.00
+## 2  28.25  8.51  7.82 234.49 334.01 1895.55  70.46 13.44 11.03 14.12 0.19
+## 3   6.15 12.45 11.44 303.72 432.62 1733.73 138.64 26.44  7.78  9.96 0.00
+## 4 118.81  8.24  7.57 225.82 321.66 1705.55  72.92 13.91  3.89  4.98 0.11
+## 5  32.51  9.91  9.10 137.25 195.50 1709.80  76.91 14.67  9.16 11.72 0.44
+## 6  19.72 14.58 13.39 254.69 362.78 1680.79  80.43 15.34  6.88  8.80 0.04
+##    X23  X24   X25   X26     X27
+## 1 0.00 0.49  0.87 31.75 2108.90
+## 2 0.09 8.73 15.45 43.09 1852.46
+## 3 0.00 4.36  7.72 44.11 1689.62
+## 4 0.05 3.88  6.87 25.80 1679.75
+## 5 0.20 8.22 14.55 41.14 1668.67
+## 6 0.02 7.86 13.91 38.07 1642.72</code></pre>
+<p>A bit better. It’s worth noting that we’re dealing with 26 variables that need column names. Now, how can we extract these?</p>
+<p>When inspecting the HTML code behind the table (<strong>Right Click =&gt; Inspect =&gt; Navigate to the part of the code that highlights the table headers</strong>), you will notice that all the “icon headers” belong to <code>thead-icon</code> class that has an attribute <code>title</code> with the very column names that we’re interested in.</p>
+<p><img src="/post/2020-01-26-webscraping-with-r-from-messy-unstructured-to-blisfully-tidy_files/nodes&amp;attributes.gif" width="800" /></p>
+<p><code>{rvest}</code> package makes it super easy to extract these using <code>html_nodes()</code> and <code>html_attr()</code> functions:</p>
+<pre class="r"><code>raw_headers &lt;- url_html %&gt;% 
+  html_nodes(&quot;.thead-icon&quot;) %&gt;% 
+  html_attr(&#39;title&#39;) 
+
+raw_headers[1:35]</code></pre>
+<pre><code>##  [1] &quot;Schwein&quot;                                                        
+##  [2] &quot;Geflügel&quot;                                                       
+##  [3] &quot;Rind&quot;                                                           
+##  [4] &quot;Lamm- und Ziegenfleisch&quot;                                        
+##  [5] &quot;Fisch&quot;                                                          
+##  [6] &quot;Eier&quot;                                                           
+##  [7] &quot;Milch - inkl. Käse&quot;                                             
+##  [8] &quot;Durchschnitt Kg CO2/Person/Jahr&quot;                                
+##  [9] &quot;Weizen und Weizenerzeugnisse&quot;                                   
+## [10] &quot;Reis&quot;                                                           
+## [11] &quot;Sojabohnen&quot;                                                     
+## [12] &quot;Nüsse - inkl. Erdnussbutter&quot;                                    
+## [13] &quot;Durchschnitt Kg CO2/Person/Jahr&quot;                                
+## [14] &quot;Supplied for Consumption (kg/person/year)&quot;                      
+## [15] &quot;Kg CO2/person/year&quot;                                             
+## [16] &quot;Animal vs. Non-Animal Products: Difference - Kg CO2/person/year&quot;
+## [17] &quot;Pork&quot;                                                           
+## [18] &quot;Poultry&quot;                                                        
+## [19] &quot;Beef&quot;                                                           
+## [20] &quot;Lamb &amp; Goat&quot;                                                    
+## [21] &quot;Fish&quot;                                                           
+## [22] &quot;Eggs&quot;                                                           
+## [23] &quot;Milk - inc. cheese&quot;                                             
+## [24] &quot;Wheat and Wheat Products&quot;                                       
+## [25] &quot;Rice&quot;                                                           
+## [26] &quot;Soybeans&quot;                                                       
+## [27] &quot;Nuts inc. Peanut Butter&quot;                                        
+## [28] &quot;Supplied for Consumption (kg/person/year)&quot;                      
+## [29] &quot;Kg CO2/person/year&quot;                                             
+## [30] &quot;Supplied for Consumption (kg/person/year)&quot;                      
+## [31] &quot;Kg CO2/person/year&quot;                                             
+## [32] &quot;Supplied for Consumption (kg/person/year)&quot;                      
+## [33] &quot;Kg CO2/person/year&quot;                                             
+## [34] &quot;Supplied for Consumption (kg/person/year)&quot;                      
+## [35] &quot;Kg CO2/person/year&quot;</code></pre>
+<p>As you can see, this way we extracted a few additional titles, but it’s easy to select the correct ones from here. First, let’s get the bottom-most names that refer to the actual column names:</p>
+<pre class="r"><code>tidy_bottom_header &lt;- raw_headers[28:length(raw_headers)]
+tidy_bottom_header[1:10]</code></pre>
+<pre><code>##  [1] &quot;Supplied for Consumption (kg/person/year)&quot;
+##  [2] &quot;Kg CO2/person/year&quot;                       
+##  [3] &quot;Supplied for Consumption (kg/person/year)&quot;
+##  [4] &quot;Kg CO2/person/year&quot;                       
+##  [5] &quot;Supplied for Consumption (kg/person/year)&quot;
+##  [6] &quot;Kg CO2/person/year&quot;                       
+##  [7] &quot;Supplied for Consumption (kg/person/year)&quot;
+##  [8] &quot;Kg CO2/person/year&quot;                       
+##  [9] &quot;Supplied for Consumption (kg/person/year)&quot;
+## [10] &quot;Kg CO2/person/year&quot;</code></pre>
+<p>Then, the middle ones:</p>
+<pre class="r"><code>raw_middle_header &lt;- raw_headers[17:27]
+raw_middle_header</code></pre>
+<pre><code>##  [1] &quot;Pork&quot;                     &quot;Poultry&quot;                 
+##  [3] &quot;Beef&quot;                     &quot;Lamb &amp; Goat&quot;             
+##  [5] &quot;Fish&quot;                     &quot;Eggs&quot;                    
+##  [7] &quot;Milk - inc. cheese&quot;       &quot;Wheat and Wheat Products&quot;
+##  [9] &quot;Rice&quot;                     &quot;Soybeans&quot;                
+## [11] &quot;Nuts inc. Peanut Butter&quot;</code></pre>
+<p>And finally, let’s organise them in a way that the column names reflect the variable order:</p>
+<pre class="r"><code>tidy_headers &lt;- c(
+  rep(raw_middle_header[1:7], each = 2),
+  &quot;animal_total&quot;,
+  rep(raw_middle_header[8:length(raw_middle_header)], each = 2),
+  &quot;non_animal_total&quot;,
+  &quot;country_total&quot;)
+
+tidy_headers</code></pre>
+<pre><code>##  [1] &quot;Pork&quot;                     &quot;Pork&quot;                    
+##  [3] &quot;Poultry&quot;                  &quot;Poultry&quot;                 
+##  [5] &quot;Beef&quot;                     &quot;Beef&quot;                    
+##  [7] &quot;Lamb &amp; Goat&quot;              &quot;Lamb &amp; Goat&quot;             
+##  [9] &quot;Fish&quot;                     &quot;Fish&quot;                    
+## [11] &quot;Eggs&quot;                     &quot;Eggs&quot;                    
+## [13] &quot;Milk - inc. cheese&quot;       &quot;Milk - inc. cheese&quot;      
+## [15] &quot;animal_total&quot;             &quot;Wheat and Wheat Products&quot;
+## [17] &quot;Wheat and Wheat Products&quot; &quot;Rice&quot;                    
+## [19] &quot;Rice&quot;                     &quot;Soybeans&quot;                
+## [21] &quot;Soybeans&quot;                 &quot;Nuts inc. Peanut Butter&quot; 
+## [23] &quot;Nuts inc. Peanut Butter&quot;  &quot;non_animal_total&quot;        
+## [25] &quot;country_total&quot;</code></pre>
+<p>I must say, this does the job but it is the part of the code that I’m least happy with, as it requires a lot of manual effort and thus is prone to errors. If you know better ways how to abstract/automate it, feel free to share it in the comments below!</p>
+<p>Ok, over the first hurdle! Now, we want to retain the information about both, the type of food that the value refers too, as well as the metric that it describes (consumption or CO2 emmissions). Let’s combine the two and make them column names:</p>
+<pre class="r"><code>combined_colnames &lt;- paste(tidy_headers, tidy_bottom_header, sep = &#39;;&#39;)
+colnames(table_content) &lt;- c(&quot;Country&quot;, combined_colnames)
+glimpse(table_content[, 1:10])</code></pre>
+<pre><code>## Observations: 130
+## Variables: 10
+## $ Country                                                 &lt;chr&gt; &quot;Argen...
+## $ `Pork;Supplied for Consumption (kg/person/year)`        &lt;chr&gt; &quot;10.51...
+## $ `Pork;Kg CO2/person/year`                               &lt;chr&gt; &quot;37.20...
+## $ `Poultry;Supplied for Consumption (kg/person/year)`     &lt;chr&gt; &quot;38.66...
+## $ `Poultry;Kg CO2/person/year`                            &lt;chr&gt; &quot;41.53...
+## $ `Beef;Supplied for Consumption (kg/person/year)`        &lt;chr&gt; &quot;55.48...
+## $ `Beef;Kg CO2/person/year`                               &lt;chr&gt; &quot;1712....
+## $ `Lamb &amp; Goat;Supplied for Consumption (kg/person/year)` &lt;chr&gt; &quot;1.56&quot;...
+## $ `Lamb &amp; Goat;Kg CO2/person/year`                        &lt;chr&gt; &quot;54.63...
+## $ `Fish;Supplied for Consumption (kg/person/year)`        &lt;chr&gt; &quot;4.36&quot;...</code></pre>
+<p>I know what you’re thinking - this is faaaar from perfect (or pretty, for that matter), but we’re only 2 lines of code away to having something much more digestable. Long live <code>{tidyr}</code> !!</p>
+<pre class="r"><code>long_table &lt;- table_content %&gt;%
+  # make column names observations of Category variable 
+  tidyr::pivot_longer(cols = -Country, names_to = &quot;Category&quot;, values_to = &quot;Values&quot;) %&gt;%
+  # separate food-related information from the metric
+  tidyr::separate(col = Category, into = c(&quot;Food Category&quot;, &quot;Metric&quot;), sep = &#39;;&#39;)
+
+glimpse(long_table)</code></pre>
+<pre><code>## Observations: 3,250
+## Variables: 4
+## $ Country         &lt;chr&gt; &quot;Argentina&quot;, &quot;Argentina&quot;, &quot;Argentina&quot;, &quot;Argent...
+## $ `Food Category` &lt;chr&gt; &quot;Pork&quot;, &quot;Pork&quot;, &quot;Poultry&quot;, &quot;Poultry&quot;, &quot;Beef&quot;, ...
+## $ Metric          &lt;chr&gt; &quot;Supplied for Consumption (kg/person/year)&quot;, &quot;...
+## $ Values          &lt;chr&gt; &quot;10.51&quot;, &quot;37.20&quot;, &quot;38.66&quot;, &quot;41.53&quot;, &quot;55.48&quot;, &quot;...</code></pre>
+<p>Almost there! I’m still not happy with the <code>Metric</code> variable that ideally should be split into two separate columns for an easier comparison of consumption and CO2 emmissions between the countries:</p>
+<pre class="r"><code>tidy_table &lt;- long_table %&gt;%
+    tidyr::pivot_wider(names_from = Metric, values_from = Values) %&gt;% 
+    janitor::clean_names(&#39;snake&#39;)
+
+glimpse(tidy_table)</code></pre>
+<pre><code>## Observations: 1,820
+## Variables: 4
+## $ country                                 &lt;chr&gt; &quot;Argentina&quot;, &quot;Argentin...
+## $ food_category                           &lt;chr&gt; &quot;Pork&quot;, &quot;Poultry&quot;, &quot;Be...
+## $ supplied_for_consumption_kg_person_year &lt;chr&gt; &quot;10.51&quot;, &quot;38.66&quot;, &quot;55....
+## $ kg_co2_person_year                      &lt;chr&gt; &quot;37.20&quot;, &quot;41.53&quot;, &quot;171...</code></pre>
+<p>Great stuff. Now we only need some final touches renaming the long column names and removing the instances of summarised data - these will be easy to calculate, if we need to, based on the final dataset:</p>
+<pre class="r"><code>final_table &lt;- tidy_table %&gt;% 
+  rename(consumption = 3,
+          co2_emmission = 4) %&gt;% 
+  filter(!stringr::str_detect(food_category, &quot;total&quot;))
+
+head(final_table, 20)</code></pre>
+<pre><code>## # A tibble: 20 x 4
+##    country   food_category            consumption co2_emmission
+##    &lt;chr&gt;     &lt;chr&gt;                    &lt;chr&gt;       &lt;chr&gt;        
+##  1 Argentina Pork                     10.51       37.20        
+##  2 Argentina Poultry                  38.66       41.53        
+##  3 Argentina Beef                     55.48       1712.00      
+##  4 Argentina Lamb &amp; Goat              1.56        54.63        
+##  5 Argentina Fish                     4.36        6.96         
+##  6 Argentina Eggs                     11.39       10.46        
+##  7 Argentina Milk - inc. cheese       195.08      277.87       
+##  8 Argentina Wheat and Wheat Products 103.11      19.66        
+##  9 Argentina Rice                     8.77        11.22        
+## 10 Argentina Soybeans                 0.00        0.00         
+## 11 Argentina Nuts inc. Peanut Butter  0.49        0.87         
+## 12 Australia Pork                     24.14       85.44        
+## 13 Australia Poultry                  46.12       49.54        
+## 14 Australia Beef                     33.86       1044.85      
+## 15 Australia Lamb &amp; Goat              9.87        345.65       
+## 16 Australia Fish                     17.69       28.25        
+## 17 Australia Eggs                     8.51        7.82         
+## 18 Australia Milk - inc. cheese       234.49      334.01       
+## 19 Australia Wheat and Wheat Products 70.46       13.44        
+## 20 Australia Rice                     11.03       14.12</code></pre>
+<p>Voila! We’ve got what we wanted with a few lines of code and basic knowledge of HTML. The whole data-wrangling process took only a fraction of what I expected it to take and now the data is tidy and ‘analysis-ready’.</p>
+<p>Do you know any examples of tricky-to-tidy data? Make sure to share your knowledge - and frustrations, why not!</p>
+</div>

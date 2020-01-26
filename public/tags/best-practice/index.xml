@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Best Practice on r-tastic</title>
+    <title>best practice on r-tastic</title>
     <link>/tags/best-practice/</link>
-    <description>Recent content in Best Practice on r-tastic</description>
+    <description>Recent content in best practice on r-tastic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018. All rights reserved.</copyright>
@@ -38,7 +38,7 @@ In this post I’ll show a couple of tests for cluster validation that can be ea
       
       <guid>/post/optimal-number-of-clusters/</guid>
       <description>Recently, I worked a bit with cluster analysis: the common method in unsupervised learning that uses datasets without labeled responses to draw inferences. I wanted to put my notes together and write it all down before I forget it, thus the blog post. For the start, I’ll tackle multiple approaches to how to determine the number of clusters in your data.
-QUICK INTRO Clustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
+QUICK INTROClustering algorithms aim to establish a structure of your data and assign a cluster/segment to each datapoint based on the input data.</description>
     </item>
     
   </channel>
