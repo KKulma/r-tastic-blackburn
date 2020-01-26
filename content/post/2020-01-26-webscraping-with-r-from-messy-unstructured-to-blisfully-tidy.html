@@ -15,8 +15,8 @@ topics: []
 
 
 
-<p>I stopped caring about the estimates that ocassionally <strong>ride</strong> the internet about how much time data scientists spend on data wrangling VS modelling. The answer is: <em>probably</em> a lot and likely more than originally planned (<em>probably</em> indicating here dependency on the state and richness of input data and the intended application for it, ekhem).</p>
-<p>Still, the right tools can go a long way in achieving a desired result in the time frame that can surprise even the most optiomistic of us. Needless to say, R is an excellent example of that right tool :).</p>
+<p>I stopped caring about the estimates that occasionally raid the internet about how much time data scientists spend on data wrangling VS modelling. The answer is: <em>probably</em> a lot and likely more than originally planned (<em>probably</em> indicating here dependency on the state and richness of input data and the intended application for it, ekhem).</p>
+<p>Still, the right tools can go a long way in achieving the desired result in the time frame that can surprise even the most optimistic of us. Needless to say, R is an excellent example of that right tool :).</p>
 <div id="goal" class="section level2">
 <h2>Goal</h2>
 <p>I want to be able to analyse the data on annual CO2 emissions per person for 130 nations worldwide published by Food and Agriculture Organization of the United Nations (FAO), that are nicely summarised on <a href="https://www.nu3.de/blogs/nutrition/food-carbon-footprint-index-2018">nu3 website</a>.</p>
@@ -45,14 +45,14 @@ library(janitor)</code></pre>
 <p>Next, scrape the content of the website and extract the HTML table:</p>
 <pre class="r"><code>url &lt;- &quot;https://www.nu3.de/blogs/nutrition/food-carbon-footprint-index-2018&quot;
 
-# scrape the website 
-url_html &lt;- read_html(url) 
+# scrape the website
+url_html &lt;- read_html(url)
 
 # extract the HTML table
-whole_table &lt;- url_html %&gt;%  
-  html_nodes(&#39;table&#39;) %&gt;% 
-  html_table(fill = TRUE) %&gt;% 
-  .[[1]]
+whole_table &lt;- url_html %&gt;% 
+ html_nodes(&#39;table&#39;) %&gt;%
+ html_table(fill = TRUE) %&gt;%
+ .[[1]]
 
 str(whole_table)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    133 obs. of  27 variables:
@@ -86,9 +86,9 @@ str(whole_table)</code></pre>
 <p>The state of column names can be summarised in only one word here: messmessmessmessmessmessmessmess….!!</p>
 <p>Before we tidy them up, let’s scrap the headers and isolate just the content of the table:</p>
 <pre class="r"><code># tidying the table
-table_content &lt;- whole_table %&gt;% 
-  select(-X1) %&gt;% # remove redundant column
-  filter(!dplyr::row_number() %in% 1:3) # remove redundant rows
+table_content &lt;- whole_table %&gt;%
+ select(-X1) %&gt;% # remove redundant column
+ filter(!dplyr::row_number() %in% 1:3) # remove redundant rows
 
 head(table_content)</code></pre>
 <pre><code>##            X2    X3    X4    X5    X6    X7      X8    X9    X10   X11
@@ -116,9 +116,9 @@ head(table_content)</code></pre>
 <p>When inspecting the HTML code behind the table (<strong>Right Click =&gt; Inspect =&gt; Navigate to the part of the code that highlights the table headers</strong>), you will notice that all the “icon headers” belong to <code>thead-icon</code> class that has an attribute <code>title</code> with the very column names that we’re interested in.</p>
 <p><img src="/post/2020-01-26-webscraping-with-r-from-messy-unstructured-to-blisfully-tidy_files/nodes&amp;attributes.gif" width="800" /></p>
 <p><code>{rvest}</code> package makes it super easy to extract these using <code>html_nodes()</code> and <code>html_attr()</code> functions:</p>
-<pre class="r"><code>raw_headers &lt;- url_html %&gt;% 
-  html_nodes(&quot;.thead-icon&quot;) %&gt;% 
-  html_attr(&#39;title&#39;) 
+<pre class="r"><code>raw_headers &lt;- url_html %&gt;%
+ html_nodes(&quot;.thead-icon&quot;) %&gt;%
+ html_attr(&#39;title&#39;)
 
 raw_headers[1:35]</code></pre>
 <pre><code>##  [1] &quot;Schwein&quot;                                                        
@@ -180,11 +180,11 @@ raw_middle_header</code></pre>
 ## [11] &quot;Nuts inc. Peanut Butter&quot;</code></pre>
 <p>And finally, let’s organise them in a way that the column names reflect the variable order:</p>
 <pre class="r"><code>tidy_headers &lt;- c(
-  rep(raw_middle_header[1:7], each = 2),
-  &quot;animal_total&quot;,
-  rep(raw_middle_header[8:length(raw_middle_header)], each = 2),
-  &quot;non_animal_total&quot;,
-  &quot;country_total&quot;)
+ rep(raw_middle_header[1:7], each = 2),
+ &quot;animal_total&quot;,
+ rep(raw_middle_header[8:length(raw_middle_header)], each = 2),
+ &quot;non_animal_total&quot;,
+ &quot;country_total&quot;)
 
 tidy_headers</code></pre>
 <pre><code>##  [1] &quot;Pork&quot;                     &quot;Pork&quot;                    
@@ -217,12 +217,12 @@ glimpse(table_content[, 1:10])</code></pre>
 ## $ `Lamb &amp; Goat;Supplied for Consumption (kg/person/year)` &lt;chr&gt; &quot;1.56&quot;...
 ## $ `Lamb &amp; Goat;Kg CO2/person/year`                        &lt;chr&gt; &quot;54.63...
 ## $ `Fish;Supplied for Consumption (kg/person/year)`        &lt;chr&gt; &quot;4.36&quot;...</code></pre>
-<p>I know what you’re thinking - this is faaaar from perfect (or pretty, for that matter), but we’re only 2 lines of code away to having something much more digestable. Long live <code>{tidyr}</code> !!</p>
+<p>I know what you’re thinking - this is faaaar from perfect (or pretty, for that matter), but we’re only 2 lines of code away to having something much more digestible. Long live <code>{tidyr}</code> !!</p>
 <pre class="r"><code>long_table &lt;- table_content %&gt;%
-  # make column names observations of Category variable 
-  tidyr::pivot_longer(cols = -Country, names_to = &quot;Category&quot;, values_to = &quot;Values&quot;) %&gt;%
-  # separate food-related information from the metric
-  tidyr::separate(col = Category, into = c(&quot;Food Category&quot;, &quot;Metric&quot;), sep = &#39;;&#39;)
+ # make column names observations of Category variable
+ tidyr::pivot_longer(cols = -Country, names_to = &quot;Category&quot;, values_to = &quot;Values&quot;) %&gt;%
+ # separate food-related information from the metric
+ tidyr::separate(col = Category, into = c(&quot;Food Category&quot;, &quot;Metric&quot;), sep = &#39;;&#39;)
 
 glimpse(long_table)</code></pre>
 <pre><code>## Observations: 3,250
@@ -231,10 +231,10 @@ glimpse(long_table)</code></pre>
 ## $ `Food Category` &lt;chr&gt; &quot;Pork&quot;, &quot;Pork&quot;, &quot;Poultry&quot;, &quot;Poultry&quot;, &quot;Beef&quot;, ...
 ## $ Metric          &lt;chr&gt; &quot;Supplied for Consumption (kg/person/year)&quot;, &quot;...
 ## $ Values          &lt;chr&gt; &quot;10.51&quot;, &quot;37.20&quot;, &quot;38.66&quot;, &quot;41.53&quot;, &quot;55.48&quot;, &quot;...</code></pre>
-<p>Almost there! I’m still not happy with the <code>Metric</code> variable that ideally should be split into two separate columns for an easier comparison of consumption and CO2 emmissions between the countries:</p>
+<p>Almost there! I’m still not happy with the <code>Metric</code> variable that ideally should be split into two separate columns for an easier comparison of consumption and CO2 emissions between the countries:</p>
 <pre class="r"><code>tidy_table &lt;- long_table %&gt;%
-    tidyr::pivot_wider(names_from = Metric, values_from = Values) %&gt;% 
-    janitor::clean_names(&#39;snake&#39;)
+   tidyr::pivot_wider(names_from = Metric, values_from = Values) %&gt;%
+   janitor::clean_names(&#39;snake&#39;)
 
 glimpse(tidy_table)</code></pre>
 <pre><code>## Observations: 1,820
@@ -244,10 +244,10 @@ glimpse(tidy_table)</code></pre>
 ## $ supplied_for_consumption_kg_person_year &lt;chr&gt; &quot;10.51&quot;, &quot;38.66&quot;, &quot;55....
 ## $ kg_co2_person_year                      &lt;chr&gt; &quot;37.20&quot;, &quot;41.53&quot;, &quot;171...</code></pre>
 <p>Great stuff. Now we only need some final touches renaming the long column names and removing the instances of summarised data - these will be easy to calculate, if we need to, based on the final dataset:</p>
-<pre class="r"><code>final_table &lt;- tidy_table %&gt;% 
-  rename(consumption = 3,
-          co2_emmission = 4) %&gt;% 
-  filter(!stringr::str_detect(food_category, &quot;total&quot;))
+<pre class="r"><code>final_table &lt;- tidy_table %&gt;%
+ rename(consumption = 3,
+         co2_emmission = 4) %&gt;%
+ filter(!stringr::str_detect(food_category, &quot;total&quot;))
 
 head(final_table, 20)</code></pre>
 <pre><code>## # A tibble: 20 x 4
